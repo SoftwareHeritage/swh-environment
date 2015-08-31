@@ -1,0 +1,5 @@
+Do "mr update" to clone or update all Git repositories listed in this repository.
+
+See .mrconfig for the actual list.
+
+The "mr" command is shipped in the "mr" Debian package.

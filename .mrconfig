@@ -1,0 +1,9 @@
+
+[swh-git-cloner]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-git-cloner' 'swh-git-cloner'
+
+[swh-git-loader]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-git-loader' 'swh-git-loader'
+
+[swh-sql]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-sql' 'swh-sql'
