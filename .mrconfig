@@ -7,3 +7,6 @@ checkout = git clone 'git@git.upsilon.cc:swh/swh-git-loader' 'swh-git-loader'
 
 [swh-sql]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-sql' 'swh-sql'
+
+[swh-core]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-core' 'swh-core'
