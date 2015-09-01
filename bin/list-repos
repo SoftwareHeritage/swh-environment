@@ -1,7 +1,18 @@
 #!/bin/bash
+
+abspath=no
+
+if [ "$1" == "-a" -o "$1" == "--absolute" ] ; then
+    abspath=yes
+fi
+
 mr list \
     | grep '^mr list:' | grep -v '^mr list: finished' \
     | awk '{print $3}' \
     | while read repo_abspath ; do
-        basename $repo_abspath
+        if [ "$abspath" == "no" ] ; then
+            basename $repo_abspath
+        else
+	    echo $repo_abspath
+	fi
       done
