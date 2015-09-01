@@ -1,4 +1,9 @@
 
+# keep the list sorted alphabetically by local repo name
+
+[swh-deb-loader]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-deb-loader' 'swh-deb-loader'
+
 [swh-git-cloner]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-git-cloner' 'swh-git-cloner'
 
