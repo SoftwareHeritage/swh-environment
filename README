@@ -3,3 +3,13 @@ Do "mr update" to clone or update all Git repositories listed in this repository
 See .mrconfig for the actual list.
 
 The "mr" command is shipped in the "mr" Debian package.
+
+
+PYTHONPATH
+----------
+
+We use several Python modules, that should all be in the PYTHONPATH to be
+found. To that extent, we provide in this repository a script to set the
+PYTHONPATH variable to the correct value. You can use it as follows:
+
+    . pythonpath.sh
