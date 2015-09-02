@@ -15,3 +15,9 @@ checkout = git clone 'git@git.upsilon.cc:swh/swh-sql' 'swh-sql'
 
 [swh-core]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-core' 'swh-core'
+
+[swh-storage]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-storage' 'swh-storage'
+
+[swh-py-template]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-py-template' 'swh-py-template'
