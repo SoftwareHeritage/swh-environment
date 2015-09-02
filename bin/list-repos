@@ -6,6 +6,11 @@ if [ "$1" == "-a" -o "$1" == "--absolute" ] ; then
     abspath=yes
 fi
 
+warn () {
+    echo "W: $@"
+}
+
+# list known repositories
 mr list \
     | grep '^mr list:' | grep -v '^mr list: finished' \
     | awk '{print $3}' \
@@ -16,3 +21,15 @@ mr list \
 	    echo $repo_abspath
 	fi
       done
+
+# list obsolete repositories
+find . -mindepth 1 -maxdepth 1 -type d |
+    while read dir ; do
+	dir=${dir#./}  # strip "./" prefix
+	if [ "$dir" == ".git" -o "$dir" == "bin" ] ; then
+	    continue
+	fi
+	if ! grep -q "^\[${dir}\]" .mrconfig ; then
+	    warn "unknown repository '$dir', you might want to remove it"
+	fi
+    done
