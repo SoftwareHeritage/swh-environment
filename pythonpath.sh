@@ -4,4 +4,12 @@
 # environment variable to the list of directories corresponding to the
 # repositories known to mr
 
-export PYTHONPATH=`bin/list-repos --absolute | paste -d: -s`
+path=$(
+    for dir in $(bin/list-repos --absolute) ; do
+	if test -f "${dir}/swh/__init__.py" ; then
+	    echo "$dir"
+	fi
+    done \
+	| paste -d':' -s)
+
+export PYTHONPATH="$path"
