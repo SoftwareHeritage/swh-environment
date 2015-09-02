@@ -4,7 +4,7 @@
 # environment variable to the list of directories corresponding to the
 # repositories known to mr
 
-path=$(
+tmp_path=$(
     for dir in $(bin/list-repos --absolute) ; do
 	if echo "$dir" | grep -q -- '-template$' ; then
 	    continue
@@ -15,4 +15,4 @@ path=$(
     done \
 	| paste -d':' -s)
 
-export PYTHONPATH="$path"
+export PYTHONPATH="$tmp_path"
