@@ -13,3 +13,22 @@ found. To that extent, we provide in this repository a script to set the
 PYTHONPATH variable to the correct value. You can use it as follows:
 
     . pythonpath.sh
+
+
+Initialize a new Python package repository
+------------------------------------------
+
+1. create the remote Git repository on the forge
+
+2. add it to `.mrconfig`
+
+3. mr update
+
+   this will clone the (empty) repository locally
+
+4. bin/init-py-repo REPO_NAME
+
+   this will fill the repository with the tempalte for SWH Python packages, and
+   make an initial commit
+
+5. cd REPO_NAME ; git push

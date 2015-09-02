@@ -1,0 +1,27 @@
+#!/bin/bash
+
+TEMPLATE_DIR="swh-py-template"
+
+usage () {
+   echo "Usage: init-py-repo REPO_NAME"
+   echo
+   echo "Note: the repo should have already been created on the forge."
+   echo "and cloned to the local directory REPO_NAME."
+   exit 1
+}
+
+if [ -z "$1" -o ! -d "$1" ] ; then
+    usage
+fi
+repo_dir="$1"
+shift 1
+
+if ! [ -d "$TEMPLATE_DIR" ] ; then
+    echo "can't find template directory: $TEMPLATE_DIR. Abort"
+    exit 2
+fi
+
+rsync -rv --exclude='**/.git/**' "$TEMPLATE_DIR/" "$repo_dir/"
+cd "$repo_dir"
+git add .
+git commit -m "import template from $TEMPLATE_DIR (init-py-repo)"
