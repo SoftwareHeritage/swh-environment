@@ -6,6 +6,9 @@
 
 path=$(
     for dir in $(bin/list-repos --absolute) ; do
+	if echo "$dir" | grep -q -- '-template$' ; then
+	    continue
+	fi
 	if test -f "${dir}/swh/__init__.py" ; then
 	    echo "$dir"
 	fi
