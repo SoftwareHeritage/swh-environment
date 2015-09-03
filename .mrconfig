@@ -4,14 +4,14 @@
 [swh-core]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-core' 'swh-core'
 
-[swh-loader-debian]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-loader-debian' 'swh-loader-debian'
-
 [swh-git-cloner]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-git-cloner' 'swh-git-cloner'
 
 [swh-git-loader]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-git-loader' 'swh-git-loader'
+
+[swh-loader-debian]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-loader-debian' 'swh-loader-debian'
 
 [swh-py-template]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-py-template' 'swh-py-template'
