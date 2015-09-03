@@ -1,9 +1,7 @@
 #    -*- mode: Makefile -*-
 
-BASENAME := $(shell basename `pwd` | sed 's/.*-//')
+PYMODULE := $(shell basename `pwd` | sed 's/-/./g')
 
-PKGNAME = swh.$(BASENAME)
-PKGDIR = swh/$(BASENAME)
 EXTRA_DIRS := $(shell test -d bin && echo bin)
 
 NOSE = nosetests3
@@ -19,8 +17,8 @@ test:
 
 .PHONY: coverage
 coverage:
-	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PKGNAME)
+	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE)
 
 .PHONY: check
 check:
-	$(FLAKE) $(FLAKEFLAGS) $(PKGDIR) $(EXTRA_DIRS)
+	$(FLAKE) $(FLAKEFLAGS) swh $(EXTRA_DIRS)
