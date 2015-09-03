@@ -16,8 +16,5 @@ checkout = git clone 'git@git.upsilon.cc:swh/swh-loader-debian' 'swh-loader-debi
 [swh-py-template]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-py-template' 'swh-py-template'
 
-[swh-sql]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-sql' 'swh-sql'
-
 [swh-storage]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-storage' 'swh-storage'
