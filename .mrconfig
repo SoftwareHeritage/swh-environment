@@ -4,8 +4,8 @@
 [swh-core]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-core' 'swh-core'
 
-[swh-deb-loader]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-deb-loader' 'swh-deb-loader'
+[swh-loader-debian]
+checkout = git clone 'git@git.upsilon.cc:swh/swh-loader-debian' 'swh-loader-debian'
 
 [swh-git-cloner]
 checkout = git clone 'git@git.upsilon.cc:swh/swh-git-cloner' 'swh-git-cloner'
