@@ -1,20 +1,20 @@
 
 # keep the list sorted alphabetically by local repo name
 
-[swh-core]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-core' 'swh-core'
+[swh-cloner-git]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCLG/swh-cloner-git.git' 'swh-cloner-git'
 
-[swh-git-cloner]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-git-cloner' 'swh-git-cloner'
+[swh-core]
+checkout = git clone 'git@forge.softwareheritage.org/diffusion/DCORE/swh-core.git' 'swh-core'
 
 [swh-loader-git]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-loader-git' 'swh-loader-git'
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDG/swh-loader-git.git' 'swh-loader-git'
 
 [swh-loader-debian]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-loader-debian' 'swh-loader-debian'
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDEB/swh-loader-debian.git' 'swh-loader-debian'
 
 [swh-py-template]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-py-template' 'swh-py-template'
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DTPL/swh-py-template.git' 'swh-py-template'
 
 [swh-storage]
-checkout = git clone 'git@git.upsilon.cc:swh/swh-storage' 'swh-storage'
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTO/swh-storage.git' 'swh-storage'
