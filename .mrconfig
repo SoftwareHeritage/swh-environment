@@ -5,7 +5,7 @@
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCLG/swh-cloner-git.git' 'swh-cloner-git'
 
 [swh-core]
-checkout = git clone 'git@forge.softwareheritage.org/diffusion/DCORE/swh-core.git' 'swh-core'
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCORE/swh-core.git' 'swh-core'
 
 [swh-loader-git]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDG/swh-loader-git.git' 'swh-loader-git'
