@@ -18,3 +18,6 @@ checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DTPL/swh-py
 
 [swh-storage]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTO/swh-storage.git' 'swh-storage'
+
+[swh-storage-testdata]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-storage-testdata.git' 'swh-storage-testdata'
