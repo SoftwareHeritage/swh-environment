@@ -13,11 +13,11 @@ all:
 
 .PHONY: test
 test:
-	$(NOSE) $(NOSEFLAGS)
+	$(NOSE) $(NOSEFLAGS) $(PYMODULE)
 
 .PHONY: coverage
 coverage:
-	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE)
+	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE) $(PYMODULE)
 
 .PHONY: check
 check:

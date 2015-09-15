@@ -9,7 +9,7 @@ tmp_path=$(
 	if echo "$dir" | grep -q -- '-template$' ; then
 	    continue
 	fi
-	if test -f "${dir}/swh/__init__.py" ; then
+	if test -d "${dir}/swh/" ; then
 	    echo "$dir"
 	fi
     done \
