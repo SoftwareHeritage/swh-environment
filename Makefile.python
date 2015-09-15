@@ -3,6 +3,7 @@
 PYMODULE := $(shell basename `pwd` | sed 's/-/./g')
 
 EXTRA_DIRS := $(shell test -d bin && echo bin)
+TEST_DIRS := $(shell find . -name tests -type d)
 
 NOSE = nosetests3
 NOSEFLAGS = -v
@@ -13,11 +14,11 @@ all:
 
 .PHONY: test
 test:
-	$(NOSE) $(NOSEFLAGS) $(PYMODULE)
+	$(NOSE) $(NOSEFLAGS) $(TEST_DIRS)
 
 .PHONY: coverage
 coverage:
-	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE) $(PYMODULE)
+	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE) $(TEST_DIRS)
 
 .PHONY: check
 check:
