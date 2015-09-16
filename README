@@ -28,7 +28,7 @@ Initialize a new Python package repository
 
 4. bin/init-py-repo REPO_NAME
 
-   this will fill the repository with the tempalte for SWH Python packages, and
+   this will fill the repository with the template for SWH Python packages, and
    make an initial commit
 
 5. cd REPO_NAME ; git push
