@@ -5,7 +5,7 @@
 # repositories known to mr
 
 tmp_path=$(
-    for dir in $(bin/list-repos --absolute) ; do
+    for dir in $(bin/ls-all-repos --absolute) ; do
 	if echo "$dir" | grep -q -- '-template$' ; then
 	    continue
 	fi
