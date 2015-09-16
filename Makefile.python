@@ -7,7 +7,7 @@ TEST_DIRS := $(shell find . -name tests -type d)
 
 NOSE = nosetests3
 NOSEFLAGS = -v
-FLAKE = flake8
+FLAKE = python3 -m flake8
 FLAKEFLAGS =
 
 all:
