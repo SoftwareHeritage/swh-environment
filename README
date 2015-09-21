@@ -20,7 +20,7 @@ Initialize a new Python package repository
 
 1. create the remote Git repository on the forge
 
-2. add it to `.mrconfig`
+2. add it to `.mrconfig` (e.g. using mr register)
 
 3. mr update
 
