@@ -21,3 +21,6 @@ checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTO/swh-st
 
 [swh-storage-testdata]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-storage-testdata.git' 'swh-storage-testdata'
+
+[swh-web-ui]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DWUI/swh-web-ui.git' 'swh-web-ui'
