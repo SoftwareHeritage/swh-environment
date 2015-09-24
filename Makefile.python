@@ -2,7 +2,7 @@
 
 PYMODULE := $(shell basename `pwd` | sed 's/-/./g')
 
-EXTRA_DIRS := $(shell test -d bin && echo bin)
+PYTHON_BIN := $(shell test -d bin/ && find bin/ -type f -executable | xargs egrep -H '^\#.*python' | cut -f 1 -d :)
 TEST_DIRS := $(shell find . -name tests -type d)
 
 NOSE = nosetests3
@@ -22,4 +22,4 @@ coverage:
 
 .PHONY: check
 check:
-	$(FLAKE) $(FLAKEFLAGS) swh $(EXTRA_DIRS)
+	$(FLAKE) $(FLAKEFLAGS) swh $(PYTHON_BIN)
