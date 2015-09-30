@@ -7,7 +7,7 @@ if [ "$1" == "-a" -o "$1" == "--absolute" ] ; then
 fi
 
 warn () {
-    echo "W: $@"
+    echo "W: $@" 1>&2
 }
 
 # list known repositories
