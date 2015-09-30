@@ -12,3 +12,8 @@ distclean/%:
 	make -C $* distclean
 test/%:
 	make -C $* test
+
+.PHONY: rebuild-testdata rebuild-storage-testdata
+rebuild-testdata: rebuild-storage-testdata
+	make -C swh-storage/sql/ distclean filldb
+	make -C swh-storage-testdata distclean dumpdb
