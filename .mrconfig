@@ -24,3 +24,6 @@ checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-s
 
 [swh-web-ui]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DWUI/swh-web-ui.git' 'swh-web-ui'
+
+[swh-loader-dir]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDIR/swh-loader-dir.git' 'swh-loader-dir'
