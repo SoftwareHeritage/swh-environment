@@ -3,7 +3,7 @@
 TEMPLATE_DIR="swh-py-template"
 
 usage () {
-    echo "Usage: sync-py-repo GIT_REVISION [REPO_NAME]"
+    echo "Usage: cherry-py-repo-from-template GIT_REVISION [REPO_NAME]"
     echo
     echo "Apply the GIT_REVISION change of the swh-py-template repository to either"
     echo "REPO_NAME, or all Python repositories"
