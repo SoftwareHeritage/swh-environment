@@ -25,7 +25,7 @@ if [ -n "$1" ] ; then
     repo="$1"
     apply_to_repo "$repo"
 else
-    for repo in bin/ls-py-modules ; do
+    for repo in `bin/ls-py-modules` ; do
 	apply_to_repo "$repo"
     done
 fi
