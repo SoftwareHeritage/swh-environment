@@ -16,3 +16,7 @@ tmp_path=$(
 	| paste -d':' -s)
 
 export PYTHONPATH="$tmp_path"
+
+if [ "$1" = "-p" -o "$1" = "--print" ] ; then
+    echo $PYTHONPATH
+fi
