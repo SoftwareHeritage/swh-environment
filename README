@@ -5,6 +5,20 @@ See .mrconfig for the actual list.
 The "mr" command is shipped in the "mr" Debian package.
 
 
+~/.mrtrust
+----------
+
+Since we do execute some commands after update/checkout (specifically: ensuring
+pre-commit hooks exist where needed), you will need to tell mr that you "trust"
+the .mrconfig used by swh-environment. If in doubt, open
+swh-environment/.mrconfig and review the commands listed there.
+
+To trust the .mrconfig, do something like the following:
+
+    cd swh-environment
+    echo `pwd`/.mrconfig >> ~/.mrtrust
+
+
 PYTHONPATH
 ----------
 
