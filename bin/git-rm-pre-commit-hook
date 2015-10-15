@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if [ -z "$1" -o ! -d "$1" ] ; then
+    echo "Usage: git-rm-pre-commit-hook LOCAL_REPO_DIR"
+    echo "E.g.:  git-rm-pre-commit-hook swh-core"
+    exit 1
+fi
+
+HOOK=".git/hooks/pre-commit"
+
+cd "$1"
+
+if [ -x "$HOOK" ] ; then
+    rm "$HOOK"
+fi

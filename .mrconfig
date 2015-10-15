@@ -3,27 +3,35 @@
 
 [swh-cloner-git]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCLG/swh-cloner-git.git' 'swh-cloner-git'
+fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-core]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCORE/swh-core.git' 'swh-core'
+fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-git]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDG/swh-loader-git.git' 'swh-loader-git'
+fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-debian]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDEB/swh-loader-debian.git' 'swh-loader-debian'
+fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-py-template]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DTPL/swh-py-template.git' 'swh-py-template'
+fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-storage]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTO/swh-storage.git' 'swh-storage'
+fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-storage-testdata]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-storage-testdata.git' 'swh-storage-testdata'
 
 [swh-web-ui]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DWUI/swh-web-ui.git' 'swh-web-ui'
+fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-dir]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDIR/swh-loader-dir.git' 'swh-loader-dir'
+fixups = ../bin/git-add-pre-commit-hook .
