@@ -35,3 +35,7 @@ fixups = ../bin/git-add-pre-commit-hook .
 [swh-loader-dir]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDIR/swh-loader-dir.git' 'swh-loader-dir'
 fixups = ../bin/git-add-pre-commit-hook .
+
+[swh-loader-tar]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDTAR/swh-loader-tar.git' 'swh-loader-tar'
+fixups = ../bin/git-add-pre-commit-hook .
