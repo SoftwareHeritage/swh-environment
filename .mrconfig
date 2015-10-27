@@ -9,6 +9,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCORE/swh-core.git' 'swh-core'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-lister-github]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLSGH/swh-lister-github.git' 'swh-lister-github'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-loader-debian]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDEB/swh-loader-debian.git' 'swh-loader-debian'
 fixups = ../bin/git-add-pre-commit-hook .
