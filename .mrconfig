@@ -1,4 +1,3 @@
-
 # keep the list sorted alphabetically by local repo name
 
 [swh-cloner-git]
@@ -27,6 +26,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-tar]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDTAR/swh-loader-tar.git' 'swh-loader-tar'
+fixups = ../bin/git-add-pre-commit-hook .
+
+[swh-model]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DMOD/swh-model.git' 'swh-model'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-py-template]
