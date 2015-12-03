@@ -18,7 +18,7 @@ test:
 
 .PHONY: coverage
 coverage:
-	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE) $(TEST_DIRS)
+	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE) --cover-inclusive --cover-branches $(TEST_DIRS)
 
 .PHONY: check
 check:
