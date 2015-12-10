@@ -1,0 +1,3 @@
+#!/bin/bash
+git pull
+mr -j 4 update
