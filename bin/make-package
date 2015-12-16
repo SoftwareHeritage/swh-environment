@@ -75,9 +75,6 @@ if [ "$build" = "yes" ] ; then
     # Build backport package
     sbuild -As --extra-repository="deb [trusted=yes] ${REPOSITORY} jessie main"
 
-    # Sign and send backports package
-    CHANGES_FILE=../${BASENAME}_${VERSION}-1~bpo8~swh+1_amd64.changes
-
     # Copy package to staging directory
     dcmd cp ../${BPO_CHANGES_FILE} ${PACKAGEDIR}
 fi
