@@ -86,4 +86,6 @@ if [ "$upload" = "yes" ] ; then
         dcmd scp ${changefile} ${DESTINATION}:${DESTDIR}/incoming
         ssh ${DESTINATION} reprepro -vb ${DESTDIR} processincoming incoming
     done
+
+    git push --tags
 fi
