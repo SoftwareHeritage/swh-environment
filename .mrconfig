@@ -36,6 +36,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DTPL/swh-py-template.git' 'swh-py-template'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-scheduler]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSCH/swh-scheduler.git' 'swh-scheduler'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-storage]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTO/swh-storage.git' 'swh-storage'
 fixups = ../bin/git-add-pre-commit-hook .
