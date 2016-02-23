@@ -23,7 +23,7 @@ if [ "$build,$upload" = "no,no" -o -z "$package" ] ; then
     usage
 fi
 
-set -ex
+set -e
 
 CURDIR=$(readlink -f "$package")
 PACKAGEDIR=$(readlink -f "packages")
