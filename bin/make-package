@@ -41,7 +41,7 @@ trap "{ rm -rf $TEMP; }" EXIT
 
 cd "$CURDIR"
 
-VERSION=$(git describe | sed s/^v//)
+VERSION=$(python3 -c 'import vcversioner; print(vcversioner.find_version().version)')
 
 SID_CHANGES_FILE=${BASENAME}_${VERSION}-1_amd64.changes
 BPO_CHANGES_FILE=${BASENAME}_${VERSION}-1~bpo8~swh+1_amd64.changes
@@ -80,6 +80,11 @@ if [ "$build" = "yes" ] ; then
 fi
 
 if [ "$upload" = "yes" ] ; then
+    if [[ ${VERSION} = *dev* ]]; then
+        echo "Uploading a dev version is not allowed! Please tag and rebuild."
+        exit 2
+    fi
+
     # Sign and send unstable package
     for changefile in ${PACKAGEDIR}/${SID_CHANGES_FILE} ${PACKAGEDIR}/${BPO_CHANGES_FILE}; do
         debsign ${changefile}
