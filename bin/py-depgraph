@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# generate dependency graph (in DOT(1) format) for all known python modules
+#
+# include by default both internal and external dependencies, but can asked to
+# include either or none of them (see --help)
+
+internal_modules=1
+external_modules=1
+while [ -n "$1" ] ; do
+    if [ "$1" = "--no-internal" ] ; then
+	internal_modules=0
+    elif [ "$1" = "--no-external" ] ; then
+	external_modules=0
+    elif [ "$1" = "--help" -o "$1" = "-h" ] ; then
+	echo "Usage: bin/py-depgraph [--no-internal] [--no-external] > FILE.dot"
+	exit 1
+    fi
+    shift 1
+done
+
+pyrepos=$(bin/ls-py-modules)  # available python repositories (with '-')
+
+declare -A pymods  # available python modules (with '.')
+for repo in $pyrepos ; do
+    pymod=${repo//-/.}
+    pymods[$pymod]=1
+done
+
+echo "digraph swh_py_deps {"
+
+for repo in $pyrepos ; do
+    pymod=${repo//-/.}
+    reqs="${repo}/requirements.txt"
+    if ! [ -f "$reqs" ] ; then
+	continue
+    fi
+    for dep in $(egrep -v '(^#|^[[:space:]]*$)' "$reqs" | cut -f 1 -d ' ') ; do
+	pydep=${dep//-/.}
+
+	if [ -n "${pymods[$pydep]}" ] ; then
+	    scope="internal"
+	else
+	    scope="external"
+	fi
+	if [ \( "$scope" = "internal" -a "$internal_modules" -eq 0 \) -o \
+		\( "$scope" = "external" -a "$external_modules" -eq 0 \) ] ; then
+	    continue
+	fi
+
+	if [ "$scope" = "external" ] ; then
+	    echo -e "\t\"${pydep}\" [style=dashed] ;"
+	fi
+
+	echo -e "\t\"${pymod}\" -> \"${pydep}\" ;"
+    done
+done | sort -u
+
+echo "}"
