@@ -29,6 +29,10 @@ done
 
 echo "digraph swh_py_deps {"
 
+for pymod in ${!pymods[@]} ; do
+    echo -e "\t\"$pymod\" ;"
+done
+
 for repo in $pyrepos ; do
     pymod=${repo//-/.}
     reqs="${repo}/requirements.txt"
