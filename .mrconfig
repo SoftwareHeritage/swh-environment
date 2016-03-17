@@ -16,6 +16,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDEB/swh-loader-debian.git' 'swh-loader-debian'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-loader-antelink]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDANT/swh-loader-antelink.git' 'swh-loader-antelink'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-loader-dir]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDIR/swh-loader-dir.git' 'swh-loader-dir'
 fixups = ../bin/git-add-pre-commit-hook .
