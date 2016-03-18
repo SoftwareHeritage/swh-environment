@@ -28,6 +28,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDG/swh-loader-git.git' 'swh-loader-git'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-loader-svn]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDSVN/swh-loader-svn.git' 'swh-loader-svn'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-loader-tar]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDTAR/swh-loader-tar.git' 'swh-loader-tar'
 fixups = ../bin/git-add-pre-commit-hook .
