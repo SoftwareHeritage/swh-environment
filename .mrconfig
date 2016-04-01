@@ -1,5 +1,8 @@
 # keep the list sorted alphabetically by local repo name
 
+[snippets]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/59/code-snippets.git' 'snippets'
+
 [swh-cloner-git]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCLG/swh-cloner-git.git' 'swh-cloner-git'
 fixups = ../bin/git-add-pre-commit-hook .

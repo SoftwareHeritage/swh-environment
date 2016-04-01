@@ -1,3 +1,4 @@
 swh-*/
 packages/*
+snippets/
 !packages/README
