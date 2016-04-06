@@ -15,10 +15,6 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLSGH/swh-lister-github.git' 'swh-lister-github'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-loader-core]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDC/swh-loader-core.git' 'swh-loader-core'
-fixups = ../bin/git-add-pre-commit-hook .
-
 [swh-loader-debian]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDEB/swh-loader-debian.git' 'swh-loader-debian'
 fixups = ../bin/git-add-pre-commit-hook .
@@ -41,6 +37,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-tar]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDTAR/swh-loader-tar.git' 'swh-loader-tar'
+fixups = ../bin/git-add-pre-commit-hook .
+
+[swh-loader-vcs]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/60/swh-loader-vcs.git' 'swh-loader-vcs'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-model]
