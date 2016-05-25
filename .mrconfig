@@ -43,8 +43,8 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDTAR/swh-loader-tar.git' 'swh-loader-tar'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-loader-vcs]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/60/swh-loader-vcs.git' 'swh-loader-vcs'
+[swh-loader-core]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/60/swh-loader-core.git' 'swh-loader-core'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-model]
