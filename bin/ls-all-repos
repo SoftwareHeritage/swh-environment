@@ -11,7 +11,7 @@ warn () {
 }
 
 # list known repositories
-mr list \
+mr -t list \
     | grep '^mr list:' | grep -v '^mr list: finished' \
     | awk '{print $3}' \
     | while read repo_abspath ; do
