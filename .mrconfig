@@ -63,6 +63,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTO/swh-storage.git' 'swh-storage'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-objstorage]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DOBJS/swh-objstorage.git' 'swh-objstorage'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-storage-testdata]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-storage-testdata.git' 'swh-storage-testdata'
 
