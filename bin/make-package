@@ -63,7 +63,7 @@ if [ "$build" = "yes" ] ; then
     dch --force-distribution --distribution unstable-swh -r ""
 
     # Build unstable package with original source
-    sbuild -As --force-orig-source --build-failed-commands '%SBUILD_SHELL' --extra-repository="deb [trusted=yes] ${REPOSITORY} unstable main"
+    sbuild -As --force-orig-source --build-dep-resolver=aptitude --build-failed-commands '%SBUILD_SHELL' --extra-repository="deb [trusted=yes] ${REPOSITORY} unstable main"
 
     # Copy package to staging directory
     dcmd cp ../${SID_CHANGES_FILE} ${PACKAGEDIR}
@@ -73,7 +73,7 @@ if [ "$build" = "yes" ] ; then
     dch -r --distribution jessie-backports-swh --force-distribution ""
 
     # Build backport package
-    sbuild -As --build-failed-commands '%SBUILD_SHELL' --extra-repository="deb [trusted=yes] ${REPOSITORY} jessie main"
+    sbuild -As --build-dep-resolver=aptitude --build-failed-commands '%SBUILD_SHELL' --extra-repository="deb [trusted=yes] ${REPOSITORY} jessie main"
 
     # Copy package to staging directory
     dcmd cp ../${BPO_CHANGES_FILE} ${PACKAGEDIR}
