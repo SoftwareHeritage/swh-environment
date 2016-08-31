@@ -16,7 +16,6 @@ tmp_path=$(
 	| paste -d':' -s)
 
 export PYTHONPATH="$tmp_path"
-export PYTHONPATH="./snippets/tasks/:$PYTHONPATH"
 
 if [ "$1" = "-p" -o "$1" = "--print" ] ; then
     echo $PYTHONPATH
