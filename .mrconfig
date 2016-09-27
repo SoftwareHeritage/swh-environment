@@ -19,6 +19,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DJNL/swh-journal.git' 'swh-journal'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-indexer]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/78/swh-indexer.git' 'swh-indexer'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-lister-github]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLSGH/swh-lister-github.git' 'swh-lister-github'
 fixups = ../bin/git-add-pre-commit-hook .
