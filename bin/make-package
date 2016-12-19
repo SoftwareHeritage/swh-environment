@@ -80,7 +80,7 @@ if [ "$build" = "yes" ] ; then
 fi
 
 if [ "$upload" = "yes" ] ; then
-    if [[ ${VERSION} = *dev* -o ${VERSION} = *post* ]]; then
+    if [ "${VERSION}" = "*dev*" -o "${VERSION}" = "*post*" ]; then
         echo "Uploading a dev version is not allowed! Please tag and rebuild."
         exit 2
     fi
