@@ -73,7 +73,7 @@ if [ "$build" = "yes" ] ; then
     dch -r --distribution jessie-backports-swh --force-distribution ""
 
     # Build backport package
-    sbuild -As --build-dep-resolver=aptitude --build-failed-commands '%SBUILD_SHELL' --extra-repository="deb [trusted=yes] ${REPOSITORY} jessie main"
+    sbuild -As --build-dep-resolver=aptitude --build-failed-commands '%SBUILD_SHELL' --extra-repository="deb [trusted=yes] ${REPOSITORY} jessie main" --extra-repository="deb http://deb.debian.org/debian jessie-backports main"
 
     # Copy package to staging directory
     dcmd cp ../${BPO_CHANGES_FILE} ${PACKAGEDIR}
