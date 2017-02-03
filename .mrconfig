@@ -63,6 +63,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDTAR/swh-loader-tar.git' 'swh-loader-tar'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-mirror-forge]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-mirror-forge.git' 'swh-mirror-forge'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-model]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DMOD/swh-model.git' 'swh-model'
 fixups = ../bin/git-add-pre-commit-hook .
