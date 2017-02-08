@@ -15,24 +15,32 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/61/swh-fetcher-googlecode.git' 'swh-fetcher-googlecode'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-indexer]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/78/swh-indexer.git' 'swh-indexer'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-journal]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DJNL/swh-journal.git' 'swh-journal'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-indexer]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/78/swh-indexer.git' 'swh-indexer'
+[swh-lister-bitbucket]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-lister-bitbucket.git' 'swh-lister-bitbucket'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-lister-github]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLSGH/swh-lister-github.git' 'swh-lister-github'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-loader-debian]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDEB/swh-loader-debian.git' 'swh-loader-debian'
-fixups = ../bin/git-add-pre-commit-hook .
-
 [swh-loader-antelink]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDANT/swh-loader-antelink.git' 'swh-loader-antelink'
+fixups = ../bin/git-add-pre-commit-hook .
+
+[swh-loader-core]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/60/swh-loader-core.git' 'swh-loader-core'
+fixups = ../bin/git-add-pre-commit-hook .
+
+[swh-loader-debian]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDEB/swh-loader-debian.git' 'swh-loader-debian'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-dir]
@@ -43,6 +51,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDG/swh-loader-git.git' 'swh-loader-git'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-loader-mercurial]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-loader-svn]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDSVN/swh-loader-svn.git' 'swh-loader-svn'
 fixups = ../bin/git-add-pre-commit-hook .
@@ -51,12 +63,12 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDTAR/swh-loader-tar.git' 'swh-loader-tar'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-loader-core]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/60/swh-loader-core.git' 'swh-loader-core'
-fixups = ../bin/git-add-pre-commit-hook .
-
 [swh-model]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DMOD/swh-model.git' 'swh-model'
+fixups = ../bin/git-add-pre-commit-hook .
+
+[swh-objstorage]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DOBJS/swh-objstorage.git' 'swh-objstorage'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-py-template]
@@ -71,21 +83,9 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTO/swh-storage.git' 'swh-storage'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-objstorage]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DOBJS/swh-objstorage.git' 'swh-objstorage'
-fixups = ../bin/git-add-pre-commit-hook .
-
 [swh-storage-testdata]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-storage-testdata.git' 'swh-storage-testdata'
 
 [swh-web-ui]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DWUI/swh-web-ui.git' 'swh-web-ui'
-fixups = ../bin/git-add-pre-commit-hook .
-
-[swh-loader-mercurial]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
-fixups = ../bin/git-add-pre-commit-hook .
-
-[swh-lister-bitbucket]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-lister-bitbucket.git' 'swh-lister-bitbucket'
 fixups = ../bin/git-add-pre-commit-hook .
