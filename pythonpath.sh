@@ -4,16 +4,18 @@
 # environment variable to the list of directories corresponding to the
 # repositories known to mr
 
+base_path=$( dirname "$0" )
+
 tmp_path=$(
-    for dir in $(bin/ls-all-repos --absolute) ; do
-	if echo "$dir" | grep -q -- '-template$' ; then
-	    continue
-	fi
-	if test -d "${dir}/swh/" ; then
-	    echo "$dir"
-	fi
-    done \
-	| paste -d':' -s)
+for dir in $( cd $base_path && bin/ls-all-repos --absolute ) ; do
+    if echo "$dir" | grep -q -- '-template$' ; then
+        continue
+    fi
+    if test -d "${dir}/swh/" ; then
+        echo "$dir"
+    fi
+done \
+    | paste -d':' -s)
 
 export PYTHONPATH="$tmp_path"
 
