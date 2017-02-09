@@ -1,4 +1,4 @@
-pyreqs = $(wildcard ../*/requirements.txt)
+pyreqs = $(wildcard ../*/requirements*.txt)
 depgraphs = deps-all.pdf deps-swh.pdf deps-external.pdf
 mkgraph = bin/py-depgraph
 

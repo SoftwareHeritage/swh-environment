@@ -9,12 +9,12 @@ internal_modules=1
 external_modules=1
 while [ -n "$1" ] ; do
     if [ "$1" = "--no-internal" ] ; then
-	internal_modules=0
+        internal_modules=0
     elif [ "$1" = "--no-external" ] ; then
-	external_modules=0
+        external_modules=0
     elif [ "$1" = "--help" -o "$1" = "-h" ] ; then
-	echo "Usage: bin/py-depgraph [--no-internal] [--no-external] > FILE.dot"
-	exit 1
+        echo "Usage: bin/py-depgraph [--no-internal] [--no-external] > FILE.dot"
+        exit 1
     fi
     shift 1
 done
@@ -33,31 +33,27 @@ for pymod in ${!pymods[@]} ; do
     echo -e "\t\"$pymod\" ;"
 done
 
+getdeps() {
+    grep -E -v '(^#|^[[:space:]]*$)' "$1" | cut -f 1 -d ' ' | tr 'A-Z' 'a-z'
+}
+
 for repo in $pyrepos ; do
     pymod=${repo//-/.}
-    reqs="${repo}/requirements.txt"
-    if ! [ -f "$reqs" ] ; then
-	continue
+    reqs_int="${repo}/requirements-swh.txt"
+    reqs_ext="${repo}/requirements.txt"
+
+    if [ "$internal_modules" -eq 1 -a -f "$reqs_int" ]; then
+        for dep in $( getdeps "$reqs_int" ) ; do
+            echo -e "\t\"${pymod}\" -> \"${dep}\" ;"
+        done
     fi
-    for dep in $(egrep -v '(^#|^[[:space:]]*$)' "$reqs" | cut -f 1 -d ' ') ; do
-	pydep=${dep//-/.}
 
-	if [ -n "${pymods[$pydep]}" ] ; then
-	    scope="internal"
-	else
-	    scope="external"
-	fi
-	if [ \( "$scope" = "internal" -a "$internal_modules" -eq 0 \) -o \
-		\( "$scope" = "external" -a "$external_modules" -eq 0 \) ] ; then
-	    continue
-	fi
-
-	if [ "$scope" = "external" ] ; then
-	    echo -e "\t\"${pydep}\" [style=dashed] ;"
-	fi
-
-	echo -e "\t\"${pymod}\" -> \"${pydep}\" ;"
-    done
+    if [ "$external_modules" -eq 1 -a -f "$reqs_ext" ]; then
+        for dep in $( getdeps "$reqs_ext" ) ; do
+            echo -e "\t\"${dep}\" [style=dashed] ;"
+            echo -e "\t\"${pymod}\" -> \"${dep}\" ;"
+        done
+    fi
 done | sort -u
 
 echo "}"
