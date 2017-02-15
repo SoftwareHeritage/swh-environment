@@ -7,7 +7,7 @@
 base_path=$( dirname "$0" )
 
 tmp_path=$(
-for dir in $( cd $base_path && bin/ls-all-repos --absolute ) ; do
+for dir in $( builtin cd $base_path && bin/ls-all-repos --absolute ) ; do
     if echo "$dir" | grep -q -- '-template$' ; then
         continue
     fi
