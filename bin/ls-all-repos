@@ -23,7 +23,7 @@ mr -t list \
       done
 
 # list obsolete repositories
-find . -mindepth 1 -maxdepth 1 -type d |
+find . -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*' |
     while read dir ; do
 	dir=${dir#./}  # strip "./" prefix
 	if [ "$dir" == ".git" -o "$dir" == "bin" -o "$dir" == "packages" \
