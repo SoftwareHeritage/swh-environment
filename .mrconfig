@@ -23,12 +23,8 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DJNL/swh-journal.git' 'swh-journal'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-lister-bitbucket]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-lister-bitbucket.git' 'swh-lister-bitbucket'
-fixups = ../bin/git-add-pre-commit-hook .
-
-[swh-lister-github]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLSGH/swh-lister-github.git' 'swh-lister-github'
+[swh-lister]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-lister.git' 'swh-lister'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-antelink]
