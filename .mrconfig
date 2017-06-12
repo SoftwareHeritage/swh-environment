@@ -3,16 +3,8 @@
 [snippets]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/59/code-snippets.git' 'snippets'
 
-[swh-cloner-git]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCLG/swh-cloner-git.git' 'swh-cloner-git'
-fixups = ../bin/git-add-pre-commit-hook .
-
 [swh-core]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCORE/swh-core.git' 'swh-core'
-fixups = ../bin/git-add-pre-commit-hook .
-
-[swh-fetcher-googlecode]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/61/swh-fetcher-googlecode.git' 'swh-fetcher-googlecode'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-indexer]
@@ -25,10 +17,6 @@ fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-lister]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-lister.git' 'swh-lister'
-fixups = ../bin/git-add-pre-commit-hook .
-
-[swh-loader-antelink]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDANT/swh-loader-antelink.git' 'swh-loader-antelink'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-core]
