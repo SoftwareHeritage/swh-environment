@@ -74,6 +74,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 [swh-storage-testdata]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-storage-testdata.git' 'swh-storage-testdata'
 
+[swh-vault]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DVAU/swh-vault.git' 'swh-vault'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-web-ui]
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DWUI/swh-web-ui.git' 'swh-web-ui'
 fixups = ../bin/git-add-pre-commit-hook .
