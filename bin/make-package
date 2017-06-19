@@ -43,10 +43,19 @@ cd "$CURDIR"
 
 VERSION=$(python3 -c 'import vcversioner; print(vcversioner.find_version().version)')
 
-SID_CHANGES_FILE=${BASENAME}_${VERSION}-1_amd64.changes
-SID_LOGFILE=${BASENAME}_${VERSION}-1_amd64.build
-BPO_CHANGES_FILE=${BASENAME}_${VERSION}-1~bpo8~swh+1_amd64.changes
-BPO_LOGFILE=${BASENAME}_${VERSION}-1~bpo8~swh+1_amd64.build
+SID_VERSION=${VERSION}-1
+SID_CHANGES_FILE=${BASENAME}_${SID_VERSION}_amd64.changes
+SID_LOGFILE=${BASENAME}_${SID_VERSION}_amd64.build
+
+BPO_VERSION=${SID_VERSION}~bpo9~swh+1
+BPO_CHANGES_FILE=${BASENAME}_${BPO_VERSION}_amd64.changes
+BPO_LOGFILE=${BASENAME}_${BPO_VERSION}_amd64.build
+
+OBPO_VERSION=${SID_VERSION}~bpo8~swh+1
+OBPO_CHANGES_FILE=${BASENAME}_${OBPO_VERSION}_amd64.changes
+OBPO_LOGFILE=${BASENAME}_${OBPO_VERSION}_amd64.build
+
+SBUILD="sbuild -As --force-orig-source --build-dep-resolver=aptitude --build-failed-commands %SBUILD_SHELL --no-run-lintian"
 
 if [ "$build" = "yes" ] ; then
     # Generate source tarball and put it in the right place
@@ -61,26 +70,37 @@ if [ "$build" = "yes" ] ; then
     cp -r $CURDIR/debian .
 
     # Generate changelog for unstable
-    dch -v "${VERSION}-1" "Deploy ${VERSION}"
+    dch -v "${SID_VERSION}" "Deploy ${VERSION}"
     dch --force-distribution --distribution unstable-swh -r ""
 
     # Build unstable package with original source
-    sbuild -As --force-orig-source --build-dep-resolver=aptitude --build-failed-commands '%SBUILD_SHELL' --extra-repository="deb [trusted=yes] ${REPOSITORY} unstable main"
+    $SBUILD --extra-repository="deb [trusted=yes] ${REPOSITORY} unstable main"
 
     # Copy package to staging directory
     dcmd cp ../${SID_CHANGES_FILE} ${PACKAGEDIR}
     cp -L ../${SID_LOGFILE} ${PACKAGEDIR}
 
     # Generate changelog for backports
-    dch -l ~bpo8~swh+ "Rebuild for jessie-backports-swh"
-    dch -r --distribution jessie-backports-swh --force-distribution ""
+    dch -bv "${BPO_VERSION}" "Rebuild for stretch-backports-swh"
+    dch -r --distribution stretch-backports-swh --force-distribution ""
 
     # Build backport package
-    sbuild -As --build-dep-resolver=aptitude --build-failed-commands '%SBUILD_SHELL' --extra-repository="deb [trusted=yes] ${REPOSITORY} jessie main" --extra-repository="deb http://deb.debian.org/debian jessie-backports main"
+    $SBUILD --extra-repository="deb [trusted=yes] ${REPOSITORY} stretch-swh main" --extra-repository="deb http://deb.debian.org/debian stretch-backports main"
 
     # Copy package to staging directory
     dcmd cp ../${BPO_CHANGES_FILE} ${PACKAGEDIR}
     cp -L ../${BPO_LOGFILE} ${PACKAGEDIR}
+
+    # Generate changelog for oldbackports
+    dch -bv "${OBPO_VERSION}" "Rebuild for jessie-backports-swh"
+    dch -r --distribution jessie-backports-swh --force-distribution ""
+
+    # Build backport package
+    $SBUILD --extra-repository="deb [trusted=yes] ${REPOSITORY} jessie main" --extra-repository="deb http://deb.debian.org/debian jessie-backports main"
+
+    # Copy package to staging directory
+    dcmd cp ../${OBPO_CHANGES_FILE} ${PACKAGEDIR}
+    cp -L ../${OBPO_LOGFILE} ${PACKAGEDIR}
 fi
 
 if [ "$upload" = "yes" ] ; then
@@ -89,8 +109,8 @@ if [ "$upload" = "yes" ] ; then
         exit 2
     fi
 
-    # Sign and send unstable package
-    for changefile in ${PACKAGEDIR}/${SID_CHANGES_FILE} ${PACKAGEDIR}/${BPO_CHANGES_FILE}; do
+    # Sign and send packages
+    for changefile in ${PACKAGEDIR}/${SID_CHANGES_FILE} ${PACKAGEDIR}/${BPO_CHANGES_FILE} ${PACKAGEDIR}/${OBPO_CHANGES_FILE}; do
         debsign ${changefile}
         dcmd scp ${changefile} ${DESTINATION}:${DESTDIR}/incoming
         ssh ${DESTINATION} reprepro -vb ${DESTDIR} processincoming incoming
