@@ -4,7 +4,11 @@
 # environment variable to the list of directories corresponding to the
 # repositories known to mr
 
+local base_path
+
 base_path=$( dirname "$0" )
+
+local tmp_path
 
 tmp_path=$(
 for dir in $( builtin cd $base_path && bin/ls-all-repos --absolute ) ; do
