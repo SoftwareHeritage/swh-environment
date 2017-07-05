@@ -20,7 +20,7 @@ test/%:
 .PHONY: rebuild-testdata rebuild-storage-testdata
 rebuild-testdata: rebuild-storage-testdata
 rebuild-storage-testdata:
-	make -C swh-storage/sql/archiver distclean filldb
+	make -C swh-archiver/sql/ distclean filldb
 	make -C swh-storage/sql/ distclean filldb
 	make -C swh-storage-testdata distclean dumpdb
 
