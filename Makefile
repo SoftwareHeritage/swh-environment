@@ -1,4 +1,5 @@
 PYMODULES := $(shell bin/ls-py-modules)
+DBMODULES := swh-storage swh-archiver swh-scheduler
 
 all:
 
@@ -20,8 +21,9 @@ test/%:
 .PHONY: rebuild-testdata rebuild-storage-testdata
 rebuild-testdata: rebuild-storage-testdata
 rebuild-storage-testdata:
-	make -C swh-archiver/sql/ distclean filldb
-	make -C swh-storage/sql/ distclean filldb
+	for dbmodule in $(DBMODULES); do \
+		make -C $$dbmodule/sql/ distclean filldb; \
+	done
 	make -C swh-storage-testdata distclean dumpdb
 
 update:
