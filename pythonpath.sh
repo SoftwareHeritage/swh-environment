@@ -4,12 +4,14 @@
 # environment variable to the list of directories corresponding to the
 # repositories known to mr
 
-local base_path
 
-base_path=$( dirname "$0" )
-
-local tmp_path
-
+# special case for bash to get the sourced script file path
+if [ -n "${BASH_VERSION}" ] ; then
+  base_path=$( dirname "${BASH_SOURCE[0]}" )
+else
+  base_path=$( dirname "$0" )
+fi
+  
 tmp_path=$(
 for dir in $( builtin cd $base_path && bin/ls-all-repos --absolute ) ; do
     if echo "$dir" | grep -q -- '-template$' ; then
@@ -26,3 +28,6 @@ export PYTHONPATH="$tmp_path"
 if [ "$1" = "-p" -o "$1" = "--print" ] ; then
     echo $PYTHONPATH
 fi
+
+unset base_path
+unset tmp_path
