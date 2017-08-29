@@ -1,5 +1,6 @@
 PYMODULES := $(shell bin/ls-py-modules)
-DBMODULES := swh-storage swh-archiver swh-scheduler
+DB_MODULES = swh-storage swh-archiver swh-scheduler
+DOC_MODULE = swh-docs
 
 all:
 
@@ -12,24 +13,29 @@ doc:
 check: $(patsubst %,check/%,$(PYMODULES))
 distclean: $(patsubst %,distclean/%,$(PYMODULES))
 test: $(patsubst %,test/%,$(PYMODULES))
-docs: $(patsubst %,docs/%,$(PYMODULES))
-clean-docs: $(patsubst %,clean-docs/%,$(PYMODULES))
+
+docs: $(patsubst %,docs/%,$(filter-out $(DOC_MODULE),$(PYMODULES)))
+docs-apidoc: $(patsubst %,docs-apidoc/%,$(filter-out $(DOC_MODULE),$(PYMODULES)))
+docs-clean: $(patsubst %,docs-clean/%,$(filter-out $(DOC_MODULE),$(PYMODULES)))
 
 check/%:
 	make -C $* check
 distclean/%:
 	make -C $* distclean
-docs/%:
-	make -C $*/docs
-clean-docs/%:
-	make -C $*/docs clean
 test/%:
 	make -C $* test
+
+docs/%:
+	make -C $*/docs
+docs-apidoc/%:
+	make -C $*/docs apidoc
+docs-clean/%:
+	make -C $*/docs clean
 
 .PHONY: rebuild-testdata rebuild-storage-testdata
 rebuild-testdata: rebuild-storage-testdata
 rebuild-storage-testdata:
-	for dbmodule in $(DBMODULES); do \
+	for dbmodule in $(DB_MODULES); do \
 		make -C $$dbmodule/sql/ distclean filldb; \
 	done
 	make -C swh-storage-testdata distclean dumpdb
