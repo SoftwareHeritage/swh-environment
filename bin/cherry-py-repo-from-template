@@ -18,6 +18,7 @@ shift 1
 
 apply_to_repo () {
     repo="$1"
+    echo "* Applying to repo $1..."
     (cd "$TEMPLATE_DIR" && git show "$gitrev") | (cd "$repo" ; git apply)
 }
 
@@ -28,4 +29,5 @@ else
     for repo in `bin/ls-py-modules` ; do
 	apply_to_repo "$repo"
     done
+    echo "All done."
 fi
