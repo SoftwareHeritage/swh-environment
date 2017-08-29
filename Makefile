@@ -3,6 +3,8 @@ DBMODULES := swh-storage swh-archiver swh-scheduler
 
 all:
 
+# TODO this is too close to "docs" below, but is meant to go away anyhow, when
+# the dependency graph stuff will migrate to the swh-docs/ module
 .PHONY: doc
 doc:
 	make -C doc/
@@ -10,11 +12,14 @@ doc:
 check: $(patsubst %,check/%,$(PYMODULES))
 distclean: $(patsubst %,distclean/%,$(PYMODULES))
 test: $(patsubst %,test/%,$(PYMODULES))
+docs: $(patsubst %,docs/%,$(PYMODULES))
 
 check/%:
 	make -C $* check
 distclean/%:
 	make -C $* distclean
+docs/%:
+	make -C $* docs
 test/%:
 	make -C $* test
 
