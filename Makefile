@@ -13,13 +13,16 @@ check: $(patsubst %,check/%,$(PYMODULES))
 distclean: $(patsubst %,distclean/%,$(PYMODULES))
 test: $(patsubst %,test/%,$(PYMODULES))
 docs: $(patsubst %,docs/%,$(PYMODULES))
+clean-docs: $(patsubst %,clean-docs/%,$(PYMODULES))
 
 check/%:
 	make -C $* check
 distclean/%:
 	make -C $* distclean
 docs/%:
-	make -C $* docs
+	make -C $*/docs
+clean-docs/%:
+	make -C $*/docs clean
 test/%:
 	make -C $* test
 
