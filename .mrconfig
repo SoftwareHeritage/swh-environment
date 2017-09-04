@@ -86,6 +86,6 @@ checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-s
 checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DVAU/swh-vault.git' 'swh-vault'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-web-ui]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DWUI/swh-web-ui.git' 'swh-web-ui'
+[swh-web]
+checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-web.git' 'swh-web'
 fixups = ../bin/git-add-pre-commit-hook .
