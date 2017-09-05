@@ -24,6 +24,10 @@ coverage:
 check:
 	$(FLAKE) $(FLAKEFLAGS) swh $(PYTHON_BIN)
 
+.PHONY: doc
+doc:
+	make -C docs html
+
 .PHONY: distclean
 # clean up Python bytecode files. Also consider random *.pyc files, in case
 # Python 2.x has been run by mistake
