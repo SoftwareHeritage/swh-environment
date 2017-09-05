@@ -24,8 +24,8 @@ coverage:
 check:
 	$(FLAKE) $(FLAKEFLAGS) swh $(PYTHON_BIN)
 
-.PHONY: doc
-doc:
+.PHONY: docs
+docs:
 	make -C docs html
 
 .PHONY: distclean
