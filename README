@@ -5,6 +5,12 @@ See .mrconfig for the actual list.
 The "mr" command is shipped in the "mr" Debian package.
 
 
+For regular updates after initial setup, you can use the `bin/update` helper:
+
+    cd swh-environment
+    bin/update
+
+
 ~/.mrtrust
 ----------
 
