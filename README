@@ -1,28 +1,30 @@
-Do "mr update" to clone or update all Git repositories listed in this repository.
+Software Heritage Python development environment
+================================================
 
-See .mrconfig for the actual list.
+This repository contains the scaffolding to initialize and keep a local
+development environment for the Software Heritage Python stack. In particular,
+it contains pointers to the Git repositories of all Software Heritage Python
+modules. The repositories are managed using [myrepos][1] (see the .mrconfig
+file), and the `mr` command.
 
-The "mr" command is shipped in the "mr" Debian package.
+[1]: http://myrepos.branchable.com/
 
+In Debian, the "mr" command is shipped in the "mr" package.
 
-For regular updates after initial setup, you can use the `bin/update` helper:
+As our `.mrconfig` file contains "untrusted" checkout commands (specifically:
+ensuring pre-commit hooks exist where needed), you need to add the path of your
+`.mrconfig` file to your `~/.mrtrust` file:
+
+    readlink -f .mrconfig >> ~/.mrtrust
+ 
+You can then checkout the repositories using `mr up`.
+
+See `.mrconfig` for the actual list of repositories.
+
+For periodic updates after initial setup, you can use the `bin/update` helper:
 
     cd swh-environment
     bin/update
-
-
-~/.mrtrust
-----------
-
-Since we do execute some commands after update/checkout (specifically: ensuring
-pre-commit hooks exist where needed), you will need to tell mr that you "trust"
-the .mrconfig used by swh-environment. If in doubt, open
-swh-environment/.mrconfig and review the commands listed there.
-
-To trust the .mrconfig, do something like the following:
-
-    cd swh-environment
-    echo `pwd`/.mrconfig >> ~/.mrtrust
 
 
 PYTHONPATH
