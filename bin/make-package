@@ -113,7 +113,7 @@ if [ "$upload" = "yes" ] ; then
     for changefile in ${PACKAGEDIR}/${SID_CHANGES_FILE} ${PACKAGEDIR}/${BPO_CHANGES_FILE} ${PACKAGEDIR}/${OBPO_CHANGES_FILE}; do
         debsign ${changefile}
         dcmd scp ${changefile} ${DESTINATION}:${DESTDIR}/incoming
-        ssh ${DESTINATION} reprepro -vb ${DESTDIR} processincoming incoming
+        ssh ${DESTINATION} "umask 002; reprepro -vb ${DESTDIR} processincoming incoming"
     done
 
     git push --tags
