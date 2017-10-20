@@ -30,7 +30,7 @@ PACKAGEDIR=$(readlink -f "packages")
 BASENAME="$(basename "$CURDIR")"
 MODULE="${BASENAME//-/.}"
 
-REPOSITORY=http://debian.internal.softwareheritage.org/
+REPOSITORY=https://debian.softwareheritage.org/
 
 DESTINATION=pergamon.internal.softwareheritage.org
 DESTDIR=/srv/softwareheritage/repository
