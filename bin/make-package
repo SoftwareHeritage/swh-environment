@@ -51,10 +51,6 @@ BPO_VERSION=${SID_VERSION}~bpo9~swh+1
 BPO_CHANGES_FILE=${BASENAME}_${BPO_VERSION}_amd64.changes
 BPO_LOGFILE=${BASENAME}_${BPO_VERSION}_amd64.build
 
-OBPO_VERSION=${SID_VERSION}~bpo8~swh+1
-OBPO_CHANGES_FILE=${BASENAME}_${OBPO_VERSION}_amd64.changes
-OBPO_LOGFILE=${BASENAME}_${OBPO_VERSION}_amd64.build
-
 SBUILD="sbuild -As --force-orig-source --build-dep-resolver=aptitude --build-failed-commands %SBUILD_SHELL --no-run-lintian"
 
 if [ "$build" = "yes" ] ; then
@@ -90,17 +86,6 @@ if [ "$build" = "yes" ] ; then
     # Copy package to staging directory
     dcmd cp ../${BPO_CHANGES_FILE} ${PACKAGEDIR}
     cp -L ../${BPO_LOGFILE} ${PACKAGEDIR}
-
-    # Generate changelog for oldbackports
-    dch -bv "${OBPO_VERSION}" "Rebuild for jessie-backports-swh"
-    dch -r --distribution jessie-backports-swh --force-distribution ""
-
-    # Build backport package
-    $SBUILD --extra-repository="deb [trusted=yes] ${REPOSITORY} jessie main" --extra-repository="deb http://deb.debian.org/debian jessie-backports main"
-
-    # Copy package to staging directory
-    dcmd cp ../${OBPO_CHANGES_FILE} ${PACKAGEDIR}
-    cp -L ../${OBPO_LOGFILE} ${PACKAGEDIR}
 fi
 
 if [ "$upload" = "yes" ] ; then
@@ -110,7 +95,7 @@ if [ "$upload" = "yes" ] ; then
     fi
 
     # Sign and send packages
-    for changefile in ${PACKAGEDIR}/${SID_CHANGES_FILE} ${PACKAGEDIR}/${BPO_CHANGES_FILE} ${PACKAGEDIR}/${OBPO_CHANGES_FILE}; do
+    for changefile in ${PACKAGEDIR}/${SID_CHANGES_FILE} ${PACKAGEDIR}/${BPO_CHANGES_FILE}; do
         debsign ${changefile}
         dcmd scp ${changefile} ${DESTINATION}:${DESTDIR}/incoming
         ssh ${DESTINATION} "umask 002; reprepro -vb ${DESTDIR} processincoming incoming"
