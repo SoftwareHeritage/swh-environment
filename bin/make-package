@@ -88,6 +88,8 @@ if [ "$build" = "yes" ] ; then
     cp -L ../${BPO_LOGFILE} ${PACKAGEDIR}
 fi
 
+cd "$CURDIR"
+
 if [ "$upload" = "yes" ] ; then
     if [[ "${VERSION}" == *dev* || "${VERSION}" == *post* ]]; then
         echo "Uploading a dev version is not allowed! Please tag and rebuild."
