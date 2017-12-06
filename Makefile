@@ -1,5 +1,5 @@
 PYMODULES := $(shell bin/ls-py-modules)
-DB_MODULES = swh-storage swh-archiver swh-scheduler
+DB_MODULES = swh-storage swh-archiver swh-scheduler swh-indexer
 DOC_MODULE = swh-docs
 
 all:
