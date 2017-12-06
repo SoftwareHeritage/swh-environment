@@ -6,6 +6,7 @@ swh-storage: 5002
 swh-objstorage: 5003
 swh-web-ui: 5004
 swh-storage-vault: 5005
+swh-deposit: 5006
 
 # Edit this line with your nick to get a merge conflict if there's an overlap
 # Next available ID (seirl) : 5006
