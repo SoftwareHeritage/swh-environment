@@ -7,6 +7,8 @@ swh-objstorage: 5003
 swh-web-ui: 5004
 swh-storage-vault: 5005
 swh-deposit: 5006
+# swh-indexer's storage api
+swh-indexer: 5007
 
 # Edit this line with your nick to get a merge conflict if there's an overlap
-# Next available ID (ardumont) : 5007
+# Next available ID (ardumont) : 5008
