@@ -4,8 +4,8 @@
 
 swh-storage: 5002
 swh-objstorage: 5003
-swh-web-ui: 5004
-swh-storage-vault: 5005
+swh-web: 5004
+swh-vault: 5005
 swh-deposit: 5006
 # swh-indexer's storage api
 swh-indexer: 5007
