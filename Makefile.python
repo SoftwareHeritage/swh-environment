@@ -8,6 +8,8 @@ TEST_DIRS := $(shell find . -name tests -type d)
 
 NOSE = python3 -m nose
 NOSEFLAGS = -sv --with-doctest
+CODESPELL = codespell
+CODESPELLFLAGS =
 FLAKE = python3 -m flake8
 FLAKEFLAGS =
 LINT = pylint3
@@ -23,9 +25,12 @@ test:
 coverage:
 	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE) --cover-inclusive --cover-branches $(TEST_DIRS)
 
-.PHONY: check
-check:
+.PHONY: check check-flake check-codespell
+check: check-flake check-codespell
+check-flake:
 	$(FLAKE) $(FLAKEFLAGS) swh $(PYTHON_BIN)
+check-codespell:
+	find . -name '*.py' | xargs $(CODESPELL) $(CODESPELLFLAGS)
 
 .PHONY: lint
 lint:
