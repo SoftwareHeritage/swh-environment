@@ -13,7 +13,7 @@ cd "$1"
 if ! [ -x "$HOOK" ] ; then
     cat > "$HOOK" <<EOF
 #!/bin/sh
-make check
+make check-staged
 EOF
     chmod +x "$HOOK"
 fi
