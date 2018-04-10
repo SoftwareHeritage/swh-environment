@@ -34,7 +34,7 @@ check-codespell:
 
 .PHONY: check-staged
 check-staged:
-	git diff -z --staged --name-only -- '*.py' \
+	git diff -z --staged --name-only -- '*.py' $(PYTHON_BIN) \
 		| xargs -0 -L1 -i'{}' /bin/sh -c \
 		"git show ':{}' | $(FLAKE) $(FLAKEFLAGS) --stdin-display-name '{}' -"
 
