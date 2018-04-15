@@ -1,95 +1,95 @@
 # keep the list sorted alphabetically by local repo name
 
 [snippets]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/59/code-snippets.git' 'snippets'
+checkout = git clone 'https://forge.softwareheritage.org/source/snippets.git' 'snippets'
 
 [swh-archiver]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-archiver.git' 'swh-archiver'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-archiver.git' 'swh-archiver'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-core]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DCORE/swh-core.git' 'swh-core'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-core.git' 'swh-core'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-deposit]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-deposit.git' 'swh-deposit'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-deposit.git' 'swh-deposit'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-docs]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DDOC/swh-docs.git' 'swh-docs'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-docs.git' 'swh-docs'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-indexer]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/78/swh-indexer.git' 'swh-indexer'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-indexer.git' 'swh-indexer'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-journal]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DJNL/swh-journal.git' 'swh-journal'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-journal.git' 'swh-journal'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-lister]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-lister.git' 'swh-lister'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-lister.git' 'swh-lister'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-core]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/60/swh-loader-core.git' 'swh-loader-core'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-core.git' 'swh-loader-core'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-debian]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDEB/swh-loader-debian.git' 'swh-loader-debian'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-debian.git' 'swh-loader-debian'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-dir]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDDIR/swh-loader-dir.git' 'swh-loader-dir'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-dir.git' 'swh-loader-dir'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-git]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDG/swh-loader-git.git' 'swh-loader-git'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-git.git' 'swh-loader-git'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-mercurial]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-svn]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDSVN/swh-loader-svn.git' 'swh-loader-svn'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-svn.git' 'swh-loader-svn'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-tar]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DLDTAR/swh-loader-tar.git' 'swh-loader-tar'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-tar.git' 'swh-loader-tar'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-mirror-forge]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-mirror-forge.git' 'swh-mirror-forge'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-mirror-forge.git' 'swh-mirror-forge'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-model]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DMOD/swh-model.git' 'swh-model'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-model.git' 'swh-model'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-objstorage]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DOBJS/swh-objstorage.git' 'swh-objstorage'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-objstorage.git' 'swh-objstorage'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-py-template]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DTPL/swh-py-template.git' 'swh-py-template'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-py-template.git' 'swh-py-template'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-scheduler]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSCH/swh-scheduler.git' 'swh-scheduler'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-scheduler.git' 'swh-scheduler'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-storage]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTO/swh-storage.git' 'swh-storage'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-storage.git' 'swh-storage'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-storage-testdata]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DSTOT/swh-storage-testdata.git' 'swh-storage-testdata'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-storage-testdata.git' 'swh-storage-testdata'
 
 [swh-vault]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/diffusion/DVAU/swh-vault.git' 'swh-vault'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-vault.git' 'swh-vault'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-web]
-checkout = git clone 'ssh://git@forge.softwareheritage.org/source/swh-web.git' 'swh-web'
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-web.git' 'swh-web'
 fixups = ../bin/git-add-pre-commit-hook .
