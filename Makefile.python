@@ -30,7 +30,8 @@ check: check-flake check-codespell
 check-flake:
 	$(FLAKE) $(FLAKEFLAGS) swh $(PYTHON_BIN)
 check-codespell:
-	find . -name '*.py' | xargs $(CODESPELL) $(CODESPELLFLAGS)
+	find swh docs -name '*.py' -o -name '*.rst' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
+	find . -maxdepth 1 -iname 'readme*' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
 
 .PHONY: check-staged
 check-staged:
