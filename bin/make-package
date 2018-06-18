@@ -81,7 +81,10 @@ if [ "$build" = "yes" ] ; then
     dch -r --distribution stretch-backports-swh --force-distribution ""
 
     # Build backport package
-    $SBUILD --extra-repository="deb [trusted=yes] ${REPOSITORY} stretch-swh main" --extra-repository="deb http://deb.debian.org/debian stretch-backports main"
+    $SBUILD \
+        --extra-repository="deb [trusted=yes] ${REPOSITORY} stretch-swh main" \
+        --extra-repository="deb http://deb.debian.org/debian stretch-backports main" \
+        --extra-repository="deb https://download.ceph.com/debian-luminous/ stretch main" --extra-repository-key=${PACKAGEDIR}/keys/ceph.asc
 
     # Copy package to staging directory
     dcmd cp ../${BPO_CHANGES_FILE} ${PACKAGEDIR}

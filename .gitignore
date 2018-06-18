@@ -2,3 +2,4 @@ swh-*/
 packages/*
 snippets/
 !packages/README
+!packages/keys/
