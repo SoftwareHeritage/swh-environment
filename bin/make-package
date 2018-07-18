@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    echo "Usage: $0 [-b|--build] [-u|--upload] SWH_PACKAGE"
+    echo "Usage: $0 [-b|--build] [-u|--upload] [-d|--distribution <all|sid|stable>] SWH_PACKAGE"
     echo "E.g.: make-package -b swh-core"
     exit 1
 }
@@ -11,15 +11,20 @@ usage() {
 build="no"
 upload="no"
 package=""
+distribution="all"
 while (( "$#" )); do
     case "$1" in
-	-b|--build) build="yes" ;;
-	-u|--upload) upload="yes" ;;
-	*) package="$1";;
+        -b|--build) build="yes" ;;
+        -u|--upload) upload="yes" ;;
+        -d|--distribution) shift; distribution=$1; shift;;
+        *) package="$1";;
     esac
     shift
 done
 if [ "$build,$upload" = "no,no" -o -z "$package" ] ; then
+    usage
+fi
+if [ $distribution != 'sid' -a $distribution != 'stable' -a $distribution != 'all' ]; then
     usage
 fi
 
@@ -65,42 +70,57 @@ if [ "$build" = "yes" ] ; then
     cd $BASENAME-$VERSION
     cp -r $CURDIR/debian .
 
-    # Generate changelog for unstable
-    dch -v "${SID_VERSION}" "Deploy ${VERSION}"
-    dch --force-distribution --distribution unstable-swh -r ""
+    if [ "$distribution" = "all" -o "$distribution" = "sid" ]; then
+        # Generate changelog for unstable
+        dch -v "${SID_VERSION}" "Deploy ${VERSION}"
+        dch --force-distribution --distribution unstable-swh -r ""
 
-    # Build unstable package with original source
-    $SBUILD --extra-repository="deb [trusted=yes] ${REPOSITORY} unstable main"
+        # Build unstable package with original source
+        $SBUILD \
+          --extra-repository="deb [trusted=yes] ${REPOSITORY} unstable main" \
+          --extra-repository="deb http://incoming.debian.org/debian-buildd/ buildd-unstable main"
 
-    # Copy package to staging directory
-    dcmd cp ../${SID_CHANGES_FILE} ${PACKAGEDIR}
-    cp -L ../${SID_LOGFILE} ${PACKAGEDIR}
+        # Copy package to staging directory
+        dcmd cp ../${SID_CHANGES_FILE} ${PACKAGEDIR}
+        cp -L ../${SID_LOGFILE} ${PACKAGEDIR}
+    fi
 
-    # Generate changelog for backports
-    dch -bv "${BPO_VERSION}" "Rebuild for stretch-backports-swh"
-    dch -r --distribution stretch-backports-swh --force-distribution ""
+    if [ "$distribution" = "all" -o "$distribution" = "stable" ]; then
+        # Generate changelog for backports
+        dch -bv "${BPO_VERSION}" "Rebuild for stretch-backports-swh"
+        dch -r --distribution stretch-backports-swh --force-distribution ""
 
-    # Build backport package
-    $SBUILD \
-        --extra-repository="deb [trusted=yes] ${REPOSITORY} stretch-swh main" \
-        --extra-repository="deb http://deb.debian.org/debian stretch-backports main" \
-        --extra-repository="deb https://download.ceph.com/debian-luminous/ stretch main" --extra-repository-key=${PACKAGEDIR}/keys/ceph.asc
+        # Build backport package
+        $SBUILD \
+            --extra-repository="deb [trusted=yes] ${REPOSITORY} stretch-swh main" \
+            --extra-repository="deb http://deb.debian.org/debian stretch-backports main" \
+            --extra-repository="deb https://download.ceph.com/debian-luminous/ stretch main" --extra-repository-key=${PACKAGEDIR}/keys/ceph.asc
 
-    # Copy package to staging directory
-    dcmd cp ../${BPO_CHANGES_FILE} ${PACKAGEDIR}
-    cp -L ../${BPO_LOGFILE} ${PACKAGEDIR}
+        # Copy package to staging directory
+        dcmd cp ../${BPO_CHANGES_FILE} ${PACKAGEDIR}
+        cp -L ../${BPO_LOGFILE} ${PACKAGEDIR}
+    fi
 fi
 
 cd "$CURDIR"
 
 if [ "$upload" = "yes" ] ; then
+    changefiles=()
     if [[ "${VERSION}" == *dev* || "${VERSION}" == *post* ]]; then
         echo "Uploading a dev version is not allowed! Please tag and rebuild."
         exit 2
     fi
 
+    if [ "$distribution" = "all" -o "$distribution" = "sid" ]; then
+        changefiles+=(${PACKAGEDIR}/${SID_CHANGES_FILE})
+    fi
+
+    if [ "$distribution" = "all" -o "$distribution" = "stable" ]; then
+        changefiles+=(${PACKAGEDIR}/${BPO_CHANGES_FILE})
+    fi
+
     # Sign and send packages
-    for changefile in ${PACKAGEDIR}/${SID_CHANGES_FILE} ${PACKAGEDIR}/${BPO_CHANGES_FILE}; do
+    for changefile in "${changefiles[@]}"; do
         debsign ${changefile}
         dcmd scp ${changefile} ${DESTINATION}:${DESTDIR}/incoming
         ssh ${DESTINATION} "umask 002; reprepro -vb ${DESTDIR} processincoming incoming"
