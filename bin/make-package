@@ -16,7 +16,7 @@ while (( "$#" )); do
     case "$1" in
         -b|--build) build="yes" ;;
         -u|--upload) upload="yes" ;;
-        -d|--distribution) shift; distribution=$1; shift;;
+        -d|--distribution) shift; distribution=$1;;
         *) package="$1";;
     esac
     shift
