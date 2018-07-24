@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-    echo "Usage: $0 [-b|--build] [-u|--upload] [-d|--distribution <all|sid|stable>] SWH_PACKAGE"
+    echo "Usage: $0 [-b|--build] [-u|--upload] [-d|--distribution <all|unstable|stable>] SWH_PACKAGE"
     echo "E.g.: make-package -b swh-core"
     exit 1
 }
@@ -24,7 +24,7 @@ done
 if [ "$build,$upload" = "no,no" -o -z "$package" ] ; then
     usage
 fi
-if [ $distribution != 'sid' -a $distribution != 'stable' -a $distribution != 'all' ]; then
+if [ $distribution != 'unstable' -a $distribution != 'stable' -a $distribution != 'all' ]; then
     usage
 fi
 
@@ -70,7 +70,7 @@ if [ "$build" = "yes" ] ; then
     cd $BASENAME-$VERSION
     cp -r $CURDIR/debian .
 
-    if [ "$distribution" = "all" -o "$distribution" = "sid" ]; then
+    if [ "$distribution" = "all" -o "$distribution" = "unstable" ]; then
         # Generate changelog for unstable
         dch -v "${SID_VERSION}" "Deploy ${VERSION}"
         dch --force-distribution --distribution unstable-swh -r ""
@@ -111,7 +111,7 @@ if [ "$upload" = "yes" ] ; then
         exit 2
     fi
 
-    if [ "$distribution" = "all" -o "$distribution" = "sid" ]; then
+    if [ "$distribution" = "all" -o "$distribution" = "unstable" ]; then
         changefiles+=(${PACKAGEDIR}/${SID_CHANGES_FILE})
     fi
 
