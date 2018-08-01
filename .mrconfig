@@ -51,6 +51,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-loader-pypi]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-pypi.git' 'swh-loader-pypi'
+fixup = ../bin/git-add-pre-commit-hook .
+
 [swh-loader-svn]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-svn.git' 'swh-loader-svn'
 fixups = ../bin/git-add-pre-commit-hook .
