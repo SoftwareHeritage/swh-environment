@@ -1,3 +1,11 @@
 #!/bin/bash
+
+mrconf=$(readlink -f .mrconfig)
+mrtrust="${HOME}/.mrtrust"
+if ! grep -q "$mrconf" "$mrtrust" &> /dev/null ; then
+    echo "I: mr repository not found in ${mrtrust}, adding it."
+    echo "$mrconf" >> "$mrtrust"
+fi
+
 git pull
 mr -j 4 update

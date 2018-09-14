@@ -11,20 +11,20 @@ file), and the `mr` command.
 
 In Debian, the "mr" command is shipped in the "mr" package.
 
-As our `.mrconfig` file contains "untrusted" checkout commands (specifically:
-ensuring pre-commit hooks exist where needed), you need to add the path of your
-`.mrconfig` file to your `~/.mrtrust` file:
-
-    readlink -f .mrconfig >> ~/.mrtrust
- 
-You can then checkout the repositories using `mr up`.
-
-See `.mrconfig` for the actual list of repositories.
-
-For periodic updates after initial setup, you can use the `bin/update` helper:
+Once you have installed "mr", just use the following helper for both initial
+code checkout and subsequent updates:
 
     cd swh-environment
     bin/update
+
+Note that the first time you run `bin/update` it will add the
+`swh-environment/.mrconfig` file to your `~/.mrtrust` (we use this to be able
+to setup pre-commit hooks upon repository checkouts). See `MR(1)` for more
+information about trusted `mr` repositories.
+
+You can also checkout/update repositories by hand using `mr up`.
+
+See `.mrconfig` for the actual list of repositories.
 
 
 PYTHONPATH
