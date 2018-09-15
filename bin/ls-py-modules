@@ -1,3 +1,9 @@
 #!/bin/bash
 
-bin/ls-all-repos "$@" | egrep -v -- "(-(template|testdata)$|snippets)"
+LS_REPOS="bin/ls-all-repos"
+if ! [ -x "$LS_REPOS" ] ; then
+    echo "ls-py-modeuls should be run from the root of swh-environment. Bye."
+    exit 2
+fi
+
+"$LS_REPOS" "$@" | egrep -v -- "(-(template|testdata)$|snippets)"
