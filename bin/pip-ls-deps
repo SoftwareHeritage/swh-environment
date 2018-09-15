@@ -1,0 +1,27 @@
+#!/bin/bash
+
+LS_MODS="bin/ls-py-modules"
+if ! [ -x "$LS_MODS" ] ; then
+    echo "pip-ls-deps should be run from the root of swh-environment. Bye."
+    exit 2
+fi
+
+for pymod in $(${LS_MODS}) ; do
+    reqs="${pymod}/requirements.txt"
+    if [ -f "$reqs" ] ; then
+        cat "$reqs"
+    fi
+done \
+| egrep -v '^#|^[[:blank:]]*$' \
+| tr '[:upper:]_' '[:lower:]-' \
+| sort -ru \
+| awk '!seen[$1]++' \
+| tac
+
+# WARNING: CRUDE HACK in the pipeline above. 'pip3 install' will fail if the
+# same package name appears multiple times, e.g., as both "django" and "django
+# >= 1.10.7" rather than trying to determine (when possible) a comprehensive
+# constraint.  So we deduplicate here, by first sorting alphabetically which
+# will (generally...) put higher dependency constraints last and then
+# deduplicate using the sole package name as key. In the example above this
+# should only keep "django >= 1.10.7" and get rid of "django".

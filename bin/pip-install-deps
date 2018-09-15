@@ -1,0 +1,22 @@
+#!/bin/bash
+
+LS_DEPS="bin/pip-ls-deps"
+if ! [ -x "$LS_DEPS" ] ; then
+    echo "pip-install-deps should be run from the root of swh-environment. Bye."
+    exit 2
+fi
+
+if [ "$1" = '-h' -o "$1" = '--help' ] ; then
+    echo "Usage: bin/pip-install-deps [PIP3_INSTALL_OPTION]..."
+    echo
+    echo "Tip: you can use bin/pip-ls-deps to list the dependencies that will be installed."
+    exit 2
+fi
+
+set -x
+
+requirements=$(mktemp tmp.swh-requirements.txt.XXXXXXXXXX)
+trap "rm -f ${requirements}" EXIT
+"$LS_DEPS" > "$requirements"
+
+pip3 install --requirement "$requirements" "$@"
