@@ -1,0 +1,10 @@
+#!/bin/bash
+
+./bin/py-depgraph |
+    grep -- '->' |
+    sed -e 's/[";]//g' -e 's/->//g' |
+    tsort |
+    tac |
+    grep '^swh\.' |
+    sed 's:\.:-:g' |
+    sed 's:^:-e :'

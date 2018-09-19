@@ -34,7 +34,10 @@ for pymod in ${!pymods[@]} ; do
 done
 
 getdeps() {
-    grep -E -v '(^#|^[[:space:]]*$)' "$1" | cut -f 1 -d ' ' | tr 'A-Z' 'a-z'
+    grep -E -v '(^#|^[[:space:]]*$)' "$1" |
+        cut -f 1 -d ' ' |
+        tr 'A-Z' 'a-z' |
+        sed -E 's/\[\w+\]//'
 }
 
 for repo in $pyrepos ; do
