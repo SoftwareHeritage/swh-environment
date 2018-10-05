@@ -1,5 +1,12 @@
 #!/bin/bash
 
+cd "$( dirname $0 )/.."
+
+suffix=""
+if [ "$1" == "--with-testing" ]; then
+    suffix="[testing]"
+fi
+
 ./bin/py-depgraph |
     grep -- '->' |
     sed -e 's/[";]//g' -e 's/->//g' |
@@ -7,4 +14,5 @@
     tac |
     grep '^swh\.' |
     sed 's:\.:-:g' |
-    sed 's:^:-e :'
+    sed 's:^:-e :' |
+    sed "s/$/$suffix/"
