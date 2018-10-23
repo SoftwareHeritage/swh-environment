@@ -6,8 +6,8 @@ PYDIR := $(shell basename `pwd` | sed 's%-%/%g')
 PYTHON_BIN := $(shell test -d bin/ && find bin/ -type f -executable | xargs egrep -H '^\#.*python' | cut -f 1 -d :)
 TEST_DIRS := .
 
-NOSE = python3 -m nose
-NOSEFLAGS = -sv --with-doctest
+TEST = python3 -m pytest
+TESTFLAGS =
 CODESPELL = codespell
 CODESPELLFLAGS =
 FLAKE = python3 -m flake8
@@ -19,11 +19,11 @@ all:
 
 .PHONY: test
 test:
-	$(NOSE) $(NOSEFLAGS) $(TEST_DIRS)
+	$(TEST) $(TESTFLAGS) $(TEST_DIRS)
 
 .PHONY: coverage
 coverage:
-	$(NOSE) $(NOSEFLAGS) --with-coverage --cover-package $(PYMODULE) --cover-inclusive --cover-branches $(TEST_DIRS)
+	$(TEST) $(TESTFLAGS) --cov=$(PYMODULE) --cov-branch $(TEST_DIRS)
 
 .PHONY: check check-flake check-codespell
 check: check-flake check-codespell
