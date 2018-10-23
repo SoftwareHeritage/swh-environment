@@ -87,9 +87,6 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-storage.git' 'swh-storage'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-storage-testdata]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-storage-testdata.git' 'swh-storage-testdata'
-
 [swh-vault]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-vault.git' 'swh-vault'
 fixups = ../bin/git-add-pre-commit-hook .

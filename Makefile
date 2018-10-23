@@ -32,16 +32,8 @@ docs-apidoc/%:
 docs-clean/%:
 	make -C $*/docs clean
 
-.PHONY: rebuild-testdata rebuild-storage-testdata
-rebuild-testdata: rebuild-storage-testdata
-rebuild-storage-testdata:
-	for dbmodule in $(DB_MODULES); do \
-		make -C $$dbmodule/sql/ distclean filldb; \
-	done
-	make -C swh-storage-testdata distclean dumpdb
-
+.PHONY: update clean
 update:
-	make -C swh-storage-testdata distclean
 	git pull
 	mr up
 
