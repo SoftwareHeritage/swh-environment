@@ -1,0 +1,20 @@
+FROM python:3
+
+RUN apt-get update
+RUN apt-get install -y libsystemd-dev
+
+RUN mkdir -p /srv/softwareheritage/objects
+
+WORKDIR /usr/local/src/
+COPY ./swh-objstorage/requirements*.txt ./swh-objstorage/
+
+RUN pip install -r ./swh-objstorage/requirements.txt -r ./swh-objstorage/requirements-swh.txt
+
+COPY ./swh-docker-dev/config/ /etc/softwareheritage/
+
+COPY . .
+RUN pip install -e ./swh-objstorage/
+
+ENTRYPOINT ["python", "-m", "swh.objstorage.api.server", "/etc/softwareheritage/objstorage/server.yml"]
+
+EXPOSE 5003

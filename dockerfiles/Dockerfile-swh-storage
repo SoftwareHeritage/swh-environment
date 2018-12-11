@@ -1,0 +1,21 @@
+FROM python:3
+
+RUN apt-get update
+RUN apt-get install -y libsystemd-dev
+
+WORKDIR /usr/local/src/
+COPY ./swh-storage/requirements*.txt ./swh-storage/
+
+RUN pip install -r ./swh-storage/requirements.txt -r ./swh-storage/requirements-swh.txt
+
+COPY ./swh-docker-dev/config/ /etc/softwareheritage/
+
+COPY . .
+RUN pip install -e ./swh-storage/
+
+RUN cat /etc/softwareheritage/storage/storage.yml
+
+ENTRYPOINT ["python", "-m", "swh.storage.api.server", "/etc/softwareheritage/storage/storage.yml"]
+
+EXPOSE 5002
+
