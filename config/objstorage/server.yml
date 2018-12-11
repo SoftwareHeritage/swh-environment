@@ -1,0 +1,5 @@
+objstorage:
+  cls: pathslicing
+  args:
+    root: /srv/softwareheritage/objects
+    slicing: 0:2/2:4/4:6
