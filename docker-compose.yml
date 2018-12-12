@@ -11,6 +11,9 @@ services:
     image: swh-storage
     ports:
     - 5002:5002
+    depends_on:
+      - pgsql-storage
+      - swh-objstorage
 
   swh-objstorage:
     image: swh-objstorage
