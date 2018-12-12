@@ -24,7 +24,7 @@ This runs the following services on their respectively standard ports:
 
 - swh-objstorage
 
-- a `softwareheritage` instance db
+- a `softwareheritage` instance db that stores the Merkle DAG.
 
 - swh-storage (plugged to communicate with the objstorage and the db)
 
