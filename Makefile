@@ -1,11 +1,14 @@
 ALL_DOCKERFILES := $(wildcard dockerfiles/Dockerfile-*)
 ALL_BUILD_TARGETS := $(subst dockerfiles/Dockerfile-,build-,$(ALL_DOCKERFILES))
 
-all: $(ALL_BUILD_TARGETS)
+build: $(ALL_BUILD_TARGETS)
 
-run: $(ALL_BUILD_TARGETS)
+rebuild: $(ALL_BUILD_TARGETS)
 	# Discard existing volumes
 	docker-compose down --volumes
+	make run
+
+run:
 	# Runs containers in the foreground
 	docker-compose up
 
