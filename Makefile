@@ -1,6 +1,8 @@
 ALL_DOCKERFILES := $(wildcard dockerfiles/Dockerfile-*)
 ALL_BUILD_TARGETS := $(subst dockerfiles/Dockerfile-,build-,$(ALL_DOCKERFILES))
 
+all: build
+
 build: $(ALL_BUILD_TARGETS)
 
 clean:
