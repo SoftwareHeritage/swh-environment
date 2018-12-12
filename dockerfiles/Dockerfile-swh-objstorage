@@ -1,7 +1,9 @@
 FROM python:3
 
-RUN apt-get update
-RUN apt-get install -y libsystemd-dev
+RUN \
+  export DEBIAN_FRONTEND=noninteractive && \
+  apt-get update && \
+  apt-get install -y libsystemd-dev
 
 RUN mkdir -p /srv/softwareheritage/objects
 
