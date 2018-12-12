@@ -3,10 +3,9 @@ ALL_BUILD_TARGETS := $(subst dockerfiles/Dockerfile-,build-,$(ALL_DOCKERFILES))
 
 build: $(ALL_BUILD_TARGETS)
 
-rebuild: $(ALL_BUILD_TARGETS)
+clean:
 	# Discard existing volumes
 	docker-compose down --volumes
-	make run
 
 run:
 	# Runs containers in the foreground
