@@ -1,0 +1,10 @@
+*/*.git
+**/*.pyc
+*/.tox
+*/.hypothesis
+swh-web/node_modules
+!swh-web/.git
+.venv/
+packages/
+*/.eggs
+*/*.egg-info
