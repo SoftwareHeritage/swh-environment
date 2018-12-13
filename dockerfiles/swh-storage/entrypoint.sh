@@ -19,7 +19,7 @@ case "$1" in
 		;;
 	"init")
 		echo Setup the database
-		swh-db-init storage -d ${POSTGRES_DB}
+		swh-db-init storage --db-name ${POSTGRES_DB} --no-create True
 		;;
 	*)
 		echo Starting the swh-storage API server
