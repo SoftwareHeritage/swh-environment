@@ -1,0 +1,14 @@
+storage:
+  cls: remote
+  args:
+    url: http://localhost:5002/
+    timeout: 1
+
+objstorage:
+  cls: remote
+  args:
+    url: http://localhost:5003/
+
+indexer_storage:
+  cls: memory
+  args: {}
