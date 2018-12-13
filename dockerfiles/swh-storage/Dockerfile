@@ -1,6 +1,6 @@
 FROM python:3
 
-export DEBIAN_FRONTEND=noninteractive && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
   apt-get install -y \
     libsystemd-dev postgresql-client
