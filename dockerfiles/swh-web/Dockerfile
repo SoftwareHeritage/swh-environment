@@ -2,7 +2,7 @@ FROM python:3
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && apt-get upgrade -y && \
-  apt-get install -y libsystemd-dev gunicorn3 && \
+  apt-get install -y libsystemd-dev && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
