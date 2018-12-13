@@ -9,7 +9,7 @@ clean:
 	# Discard existing volumes
 	docker-compose down --volumes
 
-run:
+run: build
 	# Runs containers in the foreground
 	docker-compose up
 
