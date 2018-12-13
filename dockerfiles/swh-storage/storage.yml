@@ -1,8 +1,8 @@
 storage:
   cls: local
   args:
-    db: "host=pgsql-storage port=5432 user=postgres password=testpassword" # FIXME: this should not be hardcoded
-    objstorage: 
+    db: "host=swh-storage-db port=5432 user=postgres password=testpassword" # FIXME: this should not be hardcoded
+    objstorage:
       cls: remote
       args:
         url: http://swh-objstorage:5003/ # FIXME: this should not be hardcoded

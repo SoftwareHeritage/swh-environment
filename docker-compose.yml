@@ -1,21 +1,26 @@
-version: '2.0'
+version: '2'
 
 services:
-
-  pgsql-storage:
-    image: swh-storage-pg
+  swh-storage-db:
+    image: postgres:10
     environment:
       POSTGRES_PASSWORD: testpassword
-
+      POSTGRES_DB: swh-storage
   swh-storage:
-    image: swh-storage
+    build: ./dockerfiles/swh-storage
+    image: swh/storage
     ports:
     - 5002:5002
     depends_on:
-      - pgsql-storage
+      - swh-storage-db
       - swh-objstorage
-
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-storage
+      PGHOST: swh-storage-db
+      PGUSER: postgres
   swh-objstorage:
-    image: swh-objstorage
+    build: ./dockerfiles/swh-objstorage
+    image: swh/objstorage
     ports:
     - 5003:5003

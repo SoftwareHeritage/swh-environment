@@ -1,4 +1,0 @@
-FROM postgres
-
-# Create the swh-storage's database when the container starts.
-COPY ./swh-storage/swh/storage/sql/ /docker-entrypoint-initdb.d
