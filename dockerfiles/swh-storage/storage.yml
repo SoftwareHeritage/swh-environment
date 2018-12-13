@@ -1,7 +1,7 @@
 storage:
   cls: local
   args:
-    db: "host=swh-storage-db port=5432 user=postgres password=testpassword" # FIXME: this should not be hardcoded
+    db: service=swh
     objstorage:
       cls: remote
       args:

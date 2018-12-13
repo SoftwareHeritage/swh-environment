@@ -11,6 +11,14 @@ if [[ -d /src ]] ; then
 fi
 
 echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass
+cat > ~/.pg_service.conf <<EOF
+[swh]
+dbname=${POSTGRES_DB}
+host=${PGHOST}
+port=5432
+user=${PGUSER}
+EOF
+
 chmod 0400 ~/.pgpass
 
 case "$1" in
