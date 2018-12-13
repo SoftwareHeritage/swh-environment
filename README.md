@@ -80,7 +80,10 @@ This runs the following services on their respectively standard ports:
 
 - swh-storage (plugged to communicate with the objstorage and the db)
 
+- swh-web (plugged to communicate with the previous services)
+
 That means, you can start doing the ingestion using those services
-using the same setup described in the getting-started [1].
+using the same setup described in the getting-started starting
+directly at [1].  Yes, even browsing the web app!
 
 [1] https://docs.softwareheritage.org/devel/getting-started.html#step-4-ingest-repositories
