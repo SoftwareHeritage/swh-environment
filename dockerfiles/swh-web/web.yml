@@ -12,3 +12,8 @@ objstorage:
 indexer_storage:
   cls: memory
   args: {}
+
+allowed_hosts:
+  - "*"
+
+debug: yes

@@ -14,6 +14,5 @@ if [ "$1" = 'shell' ] ; then
     exec bash -i
 else
     echo "starting the swh-web server"
-    exec python3 -m swh.web.manage runserver --nostatic 0.0.0.0:5004
-    #exec gunicorn3 -b 0.0.0.0:5004 swh.web.wsgi
+    exec python3 -m swh.web.manage runserver --verbosity 3 --insecure 0.0.0.0:5004
 fi
