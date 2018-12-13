@@ -15,6 +15,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-deposit.git' 'swh-deposit'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-docker-dev]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-docker-dev.git' 'swh-docker-dev'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-docs]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-docs.git' 'swh-docs'
 fixups = ../bin/git-add-pre-commit-hook .
