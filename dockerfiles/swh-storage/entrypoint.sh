@@ -26,9 +26,14 @@ case "$1" in
         exec bash -i
         ;;
     *)
+
+    echo Waiting for postgresql to start
+    until psql service=swh -c "select 1" > /dev/null 2> /dev/null; do sleep 0.1; done
+
 	echo Setup the database
 	PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init storage \
 		  --db-name ${POSTGRES_DB}
+
 	echo Starting the swh-storage API server
         exec python -m swh.storage.api.server /storage.yml
 	;;
