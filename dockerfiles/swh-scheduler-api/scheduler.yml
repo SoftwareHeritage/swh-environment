@@ -1,0 +1,4 @@
+scheduler:
+  cls: local
+  args:
+    db: service=swh

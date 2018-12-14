@@ -2,6 +2,46 @@ version: '2'
 
 services:
 
+  amqp:
+    image: rabbitmq:3.6-management
+    ports:
+      - 5018:15672
+
+# Scheduler
+
+  swh-scheduler-db:
+    image: postgres:10
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-scheduler
+
+  swh-scheduler-api:
+    image: swh/scheduler-api
+    build: ./dockerfiles/swh-scheduler-api
+    env_file: ./scheduler.env
+    depends_on:
+      - swh-scheduler-db
+    ports:
+      - 5008:5008
+
+  swh-scheduler-listener:
+    image: swh/scheduler-worker
+    build: ./dockerfiles/swh-scheduler-worker
+    env_file: ./scheduler.env
+    command: listener
+    depends_on:
+      - swh-scheduler-api
+      - amqp
+
+  swh-scheduler-runner:
+    image: swh/scheduler-worker
+    env_file: ./scheduler.env
+    command: runner
+    depends_on:
+      - swh-scheduler-listener  # for the image only
+      - swh-scheduler-api
+      - amqp
+
 # Graph storage
 
   swh-storage-db:
@@ -14,7 +54,7 @@ services:
     build: ./dockerfiles/swh-storage
     image: swh/storage
     ports:
-    - 5002:5002
+      - 5002:5002
     depends_on:
       - swh-storage-db
       - swh-objstorage
@@ -30,7 +70,7 @@ services:
     build: ./dockerfiles/swh-objstorage
     image: swh/objstorage
     ports:
-    - 5003:5003
+      - 5003:5003
 
 # Indexer storage
 
@@ -59,7 +99,7 @@ services:
     build: ./dockerfiles/swh-web
     image: swh/web
     ports:
-    - 5004:5004
+      - 5004:5004
     depends_on:
       - swh-objstorage
       - swh-storage
