@@ -10,8 +10,9 @@ objstorage:
     url: http://swh-objstorage:5003/
 
 indexer_storage:
-  cls: memory
-  args: {}
+  cls: remote
+  args:
+    url: http://swh-idx-storage:5007/
 
 allowed_hosts:
   - "*"

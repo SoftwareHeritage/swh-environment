@@ -1,0 +1,4 @@
+storage:
+  cls: local
+  args:
+    db: service=swh-indexer

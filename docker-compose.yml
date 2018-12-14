@@ -1,11 +1,15 @@
 version: '2'
 
 services:
+
+# Graph storage
+
   swh-storage-db:
     image: postgres:10
     environment:
       POSTGRES_PASSWORD: testpassword
       POSTGRES_DB: swh-storage
+
   swh-storage:
     build: ./dockerfiles/swh-storage
     image: swh/storage
@@ -19,11 +23,37 @@ services:
       POSTGRES_DB: swh-storage
       PGHOST: swh-storage-db
       PGUSER: postgres
+
+# Object storage
+
   swh-objstorage:
     build: ./dockerfiles/swh-objstorage
     image: swh/objstorage
     ports:
     - 5003:5003
+
+# Indexer storage
+
+  swh-idx-storage-db:
+    image: postgres:10
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-idx-storage
+
+  swh-idx-storage:
+    build: ./dockerfiles/swh-indexer-storage
+    image: swh/indexer-storage
+    ports:
+    - 5007:5007
+    depends_on:
+      - swh-idx-storage-db
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-idx-storage
+      PGHOST: swh-idx-storage-db
+      PGUSER: postgres
+
+# Web interface
 
   swh-web:
     build: ./dockerfiles/swh-web
@@ -33,3 +63,4 @@ services:
     depends_on:
       - swh-objstorage
       - swh-storage
+      - swh-idx-storage
