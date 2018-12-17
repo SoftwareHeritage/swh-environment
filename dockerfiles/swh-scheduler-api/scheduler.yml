@@ -1,4 +1,4 @@
 scheduler:
   cls: local
   args:
-    db: service=swh
+    scheduling_db: service=swh-scheduler
