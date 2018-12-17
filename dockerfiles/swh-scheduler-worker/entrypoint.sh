@@ -12,7 +12,7 @@ fi
 
 echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass
 cat > ~/.pg_service.conf <<EOF
-[swh]
+[swh-scheduler]
 dbname=${POSTGRES_DB}
 host=${PGHOST}
 port=5432
