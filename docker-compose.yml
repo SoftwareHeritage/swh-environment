@@ -104,3 +104,70 @@ services:
       - swh-objstorage
       - swh-storage
       - swh-idx-storage
+
+# Lister Celery workers
+
+  swh-listers-db:
+    image: postgres:10
+    environment:
+      POSTGRES_PASSWORD: testpassword
+
+  swh-lister-debian:
+    image: swh/listers-worker
+    build: ./dockerfiles/swh-listers-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: debian
+    depends_on:
+      - swh-listers-db
+      - swh-scheduler-api
+      - swh-storage
+      - amqp
+
+  swh-lister-github:
+    image: swh/listers-worker
+    build: ./dockerfiles/swh-listers-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: github
+    depends_on:
+      - swh-listers-db
+      - swh-scheduler-api
+      - swh-storage
+      - amqp
+
+  swh-lister-gitlab:
+    image: swh/listers-worker
+    build: ./dockerfiles/swh-listers-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: gitlab
+    depends_on:
+      - swh-listers-db
+      - swh-scheduler-api
+      - swh-storage
+      - amqp
+
+  swh-lister-npm:
+    image: swh/listers-worker
+    build: ./dockerfiles/swh-listers-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: npm
+    depends_on:
+      - swh-listers-db
+      - swh-scheduler-api
+      - swh-storage
+      - amqp
+
+  swh-lister-pypi:
+    image: swh/listers-worker
+    build: ./dockerfiles/swh-listers-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: pypi
+    depends_on:
+      - swh-listers-db
+      - swh-scheduler-api
+      - swh-storage
+      - amqp

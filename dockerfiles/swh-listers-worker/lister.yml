@@ -1,0 +1,9 @@
+storage:
+  cls: remote
+  args:
+    url: http://swh-storage:5002/
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler-api:5008/
+lister_db_url: service=swh
