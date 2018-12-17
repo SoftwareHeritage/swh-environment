@@ -3,9 +3,9 @@ FROM python:3
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
   apt-get install -y \
-    libsystemd-dev postgresql-client
+    libsystemd-dev postgresql-client libpq-dev
 
-RUN pip install swh-scheduler
+RUN pip install swh-scheduler --no-binary psycopg2
 RUN mkdir /etc/softwareheritage/
 COPY scheduler.yml /etc/softwareheritage/
 COPY entrypoint.sh /
