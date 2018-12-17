@@ -26,12 +26,12 @@ case "$1" in
         exec bash -i
         ;;
     *)
-		echo Waiting for postgresql to start
-		until psql service=swh-scheduler -c "select 1" 2>&1 > /dev/null; do sleep 0.1; done
+        echo Waiting for postgresql to start
+        until psql service=swh-scheduler -c "select 1" 2>&1 > /dev/null; do sleep 0.1; done
 
         echo Setup the swh-scheduler API database
         PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init scheduler \
-				  --db-name ${POSTGRES_DB}
+                  --db-name ${POSTGRES_DB}
 
         echo Starting the swh-scheduler API server
         exec python -m swh.scheduler.api.server /scheduler.yml

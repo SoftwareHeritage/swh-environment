@@ -19,7 +19,7 @@ else
     # --insecure to serve the static css/js
     # 0.0.0.0 so that we can actually reach the service.
     exec python3 -m swh.web.manage runserver \
-	 --verbosity 3 \
-	 --insecure \
-	 0.0.0.0:5004
+         --verbosity 3 \
+         --insecure \
+         0.0.0.0:5004
 fi

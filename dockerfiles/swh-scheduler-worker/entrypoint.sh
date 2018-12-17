@@ -28,7 +28,7 @@ case "$1" in
     "listener")
         echo Starting the swh-scheduler listener
         exec python -m swh.scheduler.celery_backend.listener
-		;;
+        ;;
     "runner")
         echo Starting the swh-scheduler runner
         exec sh -c 'while true; do
@@ -36,9 +36,9 @@ case "$1" in
             python -m swh.scheduler.celery_backend.runner;
             sleep 10;
           done'  # beuark
-		;;
-	*)
-		echo "Provide a command (shell|listener|runner)"
-		exit 1
-		;;
+        ;;
+    *)
+        echo "Provide a command (shell|listener|runner)"
+        exit 1
+        ;;
 esac
