@@ -171,3 +171,18 @@ services:
       - swh-scheduler-api
       - swh-storage
       - amqp
+
+# Indexer Celery workers
+
+  swh-indexer-mimetype:
+    image: swh/indexer-worker
+    build: ./dockerfiles/swh-indexer-worker
+    env_file: ./indexers.env
+    environment:
+      SWH_WORKER_INSTANCE: mimetype
+    depends_on:
+      - swh-scheduler-api
+      - swh-idx-storage
+      - swh-storage
+      - swh-objstorage
+      - amqp
