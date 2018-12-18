@@ -21,6 +21,9 @@ EOF
 
 chmod 0600 ~/.pgpass
 
+echo Installed Python packages:
+pip list
+
 case "$1" in
     "shell")
       exec bash -i

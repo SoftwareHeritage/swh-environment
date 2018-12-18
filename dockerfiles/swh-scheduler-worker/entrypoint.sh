@@ -10,6 +10,9 @@ if [[ -d /src ]] ; then
     done
 fi
 
+echo Installed Python packages:
+pip list
+
 echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass
 cat > ~/.pg_service.conf <<EOF
 [swh-scheduler]

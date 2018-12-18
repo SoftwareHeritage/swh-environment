@@ -12,6 +12,9 @@ if [[ -d /src ]] ; then
     done
 fi
 
+echo Installed Python packages:
+pip list
+
 export POSTGRES_DB=swh-lister-${SWH_WORKER_INSTANCE}
 
 echo "${PGHOST}:5432:postgres:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass

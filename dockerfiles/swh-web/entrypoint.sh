@@ -10,6 +10,9 @@ if [[ -d /src ]] ; then
     done
 fi
 
+echo Installed Python packages:
+pip list
+
 if [ "$1" = 'shell' ] ; then
     exec bash -i
 else
