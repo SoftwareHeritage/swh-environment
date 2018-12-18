@@ -25,6 +25,9 @@ case "$1" in
     "shell")
         exec bash -i
         ;;
+    "swh-scheduler")
+        exec $@
+        ;;
     *)
         echo Waiting for postgresql to start
         until psql service=swh-scheduler -c "select 1" 2>&1 > /dev/null; do sleep 0.1; done
