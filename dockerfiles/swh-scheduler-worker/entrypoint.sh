@@ -28,20 +28,8 @@ case "$1" in
     "shell")
         exec bash -i
         ;;
-    "listener")
-        echo Starting the swh-scheduler listener
-        exec python -m swh.scheduler.celery_backend.listener
-        ;;
-    "runner")
-        echo Starting the swh-scheduler runner
-        exec sh -c 'while true; do
-            echo running pending tasks at `/bin/date`;
-            python -m swh.scheduler.celery_backend.runner;
-            sleep 10;
-          done'  # beuark
-        ;;
     *)
-        echo "Provide a command (shell|listener|runner)"
-        exit 1
+		echo Starting the swh-scheduler $1
+		exec swh-scheduler --log-level ${LOGLEVEL} $@
         ;;
 esac

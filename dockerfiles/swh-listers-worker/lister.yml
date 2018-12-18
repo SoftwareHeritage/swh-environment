@@ -6,4 +6,4 @@ scheduler:
   cls: remote
   args:
     url: http://swh-scheduler-api:5008/
-lister_db_url: service=swh
+lister_db_url: postgresql:///?service=swh

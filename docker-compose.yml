@@ -58,7 +58,7 @@ services:
     image: swh/scheduler-worker
     build: ./dockerfiles/swh-scheduler-worker
     env_file: ./scheduler.env
-    command: runner
+    command: runner -p 10
     depends_on:
       - swh-scheduler-api
       - amqp
@@ -280,3 +280,74 @@ services:
     depends_on:
       - swh-journal-publisher
 
+# Loader Celery workers
+
+  swh-loader-debian:
+    image: swh/loaders-worker
+    build: ./dockerfiles/swh-loaders-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: debian
+    depends_on:
+      - swh-storage
+      - amqp
+
+  swh-loader-dir:
+    image: swh/loaders-worker
+    build: ./dockerfiles/swh-loaders-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: dir
+    depends_on:
+      - swh-storage
+      - amqp
+
+  swh-loader-git:
+    image: swh/loaders-worker
+    build: ./dockerfiles/swh-loaders-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: git
+    depends_on:
+      - swh-storage
+      - amqp
+
+  swh-loader-mercurial:
+    image: swh/loaders-worker
+    build: ./dockerfiles/swh-loaders-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: mercurial
+    depends_on:
+      - swh-storage
+      - amqp
+
+  swh-loader-pypi:
+    image: swh/loaders-worker
+    build: ./dockerfiles/swh-loaders-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: pypi
+    depends_on:
+      - swh-storage
+      - amqp
+
+  swh-loader-svn:
+    image: swh/loaders-worker
+    build: ./dockerfiles/swh-loaders-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: svn
+    depends_on:
+      - swh-storage
+      - amqp
+
+  swh-loader-tar:
+    image: swh/loaders-worker
+    build: ./dockerfiles/swh-loaders-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: tar
+    depends_on:
+      - swh-storage
+      - amqp
