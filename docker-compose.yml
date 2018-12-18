@@ -7,6 +7,29 @@ services:
     ports:
       - 5018:15672
 
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "9092:9092"
+    # env_file: ./kafka.env
+    environment:
+      BROKER_ID_COMMAND: "hostname | awk -F'-' '{print $$2}'"
+      # KAFKA_ADVERTISED_HOST_NAME: 192.168.99.100
+      KAFKA_CREATE_TOPICS_SEPARATOR: "$$'\n'"
+      KAFKA_CREATE_TOPICS: "swh.tmp_journal.new.content:1:1
+swh.tmp_journal.new.revision:1:1,
+swh.tmp_journal.new.release:1:1,
+swh.journal.objects.contents:1:1,
+swh.journal.objects.revision:1:1,
+swh.journal.objects.release:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 # Scheduler
 
   swh-scheduler-db:
