@@ -35,10 +35,10 @@ services:
 
   swh-scheduler-runner:
     image: swh/scheduler-worker
+    build: ./dockerfiles/swh-scheduler-worker
     env_file: ./scheduler.env
     command: runner
     depends_on:
-      - swh-scheduler-listener  # for the image only
       - swh-scheduler-api
       - amqp
 
