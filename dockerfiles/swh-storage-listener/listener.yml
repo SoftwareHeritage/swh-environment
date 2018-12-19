@@ -1,4 +1,3 @@
 database: service=swh
-brokers': kafka
-topic_prefix: swh.tmp_journal.new
-poll_timeout': 10
+brokers':
+  - kafka
