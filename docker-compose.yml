@@ -214,3 +214,10 @@ services:
     depends_on:
       - kafka
       - swh-storage-listener
+
+  swh-journal-client:
+    image: swh/journal-client
+    build: ./dockerfiles/swh-journal-client
+    depends_on:
+      - swh-journal-publisher
+
