@@ -11,10 +11,10 @@ storage:
 max_messages: 1
 
 objects:
-  - content
-  - directory
+  # - content
+  # - directory
   - revision
-  - release
+  # - release
   - origin
   - origin_visit
-  - snaphost
+  # - snapshot
