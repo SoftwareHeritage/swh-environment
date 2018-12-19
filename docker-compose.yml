@@ -73,11 +73,7 @@ services:
     depends_on:
       - swh-storage-db
       - swh-objstorage
-    environment:
-      POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: swh-storage
-      PGHOST: swh-storage-db
-      PGUSER: postgres
+    env_file: ./storage.env
 
 # Object storage
 
@@ -201,3 +197,12 @@ services:
       - swh-storage
       - swh-objstorage
       - amqp
+
+  swh-storage-listener:
+    image: swh/storage-listener
+    build: ./dockerfiles/swh-storage-listener
+    env_file: ./storage.env
+    depends_on:
+      - swh-storage-db
+      - kafka
+
