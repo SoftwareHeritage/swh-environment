@@ -7,3 +7,14 @@ storage:
   cls: remote
   args:
     url: http://swh-storage:5002/
+
+max_messages: 1
+
+objects:
+  - content
+  - directory
+  - revision
+  - release
+  - origin
+  - origin_visit
+  - snaphost
