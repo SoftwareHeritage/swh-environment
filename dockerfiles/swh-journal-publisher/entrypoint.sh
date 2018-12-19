@@ -15,7 +15,7 @@ case "$1" in
       exec bash -i
       ;;
     *)
-      echo "Starting swh-journal publisher"
-      exec python3 -m swh.journal.publisher
+        echo "Starting swh-journal publisher"
+        exec python3 -m swh.journal.publisher --verbose
       ;;
 esac
