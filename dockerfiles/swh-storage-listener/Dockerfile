@@ -5,7 +5,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y \
     libsystemd-dev postgresql-client
 
-RUN pip install swh-storage
+RUN pip install swh-storage kafka_python
 COPY listener.yml /etc/softwareheritage/storage/
 COPY entrypoint.sh /
 
