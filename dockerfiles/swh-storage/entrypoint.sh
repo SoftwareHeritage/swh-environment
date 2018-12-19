@@ -4,9 +4,9 @@ set -e
 
 if [[ -d /src ]] ; then
     for srcrepo in /src/swh-* ; do
-        pushd $srcrepo
-        pip install -e .
-        popd
+      pushd $srcrepo
+      pip install -e .
+      popd
     done
 fi
 
@@ -23,18 +23,17 @@ chmod 0600 ~/.pgpass
 
 case "$1" in
     "shell")
-        exec bash -i
-        ;;
+      exec bash -i
+      ;;
     *)
+      echo Waiting for postgresql to start
+      until psql service=swh -c "select 1" > /dev/null 2> /dev/null; do sleep 0.1; done
 
-	echo Waiting for postgresql to start
-	until psql service=swh -c "select 1" > /dev/null 2> /dev/null; do sleep 0.1; done
+      echo Setup the database
+      PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init storage \
+          --db-name ${POSTGRES_DB}
 
-	echo Setup the database
-	PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init storage \
-		  --db-name ${POSTGRES_DB}
-
-	echo Starting the swh-storage API server
-        exec python -m swh.storage.api.server /storage.yml
-    ;;
+      echo Starting the swh-storage API server
+      exec python -m swh.storage.api.server /storage.yml
+      ;;
 esac
