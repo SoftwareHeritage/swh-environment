@@ -1,6 +1,8 @@
 brokers:
   - kafka
 
+temporary_prefix: swh.tmp.journal.new
+
 storage:
   cls: remote
   args:
