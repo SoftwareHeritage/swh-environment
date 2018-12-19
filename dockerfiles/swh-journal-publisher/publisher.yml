@@ -1,0 +1,7 @@
+brokers:
+  - kafka
+
+storage:
+  cls: remote
+  args:
+    url: http://swh-storage:5002/

@@ -198,6 +198,8 @@ services:
       - swh-objstorage
       - amqp
 
+# Journal related
+
   swh-storage-listener:
     image: swh/storage-listener
     build: ./dockerfiles/swh-storage-listener
@@ -206,3 +208,9 @@ services:
       - swh-storage-db
       - kafka
 
+  swh-journal-publisher:
+    image: swh/journal-publisher
+    build: ./dockerfiles/swh-journal-publisher
+    depends_on:
+      - kafka
+      - swh-storage-listener
