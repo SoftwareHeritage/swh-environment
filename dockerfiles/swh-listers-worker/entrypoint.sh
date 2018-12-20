@@ -24,7 +24,7 @@ port=5432
 user=${PGUSER}
 EOF
 
-chmod 0400 ~/.pgpass
+chmod 0600 ~/.pgpass
 
 mkdir -p ~/.config/swh/worker
 
@@ -36,7 +36,7 @@ task_queues = swh_lister_${SWH_WORKER_INSTANCE}
 task_soft_time_limit = 0
 EOF
 
-ln -s ~/.config/swh/lister.yml ~/.config/swh/lister-${SWH_WORKER_INSTANCE}.yml
+ln -fs ~/.config/swh/lister.yml ~/.config/swh/lister-${SWH_WORKER_INSTANCE}.yml
 
 
 case "$1" in

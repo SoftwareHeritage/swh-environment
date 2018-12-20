@@ -19,7 +19,7 @@ port=5432
 user=${PGUSER}
 EOF
 
-chmod 0400 ~/.pgpass
+chmod 0600 ~/.pgpass
 
 case "$1" in
     "shell")
