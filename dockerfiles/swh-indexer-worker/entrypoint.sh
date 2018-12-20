@@ -5,7 +5,9 @@ set -e
 if [[ -d /src ]] ; then
     for srcrepo in /src/swh-* ; do
         pushd $srcrepo
-        pip install -e .
+        echo "WARNING: $srcrepo will NOT be pip installed in dev mode"
+        echo "         due to permission limitations."
+        pip install --user .
         popd
     done
 fi

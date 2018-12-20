@@ -188,7 +188,7 @@ services:
     build: ./dockerfiles/swh-indexer-worker
     env_file: ./indexers.env
     environment:
-      SWH_WORKER_INSTANCE: mimetype
+      SWH_WORKER_INSTANCE: content_mimetype
     depends_on:
       - swh-scheduler-api
       - swh-idx-storage

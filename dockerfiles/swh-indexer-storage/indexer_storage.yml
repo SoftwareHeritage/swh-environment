@@ -1,4 +1,4 @@
-storage:
+indexer_storage:
   cls: local
   args:
     db: service=swh-indexer
