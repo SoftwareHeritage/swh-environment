@@ -72,15 +72,19 @@ there is even no need for restarting the impacted container.)
 
 ## Details
 
-This runs the following services on their respectively standard ports:
+This runs the following services on their respectively standard ports,
+all of the following services are configured to communicate with each
+other:
 
-- swh-objstorage
+- swh-storage-db: a `softwareheritage` instance db that stores the
+  Merkle DAG,
 
-- a `softwareheritage` instance db that stores the Merkle DAG,
+- swh-objstorage: Content-addressable object storage,
 
-- swh-storage (plugged to communicate with the objstorage and the db),
+- swh-storage: Abstraction layer over the archive, allowing to access
+  all stored source code artifacts as well as their metadata,
 
-- swh-web (plugged to communicate with the previous services),
+- swh-web: the swh's web interface over the storage,
 
 - swh-scheduler: the API service as well as 2 utilities,
   the runner and the listener,
