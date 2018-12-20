@@ -90,6 +90,8 @@ This runs the following services on their respectively standard ports:
 - swh-loaders: celery workers dedicated to importing/updating source code
   content (VCS repos, source packages, etc.),
 
+- swh-journal: Persistent logger of changes to the archive, with
+  publish-subscribe support.
 
 That means, you can start doing the ingestion using those services
 using the same setup described in the getting-started starting
