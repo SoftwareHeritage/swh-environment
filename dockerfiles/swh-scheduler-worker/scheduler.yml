@@ -1,2 +1,2 @@
-task_broker: amqp://guest@amqp//
+task_broker: amqp://guest:guest@amqp//
 scheduling_db: service=swh-scheduler
