@@ -12,7 +12,6 @@ max_messages: 1
 
 object_types:
   - content
-  - directory
   - revision
   - release
   - origin
