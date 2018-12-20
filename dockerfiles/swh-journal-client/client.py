@@ -24,8 +24,7 @@ class JournalClientLogger(JournalClient):
         """Simply log messages received.
 
         """
-        for msg in messages:
-            logging.info('msg: %s' % msg)
+        logging.info('client received the following messages: %s' % messages)
 
 
 if __name__ == '__main__':
