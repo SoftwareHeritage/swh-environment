@@ -15,14 +15,6 @@ docker environment and docker-compose is installed.
 
 ## How to use
 
-Initialise the database with:
-
-```
-docker-compose run swh-storage init
-```
-
-then start the services with:
-
 ```
 docker-compose up
 ```
@@ -30,9 +22,6 @@ docker-compose up
 This will build docker images and run them.
 
 Press Ctrl-C when you want to stop it.
-
-Note: the db initialization process is a manual step for now because it
-is not yet "idempotent", but (hopefully) this will be fixed any time soon.
 
 To run them in a detached (background) mode:
 
