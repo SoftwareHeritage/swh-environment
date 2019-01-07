@@ -15,4 +15,5 @@ fi
     grep '^swh\.' |
     sed 's:\.:-:g' |
     sed 's:^:-e :' |
-    sed "s/$/$suffix/"
+    sed "s/$/$suffix/" |
+    sed -e 's/\]\[/,/g'
