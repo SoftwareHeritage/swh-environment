@@ -1,0 +1,4 @@
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler:5008

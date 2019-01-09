@@ -114,6 +114,22 @@ services:
       - swh-storage
       - swh-idx-storage
 
+  swh-deposit-db:
+    image: postgres:10
+    env_file: ./deposit.env
+
+  swh-deposit:
+    build: ./dockerfiles/swh-deposit
+    image: swh/deposit
+    ports:
+      - 5006:5006
+    depends_on:
+      - swh-deposit-db
+      - swh-scheduler-api
+    env_file: ./deposit.env
+    environment:
+      PGHOST: swh-deposit-db
+
 # Lister Celery workers
 
   swh-listers-db:

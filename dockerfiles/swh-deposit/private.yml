@@ -1,0 +1,8 @@
+secret_key: prod-in-docker
+db:
+  host: swh-deposit-db
+  port: 5432
+  name: softwareheritage-deposit
+  user: postgres
+  password: testpassword
+media_root: /tmp/swh-deposit/uploads
