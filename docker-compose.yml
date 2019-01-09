@@ -20,6 +20,14 @@ services:
     depends_on:
       - zookeeper
 
+  flower:
+    image: mher/flower
+    command: --broker=amqp://guest:guest@amqp:5672//
+    ports:
+      - 5555:5555
+    depends_on:
+      - amqp
+
 # Scheduler
 
   swh-scheduler-db:
