@@ -40,5 +40,5 @@ case "$1" in
                   --db-name ${POSTGRES_DB}
 
         echo Starting the swh-scheduler API server
-        exec python -m swh.scheduler.api.server /scheduler.yml
+        exec swh-scheduler api-server /scheduler.yml
 esac
