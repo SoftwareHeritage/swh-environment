@@ -4,6 +4,7 @@ set -e
 
 if [[ -d /src ]] ; then
     for srcrepo in /src/swh-* ; do
+        pushd $srcrepo
         echo installing $srcrepo
         pip install -e .
         popd
