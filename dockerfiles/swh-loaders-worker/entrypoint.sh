@@ -24,7 +24,8 @@ task_modules = swh.loader.${SWH_WORKER_INSTANCE}.tasks
 task_soft_time_limit = 0
 EOF
 
-ln -s ~/.config/swh/loader.yml ~/.config/swh/loader-${SWH_WORKER_INSTANCE}.yml
+mkdir -p ~/.config/swh/loader
+ln -fs ~/.config/swh/loader.yml ~/.config/swh/loader/${SWH_WORKER_INSTANCE}.yml
 
 
 case "$1" in
