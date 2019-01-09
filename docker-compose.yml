@@ -196,6 +196,43 @@ services:
       - swh-objstorage
       - amqp
 
+  swh-indexer-origin-head:
+    image: swh/indexer-worker
+    build: ./dockerfiles/swh-indexer-worker
+    env_file: ./indexers.env
+    environment:
+      SWH_WORKER_INSTANCE: origin_head
+    depends_on:
+      - swh-scheduler-api
+      - swh-idx-storage
+      - swh-storage
+      - amqp
+
+  swh-indexer-revision-metadata:
+    image: swh/indexer-worker
+    build: ./dockerfiles/swh-indexer-worker
+    env_file: ./indexers.env
+    environment:
+      SWH_WORKER_INSTANCE: revision_metadata
+    depends_on:
+      - swh-scheduler-api
+      - swh-idx-storage
+      - swh-storage
+      - swh-objstorage
+      - amqp
+
+  swh-indexer-origin-intrinsic-metadata:
+    image: swh/indexer-worker
+    build: ./dockerfiles/swh-indexer-worker
+    env_file: ./indexers.env
+    environment:
+      SWH_WORKER_INSTANCE: origin_intrinsic_metadata
+    depends_on:
+      - swh-scheduler-api
+      - swh-idx-storage
+      - swh-storage
+      - amqp
+
 # Journal related
 
   swh-storage-listener:

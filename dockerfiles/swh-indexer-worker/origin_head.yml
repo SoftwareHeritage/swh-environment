@@ -1,0 +1,19 @@
+storage:
+  cls: remote
+  args:
+    url: http://swh-storage:5002/
+
+indexer_storage:
+  cls: remote
+  args:
+    url: http://swh-idx-storage:5007/
+
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler-api:5008/
+
+tasks:
+  revision_metadata: indexer_revision_metadata
+  origin_intrinsic_metadata: indexer_origin_metadata
+

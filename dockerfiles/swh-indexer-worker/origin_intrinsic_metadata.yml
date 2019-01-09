@@ -1,0 +1,9 @@
+storage:
+  cls: remote
+  args:
+    url: http://swh-storage:5002/
+
+indexer_storage:
+  cls: remote
+  args:
+    url: http://swh-idx-storage:5007/
