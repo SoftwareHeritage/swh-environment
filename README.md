@@ -104,13 +104,13 @@ distribution, you may add a new task for this.
 
 This task should then spawn a series of loader tasks.
 
-For example, to add a recurring task that will scrape and maintain updated
-the Debian stretch distribution, one can do (from this git repository):
+For example, to add a (one shot) task that will list git repos on the
+0xacab.org gitlab instance, one can do (from this git repository):
 
 ```
 $ docker-compose run swh-scheduler-api \
     swh-scheduler -c remote -u http://swh-scheduler-api:5008/ \
-	    task add swh-lister-gitlab-full -p oneshot instance=https://0xacab.org
+	    task add swh-lister-gitlab-full -p oneshot api_baseurl=https://0xacab.org/api/v4
 
 Created 1 tasks
 
@@ -121,7 +121,7 @@ Task 12
   Policy: oneshot
   Args:
   Keyword args:
-    instance: https://0xacab.org
+    api_baseurl=https://0xacab.org/api/v4
 ```
 
 This will insert a new task in the scheduler. To list existing tasks for a
@@ -141,7 +141,7 @@ Task 12
   Policy: oneshot
   Args:
   Keyword args:
-    instance: https://0xacab.org
+    api_baseurl=https://0xacab.org/api/v4
 ```
 
 To list all existing task types:
