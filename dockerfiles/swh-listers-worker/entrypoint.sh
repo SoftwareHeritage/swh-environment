@@ -35,7 +35,6 @@ cat > ~/.config/swh/worker/${SWH_WORKER_INSTANCE}.ini <<EOF
 [main]
 task_broker = amqp://guest@amqp//
 task_modules = swh.lister.${SWH_WORKER_INSTANCE}.tasks
-task_queues = swh_lister_${SWH_WORKER_INSTANCE}
 task_soft_time_limit = 0
 EOF
 
