@@ -157,6 +157,18 @@ services:
       - swh-storage
       - amqp
 
+  swh-lister-bitbucket:
+    image: swh/listers-worker
+    build: ./dockerfiles/swh-listers-worker
+    env_file: ./listers.env
+    environment:
+      SWH_WORKER_INSTANCE: bitbucket
+    depends_on:
+      - swh-listers-db
+      - swh-scheduler-api
+      - swh-storage
+      - amqp
+
   swh-lister-github:
     image: swh/listers-worker
     build: ./dockerfiles/swh-listers-worker
