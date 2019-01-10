@@ -14,5 +14,3 @@ RUN ln -s /etc/softwareheritage/scheduler.yml /etc/softwareheritage/worker/
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
-
-EXPOSE 5008
