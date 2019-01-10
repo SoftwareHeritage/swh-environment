@@ -269,6 +269,12 @@ services:
       - swh-storage
       - amqp
 
+  swh-indexer-journal-client:
+    image: swh/indexer-journal-client
+    build: ./dockerfiles/swh-indexer-journal-client
+    depends_on:
+      - swh-journal-publisher
+
 # Journal related
 
   swh-storage-listener:
