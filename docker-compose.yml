@@ -5,28 +5,27 @@ services:
   amqp:
     image: rabbitmq:3.6-management
     ports:
-      - 5018:15672
-
-  zookeeper:
-    image: wurstmeister/zookeeper
-    ports:
-      - "2181:2181"
-
-  kafka:
-    image: wurstmeister/kafka
-    ports:
-      - "9092:9092"
-    env_file: ./kafka.env
-    depends_on:
-      - zookeeper
+      - 5072:5672
+      - 5073:15672
 
   flower:
     image: mher/flower
     command: --broker=amqp://guest:guest@amqp:5672//
     ports:
-      - 5555:5555
+      - 5055:5555
     depends_on:
       - amqp
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - 5092:9092
+    env_file: ./kafka.env
+    depends_on:
+      - zookeeper
 
 # Scheduler
 
@@ -101,7 +100,7 @@ services:
     build: ./dockerfiles/swh-indexer-storage
     image: swh/indexer-storage
     ports:
-    - 5007:5007
+      - 5007:5007
     depends_on:
       - swh-idx-storage-db
     environment:
@@ -116,7 +115,7 @@ services:
     build: ./dockerfiles/swh-web
     image: swh/web
     ports:
-      - 8080:5004
+      - 5004:5004
     depends_on:
       - swh-objstorage
       - swh-storage
