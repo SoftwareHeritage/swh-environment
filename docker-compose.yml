@@ -154,6 +154,7 @@ services:
     depends_on:
       - swh-listers-db
       - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-storage
       - amqp
 
@@ -166,6 +167,7 @@ services:
     depends_on:
       - swh-listers-db
       - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-storage
       - amqp
 
@@ -178,6 +180,7 @@ services:
     depends_on:
       - swh-listers-db
       - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-storage
       - amqp
 
@@ -190,6 +193,7 @@ services:
     depends_on:
       - swh-listers-db
       - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-storage
       - amqp
 
@@ -202,6 +206,7 @@ services:
     depends_on:
       - swh-listers-db
       - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-storage
       - amqp
 
@@ -214,6 +219,7 @@ services:
     depends_on:
       - swh-listers-db
       - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-storage
       - amqp
 
@@ -240,6 +246,7 @@ services:
       SWH_WORKER_INSTANCE: origin_head
     depends_on:
       - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-idx-storage
       - swh-storage
       - amqp
@@ -251,7 +258,7 @@ services:
     environment:
       SWH_WORKER_INSTANCE: revision_metadata
     depends_on:
-      - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-idx-storage
       - swh-storage
       - swh-objstorage
@@ -264,7 +271,7 @@ services:
     environment:
       SWH_WORKER_INSTANCE: origin_intrinsic_metadata
     depends_on:
-      - swh-scheduler-api
+      - swh-scheduler-runner
       - swh-idx-storage
       - swh-storage
       - amqp
