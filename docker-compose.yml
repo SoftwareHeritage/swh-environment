@@ -281,6 +281,7 @@ services:
     build: ./dockerfiles/swh-indexer-journal-client
     depends_on:
       - swh-journal-publisher
+      - swh-scheduler-api
 
 # Journal related
 
