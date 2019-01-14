@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.6
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && apt-get upgrade -y && \
