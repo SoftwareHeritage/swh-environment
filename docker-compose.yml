@@ -6,11 +6,10 @@ services:
     image: rabbitmq:3.6-management
     ports:
       - 5072:5672
-      - 5073:15672
 
   flower:
     image: mher/flower
-    command: --broker=amqp://guest:guest@amqp:5672//
+    command: --broker=amqp://guest:guest@amqp:5672// --url_prefix=flower
     ports:
       - 5055:5555
     depends_on:
@@ -26,6 +25,22 @@ services:
     env_file: ./kafka.env
     depends_on:
       - zookeeper
+
+  nginx:
+    image: nginx
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf:ro"
+    ports:
+      - 5080:80
+    depends_on:
+      - amqp
+      - flower
+      - swh-web
+      - swh-deposit
+      - swh-scheduler-api
+      - swh-storage
+      - swh-objstorage
+      - swh-idx-storage
 
 # Scheduler
 
