@@ -232,7 +232,20 @@ services:
     environment:
       SWH_WORKER_INSTANCE: content_mimetype
     depends_on:
-      - swh-scheduler-api
+      - swh-scheduler-runner
+      - swh-idx-storage
+      - swh-storage
+      - swh-objstorage
+      - amqp
+
+  swh-indexer-license:
+    image: swh/indexer-worker
+    build: ./dockerfiles/swh-indexer-worker
+    env_file: ./indexers.env
+    environment:
+      SWH_WORKER_INSTANCE: content_fossology_license
+    depends_on:
+      - swh-scheduler-runner
       - swh-idx-storage
       - swh-storage
       - swh-objstorage
