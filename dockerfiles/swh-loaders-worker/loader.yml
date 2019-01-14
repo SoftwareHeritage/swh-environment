@@ -2,4 +2,4 @@ storage:
   cls: remote
   args:
     url: http://swh-storage:5002/
-lister_db_url: service=swh
+lister_db_url: postgresql:///?service=swh

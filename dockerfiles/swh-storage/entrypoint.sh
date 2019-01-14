@@ -30,7 +30,7 @@ case "$1" in
       ;;
     *)
       echo Waiting for postgresql to start
-      until psql service=swh -c "select 1" > /dev/null 2> /dev/null; do sleep 0.1; done
+      until psql postgresql:///?service=swh -c "select 1" > /dev/null 2> /dev/null; do sleep 0.1; done
 
       echo Setup the database
       PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init storage \

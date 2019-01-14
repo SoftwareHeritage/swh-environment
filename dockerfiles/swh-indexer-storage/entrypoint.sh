@@ -33,7 +33,7 @@ case "$1" in
     *)
 
     echo Waiting for postgresql to start
-    until psql service=swh-indexer -c "select 1" 2>&1 > /dev/null; do sleep 0.1; done
+    until psql postgresql:///?service=swh-indexer -c "select 1" 2>&1 > /dev/null; do sleep 0.1; done
 
     echo Setup the database
     PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init indexer \

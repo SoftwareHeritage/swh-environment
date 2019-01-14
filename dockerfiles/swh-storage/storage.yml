@@ -1,8 +1,8 @@
 storage:
   cls: local
   args:
-    db: service=swh
+    db: postgresql:///?service=swh
     objstorage:
       cls: remote
       args:
-        url: http://swh-objstorage:5003/ # FIXME: this should not be hardcoded
+        url: http://swh-objstorage:5003/

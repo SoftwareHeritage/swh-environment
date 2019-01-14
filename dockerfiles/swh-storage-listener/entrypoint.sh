@@ -30,7 +30,7 @@ case "$1" in
       ;;
     *)
       echo "Waiting for postgresql to start"
-      until psql service=swh -c "select 1" 1>&2 >/dev/null; do sleep 0.1; done
+      until psql postgresql:///?service=swh -c "select 1" 1>&2 >/dev/null; do sleep 0.1; done
 
       echo "Starting swh-storage's listener"
       exec python3 -m swh.storage.listener --verbose

@@ -1,4 +1,4 @@
-database: service=swh
+database: postgresql:///?service=swh
 brokers:
   - kafka
 topic_prefix: swh.tmp.journal.new
