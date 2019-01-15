@@ -30,12 +30,12 @@ case "$1" in
 
         echo Starting swh-indexer worker
         exec python -m celery worker \
-			 --app=swh.scheduler.celery_backend.config.app \
-			 --pool=prefork --events \
-			 --concurrency=${CONCURRENCY} \
-			 --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
-			 -Ofair --loglevel=${LOGLEVEL} --without-gossip \
-			 --without-mingle --without-heartbeat \
-			 --hostname "${SWH_WORKER_INSTANCE}.%h"
+             --app=swh.scheduler.celery_backend.config.app \
+             --pool=prefork --events \
+             --concurrency=${CONCURRENCY} \
+             --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
+             -Ofair --loglevel=${LOGLEVEL} --without-gossip \
+             --without-mingle --without-heartbeat \
+             --hostname "${SWH_WORKER_INSTANCE}.%h"
     ;;
 esac
