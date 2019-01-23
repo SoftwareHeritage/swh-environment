@@ -26,6 +26,15 @@ services:
     depends_on:
       - zookeeper
 
+  prometheus:
+    image: prom/prometheus
+    command:
+      # Needed for the reverse-proxy
+      - "--web.external-url=/prometheus"
+    volumes:
+      - "./prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+    restart: unless-stopped
+
   nginx:
     image: nginx
     volumes:
