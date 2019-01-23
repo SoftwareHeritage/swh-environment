@@ -32,15 +32,6 @@ services:
       - "./nginx.conf:/etc/nginx/nginx.conf:ro"
     ports:
       - 5080:80
-    depends_on:
-      - amqp
-      - flower
-      - swh-web
-      - swh-deposit
-      - swh-scheduler-api
-      - swh-storage
-      - swh-objstorage
-      - swh-idx-storage
 
 # Scheduler
 
