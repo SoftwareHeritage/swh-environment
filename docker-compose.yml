@@ -35,6 +35,14 @@ services:
       - "./prometheus.yml:/etc/prometheus/prometheus.yml:ro"
     restart: unless-stopped
 
+  prometheus-statsd-exporter:
+    image: prom/statsd-exporter
+    command:
+      - "--statsd.mapping-config=/etc/prometheus/statsd-mapping.yml"
+    volumes:
+      - "./prometheus-statsd-mapping.yml:/etc/prometheus/statsd-mapping.yml:ro"
+    restart: unless-stopped
+
   nginx:
     image: nginx
     volumes:
@@ -164,6 +172,8 @@ services:
     build: ./dockerfiles/swh-listers-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: debian
     depends_on:
       - swh-listers-db
@@ -177,6 +187,8 @@ services:
     build: ./dockerfiles/swh-listers-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: bitbucket
     depends_on:
       - swh-listers-db
@@ -190,6 +202,8 @@ services:
     build: ./dockerfiles/swh-listers-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: github
     depends_on:
       - swh-listers-db
@@ -203,6 +217,8 @@ services:
     build: ./dockerfiles/swh-listers-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: gitlab
     depends_on:
       - swh-listers-db
@@ -216,6 +232,8 @@ services:
     build: ./dockerfiles/swh-listers-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: npm
     depends_on:
       - swh-listers-db
@@ -229,6 +247,8 @@ services:
     build: ./dockerfiles/swh-listers-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: pypi
     depends_on:
       - swh-listers-db
@@ -244,6 +264,8 @@ services:
     build: ./dockerfiles/swh-indexer-worker
     env_file: ./indexers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: content_mimetype
     depends_on:
       - swh-scheduler-runner
@@ -257,6 +279,8 @@ services:
     build: ./dockerfiles/swh-indexer-worker
     env_file: ./indexers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: content_fossology_license
     depends_on:
       - swh-scheduler-runner
@@ -270,6 +294,8 @@ services:
     build: ./dockerfiles/swh-indexer-worker
     env_file: ./indexers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: origin_head
     depends_on:
       - swh-scheduler-api
@@ -283,6 +309,8 @@ services:
     build: ./dockerfiles/swh-indexer-worker
     env_file: ./indexers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: revision_metadata
     depends_on:
       - swh-scheduler-runner
@@ -296,6 +324,8 @@ services:
     build: ./dockerfiles/swh-indexer-worker
     env_file: ./indexers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: origin_intrinsic_metadata
     depends_on:
       - swh-scheduler-runner
@@ -340,6 +370,8 @@ services:
     build: ./dockerfiles/swh-loaders-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: debian
     depends_on:
       - swh-storage
@@ -350,6 +382,8 @@ services:
     build: ./dockerfiles/swh-loaders-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: dir
     depends_on:
       - swh-storage
@@ -360,6 +394,8 @@ services:
     build: ./dockerfiles/swh-loaders-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: git
     depends_on:
       - swh-storage
@@ -370,6 +406,8 @@ services:
     build: ./dockerfiles/swh-loaders-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: mercurial
     depends_on:
       - swh-storage
@@ -380,6 +418,8 @@ services:
     build: ./dockerfiles/swh-loaders-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: pypi
     depends_on:
       - swh-storage
@@ -390,6 +430,8 @@ services:
     build: ./dockerfiles/swh-loaders-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: svn
     depends_on:
       - swh-storage
@@ -400,6 +442,8 @@ services:
     build: ./dockerfiles/swh-loaders-worker
     env_file: ./listers.env
     environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: tar
     depends_on:
       - swh-storage

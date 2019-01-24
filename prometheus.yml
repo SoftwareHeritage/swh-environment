@@ -10,3 +10,8 @@ scrape_configs:
     - targets:
         - localhost:9090
     metrics_path: /prometheus/metrics
+
+  - job_name: statsd-exporter
+    static_configs:
+    - targets:
+        - prometheus-statsd-exporter:9102
