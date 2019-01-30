@@ -259,14 +259,13 @@ services:
 
 # Indexer Celery workers
 
-  swh-indexer-mimetype:
+  swh-indexer:
     image: swh/indexer-worker
     build: ./dockerfiles/swh-indexer-worker
     env_file: ./indexers.env
     environment:
       STATSD_HOST: prometheus-statsd-exporter
       STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: content_mimetype
     depends_on:
       - swh-scheduler-runner
       - swh-idx-storage
@@ -274,63 +273,11 @@ services:
       - swh-objstorage
       - amqp
 
-  swh-indexer-license:
-    image: swh/indexer-worker
-    build: ./dockerfiles/swh-indexer-worker
-    env_file: ./indexers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: content_fossology_license
     depends_on:
       - swh-scheduler-runner
       - swh-idx-storage
       - swh-storage
       - swh-objstorage
-      - amqp
-
-  swh-indexer-origin-head:
-    image: swh/indexer-worker
-    build: ./dockerfiles/swh-indexer-worker
-    env_file: ./indexers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: origin_head
-    depends_on:
-      - swh-scheduler-api
-      - swh-scheduler-runner
-      - swh-idx-storage
-      - swh-storage
-      - amqp
-
-  swh-indexer-revision-metadata:
-    image: swh/indexer-worker
-    build: ./dockerfiles/swh-indexer-worker
-    env_file: ./indexers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: revision_metadata
-    depends_on:
-      - swh-scheduler-runner
-      - swh-idx-storage
-      - swh-storage
-      - swh-objstorage
-      - amqp
-
-  swh-indexer-origin-intrinsic-metadata:
-    image: swh/indexer-worker
-    build: ./dockerfiles/swh-indexer-worker
-    env_file: ./indexers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: origin_intrinsic_metadata
-    depends_on:
-      - swh-scheduler-runner
-      - swh-idx-storage
-      - swh-storage
       - amqp
 
   swh-indexer-journal-client:

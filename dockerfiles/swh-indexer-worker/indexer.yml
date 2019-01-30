@@ -10,3 +10,7 @@ indexer_storage:
   cls: remote
   args:
     url: http://swh-idx-storage:5007/
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler-api:5008/
