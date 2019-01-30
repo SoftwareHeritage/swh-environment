@@ -1,2 +1,7 @@
+scheduler:
+  cls: local
+  args:
+    db: postgresql:///?service=swh-scheduler
 task_broker: amqp://guest:guest@amqp//
-scheduling_db: postgresql:///?service=swh-scheduler
+broker_transport_options:
+  max_retries: 1

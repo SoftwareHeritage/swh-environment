@@ -4,6 +4,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
   apt-get install -y \
     libsystemd-dev postgresql-client
+RUN pip install --upgrade pip setuptools wheel
 
 RUN pip install swh-scheduler
 COPY scheduler.yml /
