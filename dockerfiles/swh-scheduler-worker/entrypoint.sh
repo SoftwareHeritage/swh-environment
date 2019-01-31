@@ -30,6 +30,6 @@ case "$1" in
         ;;
     *)
 		echo Starting the swh-scheduler $1
-		exec swh-scheduler --log-level ${LOGLEVEL} $@
+		exec swh-scheduler --log-level ${LOGLEVEL} -C /scheduler.yml $@
         ;;
 esac

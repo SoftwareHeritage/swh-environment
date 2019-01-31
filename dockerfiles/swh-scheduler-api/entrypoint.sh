@@ -40,5 +40,5 @@ case "$1" in
                   --db-name ${POSTGRES_DB}
 
         echo Starting the swh-scheduler API server
-        exec swh-scheduler --log-level ${LOGLEVEL} api-server /scheduler.yml
+        exec swh-scheduler --log-level ${LOGLEVEL} -C /scheduler.yml api-server
 esac

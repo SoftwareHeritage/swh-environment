@@ -7,11 +7,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install swh-scheduler --no-binary psycopg2
-RUN mkdir -p /etc/softwareheritage/worker/
-COPY scheduler.yml /etc/softwareheritage/
-# XXX this should NOT be needed.
-# Some cleanup work in config files handling seems necessary...
-RUN ln -s /etc/softwareheritage/scheduler.yml /etc/softwareheritage/worker/
+
+COPY scheduler.yml /
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
