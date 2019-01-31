@@ -14,3 +14,5 @@ scheduler:
   cls: remote
   args:
     url: http://swh-scheduler-api:5008/
+celery:
+  task_broker: amqp://guest:guest@amqp//
