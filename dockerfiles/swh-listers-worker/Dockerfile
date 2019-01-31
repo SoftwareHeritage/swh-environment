@@ -5,10 +5,12 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y \
     libsystemd-dev postgresql-client
 
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install swh-lister
-RUN useradd -ms /bin/bash swh
-COPY entrypoint.sh /
 
+RUN useradd -ms /bin/bash swh
+
+COPY entrypoint.sh /
 COPY lister.yml /home/swh/.config/swh/
 RUN chown -R swh: /home/swh/.config/
 

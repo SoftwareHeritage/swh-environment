@@ -5,9 +5,11 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y \
     libsystemd-dev
 
+RUN pip install -U pip setuptools wheel
 RUN pip install swh-objstorage
-COPY objstorage.yml /
+
 COPY entrypoint.sh /
+COPY objstorage.yml /
 
 RUN mkdir -p /srv/softwareheritage/objects
 

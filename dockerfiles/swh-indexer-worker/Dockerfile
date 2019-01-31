@@ -5,11 +5,12 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y \
     libsystemd-dev postgresql-client
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install swh-indexer
-RUN useradd -ms /bin/bash swh
 
+RUN useradd -ms /bin/bash swh
 USER swh
+
 COPY entrypoint.sh /
 COPY indexer.yml /home/swh/
 

@@ -5,6 +5,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y \
     libsystemd-dev postgresql-client libpq-dev
 
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install swh-scheduler --no-binary psycopg2
 RUN mkdir -p /etc/softwareheritage/worker/
 COPY scheduler.yml /etc/softwareheritage/
