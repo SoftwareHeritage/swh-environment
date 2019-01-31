@@ -66,6 +66,6 @@ case "$1" in
                     --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
                     -Ofair --loglevel=${LOGLEVEL} --without-gossip \
                     --without-mingle --without-heartbeat \
-                    --hostname "${SWH_WORKER_INSTANCE}@%h"
+                    --hostname "lister-${SWH_WORKER_INSTANCE}@%h"
         ;;
 esac
