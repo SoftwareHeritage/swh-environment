@@ -14,4 +14,4 @@ USER swh
 COPY entrypoint.sh /
 COPY indexer.yml /home/swh/
 
-ENTRYPOINT ["/home/swh/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
