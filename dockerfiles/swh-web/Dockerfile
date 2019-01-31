@@ -10,7 +10,6 @@ RUN pip install swh-web
 RUN pip install psycopg2-binary  # to make pip silent
 RUN python3 -m swh.web.manage migrate
 
-COPY web.yml /etc/softwareheritage/web/
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]

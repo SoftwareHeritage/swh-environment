@@ -16,3 +16,5 @@ scheduler:
     url: http://swh-scheduler-api:5008/
 celery:
   task_broker: amqp://guest:guest@amqp//
+  task_modules:
+    - swh.indexer.tasks

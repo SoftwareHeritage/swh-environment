@@ -5,7 +5,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y libsystemd-dev
 
 RUN pip install swh-journal
-COPY logger.yml /etc/softwareheritage/journal/
 COPY client.py /
 COPY entrypoint.sh /
 

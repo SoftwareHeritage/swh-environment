@@ -8,7 +8,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install swh-scheduler --no-binary psycopg2
 
-COPY scheduler.yml /
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]

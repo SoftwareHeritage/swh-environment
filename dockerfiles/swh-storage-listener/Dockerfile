@@ -6,7 +6,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsystemd-dev postgresql-client
 
 RUN pip install swh-storage kafka_python
-COPY listener.yml /etc/softwareheritage/storage/
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]

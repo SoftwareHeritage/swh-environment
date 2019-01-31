@@ -8,7 +8,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install swh-indexer
 
-COPY indexer_storage.yml /
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]

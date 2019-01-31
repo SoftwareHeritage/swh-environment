@@ -18,8 +18,5 @@ RUN pip install \
 RUN useradd -ms /bin/bash swh
 COPY entrypoint.sh /
 
-COPY loader.yml /home/swh/.config/swh/
-RUN chown -R swh: /home/swh/.config/
-
 USER swh
 ENTRYPOINT ["/entrypoint.sh"]

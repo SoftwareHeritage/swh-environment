@@ -67,6 +67,8 @@ services:
       - swh-scheduler-db
     ports:
       - 5008:5008
+    volumes:
+      - "./conf/scheduler.yml:/scheduler.yml:ro"
 
   swh-scheduler-listener:
     image: swh/scheduler-worker
@@ -76,6 +78,8 @@ services:
     depends_on:
       - swh-scheduler-api
       - amqp
+    volumes:
+      - "./conf/scheduler.yml:/scheduler.yml:ro"
 
   swh-scheduler-runner:
     image: swh/scheduler-worker
@@ -85,6 +89,8 @@ services:
     depends_on:
       - swh-scheduler-api
       - amqp
+    volumes:
+      - "./conf/scheduler.yml:/scheduler.yml:ro"
 
 # Graph storage
 
@@ -103,6 +109,8 @@ services:
       - swh-storage-db
       - swh-objstorage
     env_file: ./env/storage.env
+    volumes:
+      - "./conf/storage.yml:/storage.yml:ro"
 
 # Object storage
 
@@ -111,6 +119,8 @@ services:
     image: swh/objstorage
     ports:
       - 5003:5003
+    volumes:
+      - "./conf/objstorage.yml:/objstorage.yml:ro"
 
 # Indexer storage
 
@@ -132,6 +142,8 @@ services:
       POSTGRES_DB: swh-idx-storage
       PGHOST: swh-idx-storage-db
       PGUSER: postgres
+    volumes:
+      - "./conf/indexer_storage.yml:/indexer_storage.yml:ro"
 
 # Web interface
 
@@ -144,6 +156,8 @@ services:
       - swh-objstorage
       - swh-storage
       - swh-idx-storage
+    volumes:
+      - "./conf/web.yml:/etc/softwareheritage/web/web.yml:ro"
 
   swh-deposit-db:
     image: postgres:10
@@ -160,6 +174,9 @@ services:
     env_file: ./env/deposit.env
     environment:
       PGHOST: swh-deposit-db
+    volumes:
+      - "./conf/deposit_server.yml:/etc/softwareheritage/deposit/server.yml:ro"
+      - "./conf/deposit_private.yml:/etc/softwareheritage/deposit/private.yml:ro"
 
 # Lister Celery workers
 
@@ -182,6 +199,8 @@ services:
       - swh-scheduler-runner
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
 
   swh-lister-bitbucket:
     image: swh/listers-worker
@@ -197,6 +216,8 @@ services:
       - swh-scheduler-runner
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
 
   swh-lister-github:
     image: swh/listers-worker
@@ -212,6 +233,8 @@ services:
       - swh-scheduler-runner
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
 
   swh-lister-gitlab:
     image: swh/listers-worker
@@ -227,6 +250,8 @@ services:
       - swh-scheduler-runner
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
 
   swh-lister-npm:
     image: swh/listers-worker
@@ -242,6 +267,8 @@ services:
       - swh-scheduler-runner
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
 
   swh-lister-pypi:
     image: swh/listers-worker
@@ -257,6 +284,8 @@ services:
       - swh-scheduler-runner
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
 
 # Indexer Celery workers
 
@@ -280,6 +309,8 @@ services:
       - swh-storage
       - swh-objstorage
       - amqp
+    volumes:
+      - "./conf/indexer.yml:/home/swh/.config/swh/indexer.yml:ro"
 
   swh-indexer-journal-client:
     image: swh/indexer-journal-client
@@ -287,6 +318,8 @@ services:
     depends_on:
       - swh-journal-publisher
       - swh-scheduler-api
+    volumes:
+      - "./conf/journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
 
 # Journal related
 
@@ -297,6 +330,8 @@ services:
     depends_on:
       - swh-storage-db
       - kafka
+    volumes:
+      - "./conf/storage_listener.yml:/etc/softwareheritage/storage/listener.yml:ro"
 
   swh-journal-publisher:
     image: swh/journal-publisher
@@ -304,12 +339,16 @@ services:
     depends_on:
       - kafka
       - swh-storage-listener
+    volumes:
+      - "./conf/journal_publisher.yml:/etc/softwareheritage/journal/publisher.yml:ro"
 
   swh-journal-client:
     image: swh/journal-client
     build: ./dockerfiles/swh-journal-client
     depends_on:
       - swh-journal-publisher
+    volumes:
+      - "./conf/journal_client.yml:/etc/softwareheritage/journal/logger.yml:ro"
 
 # Loader Celery workers
 
@@ -324,6 +363,8 @@ services:
     depends_on:
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
 
   swh-loader-dir:
     image: swh/loaders-worker
@@ -336,6 +377,8 @@ services:
     depends_on:
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
 
   swh-loader-git:
     image: swh/loaders-worker
@@ -348,6 +391,8 @@ services:
     depends_on:
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
 
   swh-loader-mercurial:
     image: swh/loaders-worker
@@ -360,6 +405,8 @@ services:
     depends_on:
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
 
   swh-loader-pypi:
     image: swh/loaders-worker
@@ -372,6 +419,8 @@ services:
     depends_on:
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
 
   swh-loader-svn:
     image: swh/loaders-worker
@@ -384,6 +433,8 @@ services:
     depends_on:
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
 
   swh-loader-tar:
     image: swh/loaders-worker
@@ -396,3 +447,5 @@ services:
     depends_on:
       - swh-storage
       - amqp
+    volumes:
+      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"

@@ -12,6 +12,5 @@ RUN useradd -ms /bin/bash swh
 USER swh
 
 COPY entrypoint.sh /
-COPY indexer.yml /home/swh/
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -9,7 +9,6 @@ RUN pip install -U pip setuptools wheel
 RUN pip install swh-objstorage
 
 COPY entrypoint.sh /
-COPY objstorage.yml /
 
 RUN mkdir -p /srv/softwareheritage/objects
 

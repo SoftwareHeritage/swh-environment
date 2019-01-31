@@ -8,8 +8,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 RUN pip install swh-deposit gunicorn
 RUN pip install psycopg2-binary  # to make pip silent
-COPY server.yml /etc/softwareheritage/deposit/
-COPY private.yml /etc/softwareheritage/deposit/
 
 COPY entrypoint.sh /
 EXPOSE 5006
