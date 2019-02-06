@@ -30,17 +30,6 @@ EOF
 
 chmod 0600 ~/.pgpass
 
-mkdir -p ~/.config/swh/worker
-
-cat > ~/.config/swh/worker/${SWH_WORKER_INSTANCE}.ini <<EOF
-[main]
-task_broker = amqp://guest@amqp//
-task_modules = swh.lister.${SWH_WORKER_INSTANCE}.tasks
-task_soft_time_limit = 0
-EOF
-
-ln -fs ~/.config/swh/lister.yml ~/.config/swh/lister-${SWH_WORKER_INSTANCE}.yml
-
 
 case "$1" in
     "shell")
@@ -54,11 +43,13 @@ case "$1" in
         else
             echo Creating database
             createdb ${POSTGRES_DB}
-            echo Initialize database
-            python -m swh.lister.cli --create-tables --with-data \
-                   --db-url postgres://${PGUSER}@${PGHOST}/${POSTGRES_DB} \
-                   --lister ${SWH_WORKER_INSTANCE}
-        fi
+
+			echo Initialize database
+			python -m swh.lister.cli --create-tables --with-data \
+				   --db-url postgres://${PGUSER}@${PGHOST}/${POSTGRES_DB} \
+				   all
+		fi
+
         echo Starting the swh-lister Celery worker for ${SWH_WORKER_INSTANCE}
         exec python -m celery worker \
                     --app=swh.scheduler.celery_backend.config.app \
@@ -67,6 +58,6 @@ case "$1" in
                     --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
                     -Ofair --loglevel=${LOGLEVEL} --without-gossip \
                     --without-mingle --without-heartbeat \
-                    --hostname "lister-${SWH_WORKER_INSTANCE}@%h"
+                    --hostname "${SWH_WORKER_INSTANCE}@%h"
         ;;
 esac

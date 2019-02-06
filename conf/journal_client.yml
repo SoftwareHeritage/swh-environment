@@ -2,3 +2,7 @@ brokers:
   - kafka
 # small number of batch
 max_messages: 1
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler-api:5008/

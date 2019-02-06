@@ -2,6 +2,18 @@ storage:
   cls: remote
   args:
     url: http://swh-storage:5002/
-lister_db_url: postgresql:///?service=swh
+lister:
+  cls: local
+  args:
+    db: postgresql:///?service=swh
 celery:
   task_broker: amqp://guest:guest@amqp//
+  task_modules:
+    - swh.loader.debian.tasks
+    - swh.loader.dir.tasks
+    - swh.loader.git.tasks
+    - swh.loader.mercurial.tasks
+    - swh.loader.pypi.tasks
+    - swh.loader.svn.tasks
+    - swh.loader.tar.tasks
+lister_db_url: postgresql:///?service=swh

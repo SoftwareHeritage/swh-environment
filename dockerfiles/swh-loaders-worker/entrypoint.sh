@@ -16,18 +16,6 @@ fi
 echo Installed Python packages:
 pip list
 
-mkdir -p ~/.config/swh/worker
-
-cat > ~/.config/swh/worker/${SWH_WORKER_INSTANCE}.ini <<EOF
-[main]
-task_broker = amqp://guest@amqp//
-task_modules = swh.loader.${SWH_WORKER_INSTANCE}.tasks
-task_soft_time_limit = 0
-EOF
-
-mkdir -p ~/.config/swh/loader
-ln -fs ~/.config/swh/loader.yml ~/.config/swh/loader/${SWH_WORKER_INSTANCE}.yml
-
 
 case "$1" in
     "shell")
@@ -42,6 +30,6 @@ case "$1" in
                     --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
                     -Ofair --loglevel=${LOGLEVEL} --without-gossip \
                     --without-mingle --without-heartbeat \
-                    --hostname "loader-${SWH_WORKER_INSTANCE}@%h"
+                    --hostname "${SWH_WORKER_INSTANCE}@%h"
         ;;
 esac

@@ -7,13 +7,13 @@ services:
     ports:
       - 5072:5672
 
-  flower:
-    image: mher/flower
-    command: --broker=amqp://guest:guest@amqp:5672// --url_prefix=flower
-    ports:
-      - 5055:5555
-    depends_on:
-      - amqp
+#  flower:
+#    image: mher/flower
+#    command: --broker=amqp://guest:guest@amqp:5672// --url_prefix=flower
+#    ports:
+#      - 5055:5555
+#    depends_on:
+#      - amqp
 
   zookeeper:
     image: wurstmeister/zookeeper
@@ -156,6 +156,8 @@ services:
       - swh-objstorage
       - swh-storage
       - swh-idx-storage
+    environment:
+      VERBOSITY: 3
     volumes:
       - "./conf/web.yml:/etc/softwareheritage/web/web.yml:ro"
 
@@ -185,14 +187,15 @@ services:
     environment:
       POSTGRES_PASSWORD: testpassword
 
-  swh-lister-debian:
+  swh-lister:
     image: swh/listers-worker
     build: ./dockerfiles/swh-listers-worker
     env_file: ./env/listers.env
     environment:
       STATSD_HOST: prometheus-statsd-exporter
       STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: debian
+      SWH_WORKER_INSTANCE: listers
+      SWH_CONFIG_FILENAME: /lister.yml
     depends_on:
       - swh-listers-db
       - swh-scheduler-api
@@ -200,92 +203,24 @@ services:
       - swh-storage
       - amqp
     volumes:
-      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
+      - "./conf/lister.yml:/lister.yml:ro"
 
-  swh-lister-bitbucket:
-    image: swh/listers-worker
-    build: ./dockerfiles/swh-listers-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: bitbucket
-    depends_on:
-      - swh-listers-db
-      - swh-scheduler-api
-      - swh-scheduler-runner
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
+# Loader Celery workers
 
-  swh-lister-github:
-    image: swh/listers-worker
-    build: ./dockerfiles/swh-listers-worker
+  swh-loader:
+    image: swh/loaders-worker
+    build: ./dockerfiles/swh-loaders-worker
     env_file: ./env/listers.env
     environment:
       STATSD_HOST: prometheus-statsd-exporter
       STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: github
+      SWH_WORKER_INSTANCE: loader
+      SWH_CONFIG_FILENAME: /loader.yml
     depends_on:
-      - swh-listers-db
-      - swh-scheduler-api
-      - swh-scheduler-runner
       - swh-storage
       - amqp
     volumes:
-      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
-
-  swh-lister-gitlab:
-    image: swh/listers-worker
-    build: ./dockerfiles/swh-listers-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: gitlab
-    depends_on:
-      - swh-listers-db
-      - swh-scheduler-api
-      - swh-scheduler-runner
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
-
-  swh-lister-npm:
-    image: swh/listers-worker
-    build: ./dockerfiles/swh-listers-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: npm
-    depends_on:
-      - swh-listers-db
-      - swh-scheduler-api
-      - swh-scheduler-runner
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
-
-  swh-lister-pypi:
-    image: swh/listers-worker
-    build: ./dockerfiles/swh-listers-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: pypi
-    depends_on:
-      - swh-listers-db
-      - swh-scheduler-api
-      - swh-scheduler-runner
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/lister.yml:/home/swh/.config/swh/lister.yml:ro"
+      - "./conf/loader.yml:/loader.yml:ro"
 
 # Indexer Celery workers
 
@@ -302,15 +237,8 @@ services:
       - swh-storage
       - swh-objstorage
       - amqp
-
-    depends_on:
-      - swh-scheduler-runner
-      - swh-idx-storage
-      - swh-storage
-      - swh-objstorage
-      - amqp
     volumes:
-      - "./conf/indexer.yml:/home/swh/.config/swh/indexer.yml:ro"
+      - "./conf/indexer.yml:/indexer.yml:ro"
 
   swh-indexer-journal-client:
     image: swh/indexer-journal-client
@@ -349,103 +277,3 @@ services:
       - swh-journal-publisher
     volumes:
       - "./conf/journal_client.yml:/etc/softwareheritage/journal/logger.yml:ro"
-
-# Loader Celery workers
-
-  swh-loader-debian:
-    image: swh/loaders-worker
-    build: ./dockerfiles/swh-loaders-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: debian
-    depends_on:
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
-
-  swh-loader-dir:
-    image: swh/loaders-worker
-    build: ./dockerfiles/swh-loaders-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: dir
-    depends_on:
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
-
-  swh-loader-git:
-    image: swh/loaders-worker
-    build: ./dockerfiles/swh-loaders-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: git
-    depends_on:
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
-
-  swh-loader-mercurial:
-    image: swh/loaders-worker
-    build: ./dockerfiles/swh-loaders-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: mercurial
-    depends_on:
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
-
-  swh-loader-pypi:
-    image: swh/loaders-worker
-    build: ./dockerfiles/swh-loaders-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: pypi
-    depends_on:
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
-
-  swh-loader-svn:
-    image: swh/loaders-worker
-    build: ./dockerfiles/swh-loaders-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: svn
-    depends_on:
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"
-
-  swh-loader-tar:
-    image: swh/loaders-worker
-    build: ./dockerfiles/swh-loaders-worker
-    env_file: ./env/listers.env
-    environment:
-      STATSD_HOST: prometheus-statsd-exporter
-      STATSD_PORT: 9125
-      SWH_WORKER_INSTANCE: tar
-    depends_on:
-      - swh-storage
-      - amqp
-    volumes:
-      - "./conf/loader.yml:/home/swh/.config/swh/loader.yml:ro"

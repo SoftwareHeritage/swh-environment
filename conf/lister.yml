@@ -8,7 +8,19 @@ scheduler:
   args:
     url: http://swh-scheduler-api:5008/
 
+lister:
+  cls: local
+  args:
+    db: postgresql:///?service=swh
+
 celery:
   task_broker: amqp://guest:guest@amqp//
+  task_modules:
+    - swh.lister.bitbucket.tasks
+    - swh.lister.debian.tasks
+    - swh.lister.github.tasks
+    - swh.lister.gitlab.tasks
+    - swh.lister.npm.tasks
+    - swh.lister.pypi.tasks
 
 lister_db_url: postgresql:///?service=swh
