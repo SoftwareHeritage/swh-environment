@@ -33,6 +33,6 @@ case "$1" in
       until psql postgresql:///?service=swh -c "select 1" 1>&2 >/dev/null; do sleep 0.1; done
 
       echo "Starting swh-storage's listener"
-      exec python3 -m swh.storage.listener --verbose
+      exec python3 -m swh.storage.listener
       ;;
 esac

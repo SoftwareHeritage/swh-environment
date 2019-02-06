@@ -19,6 +19,6 @@ case "$1" in
       ;;
     *)
         echo "Starting swh-journal publisher"
-        exec python3 -m swh.journal.publisher --verbose
+        exec python3 -m swh.journal.publisher
       ;;
 esac
