@@ -45,7 +45,7 @@ case "$1" in
             createdb ${POSTGRES_DB}
 
 			echo Initialize database
-			python -m swh.lister.cli --create-tables --with-data \
+			python -m swh.lister.cli \
 				   --db-url postgres://${PGUSER}@${PGHOST}/${POSTGRES_DB} \
 				   all
 		fi
