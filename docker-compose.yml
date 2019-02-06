@@ -44,6 +44,15 @@ services:
       - "./conf/prometheus-statsd-mapping.yml:/etc/prometheus/statsd-mapping.yml:ro"
     restart: unless-stopped
 
+  grafana:
+    image: grafana/grafana
+    restart: unless-stopped
+    environment:
+      GF_SERVER_ROOT_URL: http://localhost:5080/grafana
+    volumes:
+      - "./conf/grafana/provisioning:/etc/grafana/provisioning:ro"
+      - "./conf/grafana/dashboards:/var/lib/grafana/dashboards"
+
   nginx:
     image: nginx
     volumes:
