@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -e
+export PATH=${HOME}/.local/bin:${PATH}
 
 if [[ -d /src ]] ; then
     for srcrepo in /src/swh-* ; do
