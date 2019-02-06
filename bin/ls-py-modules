@@ -6,4 +6,4 @@ if ! [ -x "$LS_REPOS" ] ; then
     exit 2
 fi
 
-"$LS_REPOS" "$@" | egrep -v -- "(-(template|testdata)$|snippets)"
+"$LS_REPOS" "$@" | egrep -v -- "(-(template|testdata)$|snippets|docker)"
