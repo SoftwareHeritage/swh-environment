@@ -13,6 +13,13 @@ on coding, not configuring!
 This uses docker with docker-compose, so ensure you have a working
 docker environment and docker-compose is installed.
 
+## Warning
+
+Running a Software Heritage instance on your machine can be quickly quite
+ressource consuming: if you play a bit too hard (eg. if you try the github
+lister), you may fill your hard drive pretty quick, and consume a lot of CPU,
+memory and network bandwidth.
+
 ## Quick start
 
 First, start containers:
@@ -60,9 +67,9 @@ swh-lister-debian_1                      |
 Once all the containers are running, you can use the web interface by opening
 http://localhost:5080/ in your web browser.
 
-At this point, the archive is empty and needs to be filled with content. To do
-so, you can create tasks that will scrape a forge. For example, to inject the
-code from the https://0xacab.org gitlab forge:
+At this point, the archive is empty and needs to be filled with some content.
+To do so, you can create tasks that will scrape a forge. For example, to inject
+the code from the https://0xacab.org gitlab forge:
 
 ```
 $ ~/swh-environment/swh-docker-dev$ docker-compose run swh-scheduler-api \
@@ -84,8 +91,7 @@ Task 1
 This task will scrape the forge's project list and create subtasks to inject
 each git repository found there.
 
-This will take a bit af time to complete, but you can follow Celery activity on
-the flower instance: http://localhost:5080/flower/
+This will take a bit af time to complete.
 
 To increase the speed at wich git repositories are imported, you can spawn more
 `swh-loader-git` workers:
@@ -153,6 +159,22 @@ mount it in the container in `/src` and the entrypoint will ensure every
 swh-* package found in `/src/` is installed (using `pip install -e` so you can
 easily hack your code. If the application you play with have autoreload support,
 there is even no need for restarting the impacted container.)
+
+Note: if the docker fails to start when using local sources for one or more swh
+package, it's most probably due to permission problems on cache files. For
+example, if you have executed tests locally (using pytest or tox), you have
+cache files (__pycache__ etc.) that will prevent `pip install` from working
+within the docker.
+
+The solution is to clean these files and directories before trying to spawn the
+docker.
+
+```
+~/swh-environment$ find . -type d -name __pycache__ -exec rm -rf {} \;
+~/swh-environment$ find . -type d -name .tox -exec rm -rf {} \;
+~/swh-environment$ find . -type d -name .hypothesis -exec rm -rf {} \;
+```
+
 
 ## Details
 
