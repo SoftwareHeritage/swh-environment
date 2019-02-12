@@ -159,6 +159,12 @@ services:
   swh-web:
     build: ./dockerfiles/swh-web
     image: swh/web
+    command:
+      - runserver
+      - --verbosity 3
+      - --insecure
+      - 0.0.0.0:5004
+
     ports:
       - 5004:5004
     depends_on:
