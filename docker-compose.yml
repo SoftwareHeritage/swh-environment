@@ -173,6 +173,7 @@ services:
       - swh-idx-storage
     environment:
       VERBOSITY: 3
+      #DJANGO_SETTINGS_MODULE: djangosettings
       PYTHONPATH: /tmp/swh
     volumes:
       - "./conf/web.yml:/etc/softwareheritage/web/web.yml:ro"
@@ -196,6 +197,38 @@ services:
     volumes:
       - "./conf/deposit_server.yml:/etc/softwareheritage/deposit/server.yml:ro"
       - "./conf/deposit_private.yml:/etc/softwareheritage/deposit/private.yml:ro"
+
+  swh-vault-db:
+    image: postgres:10
+    env_file: ./env/vault.env
+
+  swh-vault-api:
+    build: ./dockerfiles/swh-vault
+    image: swh/vault
+    env_file: ./env/vault.env
+    command: server
+    ports:
+      - 5005:5005
+    depends_on:
+      - swh-vault-db
+      - swh-objstorage
+      - swh-storage
+      - swh-scheduler-api
+    volumes:
+      - "./conf/vault-api.yml:/vault-api.yml:ro"
+
+  swh-vault-worker:
+    build: ./dockerfiles/swh-vault
+    image: swh/vault
+    command: worker
+    environment:
+      SWH_CONFIG_FILENAME: /cooker.yml
+    depends_on:
+      - swh-vault-api
+      - swh-storage
+    volumes:
+      - "./conf/vault-worker.yml:/cooker.yml:ro"
+
 
 # Lister Celery workers
 

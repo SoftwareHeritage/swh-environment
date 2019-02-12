@@ -14,6 +14,21 @@ indexer_storage:
   args:
     url: http://swh-idx-storage:5007/
 
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler-api:5008/
+
+vault:
+  cls: remote
+  args:
+    url: http://swh-vault-api:5005/
+
+deposit:
+  private_api_url: https://swh-deposit:5006/1/private/
+  private_api_user: swhworker
+  private_api_password: ''
+
 allowed_hosts:
   - "*"
 
