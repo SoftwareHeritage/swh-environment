@@ -13,5 +13,6 @@ RUN python3 -m swh.web.manage migrate
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
+WORKDIR /tmp/swh
 
 EXPOSE 5004
