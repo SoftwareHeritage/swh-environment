@@ -10,13 +10,6 @@ if [[ -d /src ]] ; then
     done
 fi
 
-echo '#################### Warning #####################'
-echo '# Install kombu from sources as a workaround for #'
-echo '# https://forge.softwareheritage.org/T1491       #'
-echo '# TODO: Remove this ASAP                         #'
-echo '##################################################'
-pip install git+https://github.com/celery/kombu.git
-
 echo Installed Python packages:
 pip list
 
