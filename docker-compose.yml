@@ -195,8 +195,7 @@ services:
     environment:
       PGHOST: swh-deposit-db
     volumes:
-      - "./conf/deposit_server.yml:/etc/softwareheritage/deposit/server.yml:ro"
-      - "./conf/deposit_private.yml:/etc/softwareheritage/deposit/private.yml:ro"
+      - "./conf/deposit.yml:/deposit.yml:ro"
 
   swh-vault-db:
     image: postgres:10
