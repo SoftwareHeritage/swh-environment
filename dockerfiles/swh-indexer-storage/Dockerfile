@@ -6,7 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsystemd-dev postgresql-client
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install swh-indexer
+RUN pip install swh-indexer gunicorn
 
 COPY entrypoint.sh /
 

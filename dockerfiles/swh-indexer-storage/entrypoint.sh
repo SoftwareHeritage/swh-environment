@@ -41,6 +41,9 @@ case "$1" in
           --db-name ${POSTGRES_DB}
 
     echo Starting the swh-indexer-storage API server
-        exec python -m swh.indexer.storage.api.server /indexer_storage
+    exec gunicorn --bind 0.0.0.0:5007 \
+         --reload \
+         --log-level DEBUG \
+         swh.indexer.storage.api.wsgi
     ;;
 esac

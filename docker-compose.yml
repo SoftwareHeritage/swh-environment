@@ -151,6 +151,7 @@ services:
       POSTGRES_DB: swh-idx-storage
       PGHOST: swh-idx-storage-db
       PGUSER: postgres
+      SWH_CONFIG_FILENAME: /indexer_storage.yml
     volumes:
       - "./conf/indexer_storage.yml:/indexer_storage.yml:ro"
 
