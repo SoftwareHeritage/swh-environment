@@ -22,5 +22,23 @@ celery:
     - swh.lister.gitlab.tasks
     - swh.lister.npm.tasks
     - swh.lister.pypi.tasks
-
-lister_db_url: postgresql:///?service=swh
+  task_queues:
+    - swh.lister.bitbucket.tasks.FullBitBucketRelister
+    - swh.lister.bitbucket.tasks.IncrementalBitBucketLister
+    - swh.lister.bitbucket.tasks.RangeBitBucketLister
+    - swh.lister.bitbucket.tasks.ping
+    - swh.lister.debian.tasks.DebianListerTask
+    - swh.lister.debian.tasks.ping
+    - swh.lister.github.tasks.FullGitHubRelister
+    - swh.lister.github.tasks.IncrementalGitHubLister
+    - swh.lister.github.tasks.RangeGitHubLister
+    - swh.lister.github.tasks.ping
+    - swh.lister.gitlab.tasks.FullGitLabRelister
+    - swh.lister.gitlab.tasks.IncrementalGitLabLister
+    - swh.lister.gitlab.tasks.RangeGitLabLister
+    - swh.lister.gitlab.tasks.ping
+    - swh.lister.npm.tasks.NpmIncrementalListerTask
+    - swh.lister.npm.tasks.NpmListerTask
+    - swh.lister.npm.tasks.ping
+    - swh.lister.pypi.tasks.PyPIListerTask
+    - swh.lister.pypi.tasks.ping

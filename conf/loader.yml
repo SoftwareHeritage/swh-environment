@@ -16,4 +16,18 @@ celery:
     - swh.loader.pypi.tasks
     - swh.loader.svn.tasks
     - swh.loader.tar.tasks
+  task_queues:
+    - swh.loader.debian.tasks.LoadDebianPackage
+    - swh.loader.dir.tasks.LoadDirRepository
+    - swh.loader.git.tasks.LoadDiskGitRepository
+    - swh.loader.git.tasks.UncompressAndLoadDiskGitRepository
+    - swh.loader.git.tasks.UpdateGitRepository
+    - swh.loader.mercurial.tasks.LoadArchiveMercurial
+    - swh.loader.mercurial.tasks.LoadMercurial
+    - swh.loader.pypi.tasks.LoadPyPI
+    - swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
+    - swh.loader.svn.tasks.LoadSvnRepository
+    - swh.loader.svn.tasks.MountAndLoadSvnRepository
+    - swh.loader.tar.tasks.LoadTarRepository
+
 lister_db_url: postgresql:///?service=swh

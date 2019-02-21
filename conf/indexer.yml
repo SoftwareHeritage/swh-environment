@@ -18,3 +18,14 @@ celery:
   task_broker: amqp://guest:guest@amqp//
   task_modules:
     - swh.indexer.tasks
+  task_queues:
+    - swh.indexer.tasks.ContentFossologyLicense
+    - swh.indexer.tasks.ContentLanguage
+    - swh.indexer.tasks.ContentMimetype
+    - swh.indexer.tasks.ContentRangeFossologyLicense
+    - swh.indexer.tasks.ContentRangeMimetype
+    - swh.indexer.tasks.Ctags
+    - swh.indexer.tasks.OriginHead
+    - swh.indexer.tasks.OriginMetadata
+    - swh.indexer.tasks.RecomputeChecksums
+    - swh.indexer.tasks.RevisionMetadata

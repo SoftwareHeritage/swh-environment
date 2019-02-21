@@ -10,4 +10,8 @@ celery:
   task_broker: amqp://guest:guest@amqp//
   task_modules:
     - swh.vault.cooking_tasks
+  task_queues:
+    - swh.vault.cooking_tasks.SWHBatchCookingTask
+    - swh.vault.cooking_tasks.SWHCookingTask
+
 max_bundle_size: 536870912
