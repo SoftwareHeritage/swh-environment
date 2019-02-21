@@ -6,7 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsystemd-dev
 
 RUN pip install -U pip setuptools wheel
-RUN pip install swh-objstorage
+RUN pip install swh-objstorage gunicorn
 
 COPY entrypoint.sh /
 

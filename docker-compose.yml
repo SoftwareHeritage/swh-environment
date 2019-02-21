@@ -128,6 +128,8 @@ services:
     image: swh/objstorage
     ports:
       - 5003:5003
+    environment:
+      SWH_CONFIG_FILENAME: /objstorage.yml
     volumes:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
 

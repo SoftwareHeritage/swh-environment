@@ -20,5 +20,10 @@ if [ "$1" = 'shell' ] ; then
 	exec bash -i
 else
 	echo Starting the swh-objstorage API server
-	exec python -m swh.objstorage.api.server /objstorage.yml
+        exec gunicorn --bind 0.0.0.0:5003 \
+           --worker-class aiohttp.worker.GunicornWebWorker \
+           --log-level DEBUG \
+           --reload \
+           swh.objstorage.api.wsgi
+
 fi
