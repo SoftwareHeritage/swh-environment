@@ -6,7 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsystemd-dev postgresql-client
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install swh-storage
+RUN pip install swh-storage gunicorn
 
 COPY entrypoint.sh /
 

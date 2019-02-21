@@ -37,6 +37,9 @@ case "$1" in
           --db-name ${POSTGRES_DB}
 
       echo Starting the swh-storage API server
-      exec python -m swh.storage.api.server /storage.yml
+      exec gunicorn --bind 0.0.0.0:5002 \
+           --reload \
+           --log-level DEBUG \
+           swh.storage.api.wsgi
       ;;
 esac
