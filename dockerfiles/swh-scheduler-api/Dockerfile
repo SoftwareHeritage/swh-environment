@@ -6,7 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsystemd-dev postgresql-client
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install swh-scheduler
+RUN pip install swh-scheduler gunicorn
 
 COPY entrypoint.sh /
 

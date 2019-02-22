@@ -40,5 +40,9 @@ case "$1" in
                   --db-name ${POSTGRES_DB}
 
         echo Starting the swh-scheduler API server
-        exec swh-scheduler --log-level ${LOGLEVEL} -C /scheduler.yml api-server
+        exec gunicorn --bind 0.0.0.0:5008 \
+           --log-level DEBUG \
+           --reload \
+           swh.scheduler.api.wsgi
+
 esac

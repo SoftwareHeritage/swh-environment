@@ -72,6 +72,8 @@ services:
     image: swh/scheduler-api
     build: ./dockerfiles/swh-scheduler-api
     env_file: ./env/scheduler.env
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
     depends_on:
       - swh-scheduler-db
     ports:
