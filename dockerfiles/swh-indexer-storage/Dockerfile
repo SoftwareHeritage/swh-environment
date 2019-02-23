@@ -11,5 +11,3 @@ RUN pip install swh-indexer gunicorn
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
-
-EXPOSE 5002
