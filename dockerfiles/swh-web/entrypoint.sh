@@ -18,8 +18,7 @@ case "$1" in
     "shell")
         exec bash -i
         ;;
-	*)
-		echo "starting the swh-web server"
-		exec python3 -m swh.web.manage $@
-		;;
+     *)
+        echo "starting the swh-web server"
+        exec gunicorn -b 0.0.0.0:5004 swh.web.wsgi
 esac
