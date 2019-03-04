@@ -173,12 +173,11 @@ services:
       - swh-idx-storage
     environment:
       VERBOSITY: 3
-      # DJANGO_SETTINGS_MODULE: djangosettings
+      DJANGO_SETTINGS_MODULE: swh.web.settings.development
       SWH_CONFIG_FILENAME: /web.yml
       PYTHONPATH: /tmp/swh
     volumes:
       - "./conf/web.yml:/web.yml:ro"
-      - "./conf/djangosettings.py:/tmp/swh/djangosettings.py"
 
   swh-deposit-db:
     image: postgres:11
