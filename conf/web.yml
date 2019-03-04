@@ -37,3 +37,5 @@ debug: yes
 grecaptcha:
   activated: false
   site_key: ''
+
+serve_assets: yes
