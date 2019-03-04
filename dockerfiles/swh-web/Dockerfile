@@ -6,6 +6,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
+RUN pip install -U pip
 RUN pip install swh-web
 RUN pip install psycopg2-binary  # to make pip silent
 RUN pip install gunicorn
