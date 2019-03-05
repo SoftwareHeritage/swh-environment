@@ -74,6 +74,7 @@ services:
     env_file: ./env/scheduler.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     depends_on:
       - swh-scheduler-db
     ports:
@@ -85,6 +86,9 @@ services:
     image: swh/scheduler-worker
     build: ./dockerfiles/swh-scheduler-worker
     env_file: ./env/scheduler.env
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     command: listener
     depends_on:
       - swh-scheduler-api
@@ -96,6 +100,9 @@ services:
     image: swh/scheduler-worker
     build: ./dockerfiles/swh-scheduler-worker
     env_file: ./env/scheduler.env
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     command: runner -p 10
     depends_on:
       - swh-scheduler-api
