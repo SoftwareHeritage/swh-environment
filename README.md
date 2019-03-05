@@ -1,30 +1,61 @@
 # swh-docker-dev
 
-[Work in progress]
-
 This repo contains Dockerfiles to allow developers to run a small
 Software Heritage instance on their development computer.
 
 The end goal is to smooth the contributors/developers workflow. Focus
 on coding, not configuring!
 
+WARNING: Running a Software Heritage instance on your machine can consume
+         quite a bit of resources: if you play a bit too hard (e.g., if you
+         try to list all GitHub repositories with the corresponding lister),
+         you may fill your hard drive, and consume a lot of CPU, memory and
+         network bandwidth.
+
+
 ## Dependencies
 
 This uses docker with docker-compose, so ensure you have a working
 docker environment and docker-compose is installed.
 
-## Warning
+We recommend using the latest version of docker, so please read
+https://docs.docker.com/install/linux/docker-ce/debian/ for more details on how
+to install docker on your machine.
 
-Running a Software Heritage instance on your machine can be quickly quite
-ressource consuming: if you play a bit too hard (eg. if you try the github
-lister), you may fill your hard drive pretty quick, and consume a lot of CPU,
-memory and network bandwidth.
+On a debian system, docker-compose can be installed from debian repositories.
+On a stable (stretch) machine, it is recommended to install the version from
+[backports](https://backports.debian.org/Instructions/):
+
+``` bash
+~$ sudo apt install -t stretch-backports docker-compose
+```
 
 ## Quick start
 
-First, start containers:
+First, clone this repository.
 
+If you already have followed the [develop setup guide], then you should already
+have a copy of the swh-docker-env git repository. Use it:
+
+``` bash
+~$ cd swh-environment/swh-docker-dev
 ```
+
+Otherwise, we suggest to create a `swh-environment`
+directory in which this repo will be cloned so you can later on run some
+component in docker containers with overrides code from local repositories (see
+[below](#using-docker-setup-development-and-integration-testing)):
+
+``` bash
+~$ mkdir swh-environment
+~$ cd swh-environment
+~/swh-environment$ git clone https://forge.softwareheritage.org/source/swh-docker-dev.git
+~/swh-environment$ cd swh-docker-dev
+```
+
+Then, start containers:
+
+``` bash
 ~/swh-environment/swh-docker-dev$ docker-compose up -d
 [...]
 Creating swh-docker-dev_amqp_1               ... done
@@ -36,10 +67,9 @@ Creating swh-docker-dev_swh-scheduler-db_1   ... done
 ```
 
 This will build docker images and run them.
-
 Check everything is running fine with:
 
-```
+``` bash
 ~/swh-environment/swh-docker-dev$ docker-compose ps
                          Name                                       Command               State                                      Ports
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -51,11 +81,14 @@ swh-docker-dev_swh-deposit_1                             /entrypoint.sh         
 [...]
 ```
 
-Note: if a container failed to start, it's status will be marked as `Exit 1`
-instead of `Up`. You can check why using the `docker-compose logs` command. For
-example:
+At the time of writing this guide, the startup of some containers may fail the
+first time for dependency-related problems. If some containers failed to start,
+just run the `docker-compose up -d` command again.
 
-```
+If a container really refuses to start properly, you can check why using the
+`docker-compose logs` command. For example:
+
+``` bash
 ~/swh-environment/swh-docker-dev$ docker-compose logs swh-lister-debian
 Attaching to swh-docker-dev_swh-lister-debian_1
 [...]
@@ -64,17 +97,17 @@ swh-lister-debian_1                      | Could not install packages due to an 
 swh-lister-debian_1                      |
 ```
 
-Once all the containers are running, you can use the web interface by opening
+Once all containers are running, you can use the web interface by opening
 http://localhost:5080/ in your web browser.
 
 At this point, the archive is empty and needs to be filled with some content.
 To do so, you can create tasks that will scrape a forge. For example, to inject
 the code from the https://0xacab.org gitlab forge:
 
-```
-$ ~/swh-environment/swh-docker-dev$ docker-compose run swh-scheduler-api \
-    swh-scheduler -c remote -u http://swh-scheduler-api:5008/ \
-	    task add swh-lister-gitlab-full -p oneshot api_baseurl=https://0xacab.org/api/v4
+``` bash
+~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+    swh-scheduler task add swh-lister-gitlab-full \
+	  -p oneshot api_baseurl=https://0xacab.org/api/v4
 
 Created 1 tasks
 
@@ -96,83 +129,33 @@ This will take a bit af time to complete.
 To increase the speed at wich git repositories are imported, you can spawn more
 `swh-loader-git` workers:
 
-```
-~/swh-environment/swh-docker-dev$ export CELERY_BROKER_URL=amqp://:5072//
-~/swh-environment/swh-docker-dev$ celery status
-mercurial@8f63da914c26: OK
-debian@8a1c6ced237b: OK
-debian@d4be158f1759: OK
-pypi@41187053b90d: OK
-dir@52a19b9ba606: OK
-pypi@9be0cdcb484c: OK
-github@101d702d6e1d: OK
-bitbucket@1770d3b81da8: OK
-svn@9b2e473d466b: OK
-git@ae6ddafca382: OK
-tar@e17c0bc4392d: OK
-npm@ccfc73f73c4b: OK
-gitlab@280a937595f3: OK
+``` bash
+~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+    celery status
+listers@50ac2185c6c9: OK
+loader@b164f9055637: OK
+indexer@33bc6067a5b8: OK
+vault@c9fef1bbfdc1: OK
 
-~/swh-environment/swh-docker-dev$ celery control pool_grow 3 -d git@ae6ddafca382
--> git@ae6ddafca382: OK
+4 nodes online.
+~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+    celery control pool_grow 3 -d loader@b164f9055637
+-> loader@b164f9055637: OK
         pool will grow
-~/swh-environment/swh-docker-dev$ celery inspect -d git@ae6ddafca382 stats | grep prefetch_count
-       "prefetch_count": 4,
+~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+    celery inspect -d loader@b164f9055637 stats | grep prefetch_count
+       "prefetch_count": 4
 ```
-
-Note: this later command assumes you have `celery` available on your host
-machine.
 
 Now there are 4 workers ingesting git repositories.
 You can also increase the number of `swh-loader-git` containers:
 
-```
-~/swh-environment/swh-docker-dev$ docker-compose up -d --scale swh-loader-git=4
+``` bash
+~/swh-environment/swh-docker-dev$ docker-compose up -d --scale swh-loader=4
 [...]
-Creating swh-docker-dev_swh-loader-git_2        ... done
-Creating swh-docker-dev_swh-loader-git_3        ... done
-Creating swh-docker-dev_swh-loader-git_4        ... done
-```
-
-
-### Install a package from sources
-
-It is possible to run a docker container with some swh packages installed from
-sources instead of using lastest published packages from pypi. To do this you
-must write a docker-compose override file (`docker-compose.override.yml`). An
-example is given in the `docker-compose.override.yml.example` file:
-
-```
-version: '2'
-
-services:
-  swh-objstorage:
-    volumes:
-      - "/home/ddouard/src/swh-environment/swh-objstorage:/src/swh-objstorage"
-```
-
-The file named `docker-compose.override.yml` will automatically be loaded by
-`docker-compose`.
-
-This example shows the simple case of the `swh-objstorage` package: you just have to
-mount it in the container in `/src` and the entrypoint will ensure every
-swh-* package found in `/src/` is installed (using `pip install -e` so you can
-easily hack your code. If the application you play with have autoreload support,
-there is even no need for restarting the impacted container.)
-
-Note: if the docker fails to start when using local sources for one or more swh
-package, it's most probably due to permission problems on cache files. For
-example, if you have executed tests locally (using pytest or tox), you have
-cache files (__pycache__ etc.) that will prevent `pip install` from working
-within the docker.
-
-The solution is to clean these files and directories before trying to spawn the
-docker.
-
-```
-~/swh-environment$ find . -type d -name __pycache__ -exec rm -rf {} \;
-~/swh-environment$ find . -type d -name .tox -exec rm -rf {} \;
-~/swh-environment$ find . -type d -name .hypothesis -exec rm -rf {} \;
+Creating swh-docker-dev_swh-loader_2        ... done
+Creating swh-docker-dev_swh-loader_3        ... done
+Creating swh-docker-dev_swh-loader_4        ... done
 ```
 
 
@@ -231,18 +214,17 @@ docker network. This means that the same command executed from the host or from
 a docker container will not use the same urls to access services. For example,
 to use the `celery` utility from the host, you may type:
 
-```
+``` bash
 ~/swh-environment/swh-docker-dev$ CELERY_BROKER_URL=amqp://:5072// celery status
-dir@52a19b9ba606: OK
+loader@61704103668c: OK
 [...]
 ```
 
 To run the same command from within a container:
 
-```
-~/swh-environment/swh-docker-dev$ celery-compose exec swh-scheduler-api bash
-root@01dba49adf37:/# CELERY_BROKER_URL=amqp://amqp:5672// celery status
-dir@52a19b9ba606: OK
+``` bash
+~/swh-environment/swh-docker-dev$ celery-compose exec swh-scheduler-api celery status
+loader@61704103668c: OK
 [...]
 ```
 
@@ -285,10 +267,10 @@ and keep it up to date.
 For example, to add a (one shot) task that will list git repos on the
 0xacab.org gitlab instance, one can do (from this git repository):
 
-```
-$ docker-compose run swh-scheduler-api \
-    swh-scheduler -c remote -u http://swh-scheduler-api:5008/ \
-	    task add swh-lister-gitlab-full -p oneshot api_baseurl=https://0xacab.org/api/v4
+``` bash
+~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+    swh-scheduler task add swh-lister-gitlab-full \
+	  -p oneshot api_baseurl=https://0xacab.org/api/v4
 
 Created 1 tasks
 
@@ -305,10 +287,9 @@ Task 12
 This will insert a new task in the scheduler. To list existing tasks for a
 given task type:
 
-```
-$ docker-compose run swh-scheduler-api \
-  swh-scheduler -c remote -u http://swh-scheduler-api:5008/ \
-    task list-pending swh-lister-gitlab-full
+``` bash
+~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+  swh-scheduler task list-pending swh-lister-gitlab-full
 
 Found 1 swh-lister-gitlab-full tasks
 
@@ -324,10 +305,9 @@ Task 12
 
 To list all existing task types:
 
-```
-$ docker-compose run swh-scheduler-api \
-  swh-scheduler -c remote -u http://swh-scheduler-api:5008/ \
-    task --list-types
+``` bash
+~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+  swh-scheduler task --list-types
 
 Known task types:
 swh-loader-mount-dump-and-load-svn-repository:
@@ -381,16 +361,16 @@ indexer_origin_metadata:
 ### Monitoring activity
 
 You can monitor the workers activity by connecting to the RabbitMQ console on
-`http://localhost:5002` or the Celery dashboard (flower) on
-`http://localhost:5003`.
+`http://localhost:5080/reaabitmq` or the grafan dashboard on
+`http://localhost:5080/grafana`.
 
 If you cannot see any task being in fact executed, check the logs of the
 `swh-scheduler-runner` service (here is an ecample of failure due to the
 debian lister task not being properly registered on the swh-scheduler-runner
 service):
 
-```
-$ docker-compose logs --tail=10 swh-scheduler-runner
+``` bash
+~/swh-environment/swh-docker-dev$ docker-compose logs --tail=10 swh-scheduler-runner
 Attaching to swh-docker-dev_swh-scheduler-runner_1
 swh-scheduler-runner_1    |     "__main__", mod_spec)
 swh-scheduler-runner_1    |   File "/usr/local/lib/python3.7/runpy.py", line 85, in _run_code
@@ -403,3 +383,232 @@ swh-scheduler-runner_1    |   File "/usr/local/lib/python3.7/site-packages/celer
 swh-scheduler-runner_1    |     raise self.NotRegistered(key)
 swh-scheduler-runner_1    | celery.exceptions.NotRegistered: 'swh.lister.debian.tasks.DebianListerTask'
 ```
+
+
+## Using docker setup development and integration testing
+
+If you hack the code of one or more components of the archive with a virtual
+env based setup as described in the [develop setup guide],
+you may want to test your modifications in a working Software Heritage
+instance. The simplest way of achieving this is to use this docker-based
+environment.
+
+If you haven't followed the [develop setup guide], you must clone the the
+[swh-environment] repo in your `swh-environment` directory:
+
+``` bash
+~/swh-environment$ git clone https://forge.softwareheritage.org/source/swh-environment.git .
+```
+
+Note the `.` at the end of this command : we want the git repository to be
+cloned directly in the `~/swh-environment` directory, not in a sub directory.
+Also note that if you haven't done it yet and you want to hack the source code
+of one or more Software Heritage packages, you really should read the
+[develop setup guide].
+
+From there, we will checkout or update all the swh packages:
+
+``` bash
+~/swh-environment$ ./bin/update
+```
+
+### Install a swh package from sources in a container
+
+It is possible to run a docker container with some swh packages installed from
+sources instead of using lastest published packages from pypi. To do this you
+must write a docker-compose override file (`docker-compose.override.yml`). An
+example is given in the `docker-compose.override.yml.example` file:
+
+``` yaml
+version: '2'
+
+services:
+  swh-objstorage:
+    volumes:
+      - "/home/ddouard/src/swh-environment/swh-objstorage:/src/swh-objstorage"
+```
+
+The file named `docker-compose.override.yml` will automatically be loaded by
+`docker-compose`.
+
+This example shows the simple case of the `swh-objstorage` package: you just have to
+mount it in the container in `/src` and the entrypoint will ensure every
+swh-* package found in `/src/` is installed (using `pip install -e` so you can
+easily hack your code. If the application you play with have autoreload support,
+there is even no need for restarting the impacted container.)
+
+Note: if the docker fails to start when using local sources for one or more swh
+package, it's most probably due to permission problems on cache files. For
+example, if you have executed tests locally (using pytest or tox), you have
+cache files (__pycache__ etc.) that will prevent `pip install` from working
+within the docker.
+
+The solution is to clean these files and directories before trying to spawn the
+docker.
+
+``` bash
+~/swh-environment$ find . -type d -name __pycache__ -exec rm -rf {} \;
+~/swh-environment$ find . -type d -name .tox -exec rm -rf {} \;
+~/swh-environment$ find . -type d -name .hypothesis -exec rm -rf {} \;
+```
+
+### Using locally installed swh tools with docker
+
+In all examples above, we have executed swh commands from within a running
+container. Now we also have these swh commands locally available in our virtual
+env, we can use them to interact with swh services running in docker
+containers.
+
+For this, we just need to configure a few environment variables. First, ensure
+your Software Heritage virtualenv is activated (here, using virtualenvwrapper):
+
+``` bash
+~$ workon swh
+(swh) ~/swh-environment$ export SWH_SCHEDULER_URL=http://127.0.0.1:5008/
+(swh) ~/swh-environment$ export CELERY_BROKER_URL=amqp://127.0.0.1:5072/
+```
+
+Now we can use the `celery` command directly to control the celery system
+running in the docker environment:
+
+``` bash
+(swh) ~/swh-environment$ celery status
+vault@c9fef1bbfdc1: OK
+listers@ba66f18e7d02: OK
+indexer@cb14c33cbbfb: OK
+loader@61704103668c: OK
+
+4 nodes online.
+(swh) ~/swh-environment$ celery control -d loader@61704103668c pool_grow 3
+```
+
+And we can use the `swh-scheduler` command all the same:
+
+``` bash
+(swh) ~/swh-environment$ swh-scheduler task-type list
+Known task types:
+indexer_fossology_license:
+  Fossology license indexer task
+indexer_mimetype:
+  Mimetype indexer task
+[...]
+```
+
+### Make your life a bit easier
+
+When you use virtualenvwrapper, you can add postactivation commands:
+
+``` bash
+(swh) ~/swh-environment$ cat >>$VIRTUAL_ENV/bin/postactivate <<EOF
+# unfortunately, the interface cmd for the click autocompletion
+# depends on the shell
+# https://click.palletsprojects.com/en/7.x/bashcomplete/#activation
+
+shell=$(basename $SHELL)
+case "$shell" in
+    "zsh")
+        autocomplete_cmd=source_zsh
+        ;;
+    *)
+        autocomplete_cmd=source
+        ;;
+esac
+
+eval "$(_SWH_SCHEDULER_COMPLETE=$autocomplete_cmd swh-scheduler)"
+export SWH_SCHEDULER_URL=http://127.0.0.1:5008/
+export CELERY_BROKER_URL=amqp://127.0.0.1:5072/
+export COMPOSE_FILE=~/swh-environment/swh-docker-dev/docker-compose.yml:~/swh-environment/swh-docker-dev/docker-compose.override.yml
+alias doco=docker-compose
+
+function swhclean {
+    find ~/swh-environment -type d -name __pycache__ -exec rm -rf {} \;
+    find ~/swh-environment -type d -name .tox -exec rm -rf {} \;
+    find ~/swh-environment -type d -name .hypothesis -exec rm -rf {} \;
+}
+EOF
+```
+
+This postactivate script does:
+
+- install a shell completion handler for the swh-scheduler command,
+- preset a bunch of environment variables
+
+  - `SWH_SCHEDULER_URL` so that you can just run `sch-scheduler` against the
+    scheduler API instance running in docker, without having to specify the
+    endpoint URL,
+
+  - `CELERY_BROKER` so you can execute the `celery` tool without options
+    against the rabbitmq server running in the docker environment,
+
+  - `COMPOSE_FILE` so you can run `docker-compose` from everywhere,
+
+- create an alias `doco` for `docker-compose` because this later is way too
+  long to type,
+
+- add a `swhclean` shell function to clean your source directories so that
+  there is no conflict with docker containers using local swh repositories (see
+  below). This will delete any `.tox`, `__pycache__` and `.hypothesis`
+  directory found in your swh-environment directory.
+
+So now you can easily:
+
+* Start the SWH platform:
+
+  ``` bash
+  (swh) ~/swh-environment$ docker-compose up -d
+  [...]
+  ```
+
+* Check celery:
+
+  ``` bash
+  (swh) ~/swh-environment$ celery status
+  listers@50ac2185c6c9: OK
+  loader@b164f9055637: OK
+  indexer@33bc6067a5b8: OK
+  ```
+
+* List task-types:
+
+  ``` bash
+  (swh) ~/swh-environment$ swh-scheduler task-type list
+  [...]
+  ```
+
+* Get more info on a task type:
+
+  ``` bash
+  (swh) ~/swh-environment$ swh-scheduler task-type list -v -t origin-update-hg
+  Known task types:
+  origin-update-hg: swh.loader.mercurial.tasks.LoadMercurial
+    Loading mercurial repository swh-loader-mercurial
+    interval: 1 day, 0:00:00 [1 day, 0:00:00, 1 day, 0:00:00]
+    backoff_factor: 1.0
+    max_queue_length: 1000
+    num_retries: None
+    retry_delay: None
+  ```
+
+* Add a new task:
+
+  ``` bash
+  (swh) ~/swh-environment$ swh-scheduler task add origin-update-hg \
+    origin_url=https://hg.logilab.org/master/cubicweb
+  Created 1 tasks
+  Task 1
+     Next run: just now (2019-02-06 12:36:58+00:00)
+     Interval: 1 day, 0:00:00
+     Type: origin-update-hg
+     Policy: recurring
+     Args:
+     Keyword args:
+       origin_url: https://hg.logilab.org/master/cubicweb
+
+* Respawn a task:
+
+  ``` bash
+  (swh) ~/swh-environment$ swh-scheduler task respawn 1
+  ```
+
+
+[develop setup guide](https://docs.softwareheritage.org/devel/developer-setup.html)
