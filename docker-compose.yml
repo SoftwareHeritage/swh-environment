@@ -291,15 +291,6 @@ services:
     volumes:
       - "./conf/indexer.yml:/indexer.yml:ro"
 
-  swh-indexer-journal-client:
-    image: swh/indexer-journal-client
-    build: ./dockerfiles/swh-indexer-journal-client
-    depends_on:
-      - swh-journal-publisher
-      - swh-scheduler-api
-    volumes:
-      - "./conf/journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
-
 # Journal related
 
   swh-storage-listener:
@@ -328,3 +319,12 @@ services:
       - swh-journal-publisher
     volumes:
       - "./conf/journal_client.yml:/etc/softwareheritage/journal/logger.yml:ro"
+
+  swh-indexer-journal-client:
+    image: swh/indexer-journal-client
+    build: ./dockerfiles/swh-indexer-journal-client
+    depends_on:
+      - swh-journal-publisher
+      - swh-scheduler-api
+    volumes:
+      - "./conf/journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
