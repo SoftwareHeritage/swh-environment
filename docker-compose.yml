@@ -199,7 +199,9 @@ services:
 
   swh-vault-db:
     image: postgres:11
-    env_file: ./env/vault.env
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-vault
 
   swh-vault-api:
     build: ./dockerfiles/swh-vault
