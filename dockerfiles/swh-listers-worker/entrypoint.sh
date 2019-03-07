@@ -44,11 +44,14 @@ case "$1" in
             echo Creating database
             createdb ${POSTGRES_DB}
 
-			echo Initialize database
-			python -m swh.lister.cli \
-				   --db-url postgres://${PGUSER}@${PGHOST}/${POSTGRES_DB} \
-				   all
-		fi
+            echo Initialize database
+            python -m swh.lister.cli \
+                   --db-url postgres://${PGUSER}@${PGHOST}/${POSTGRES_DB} \
+                   all
+        fi
+
+        echo Waiting for RabbitMQ to start
+        wait-for-it amqp:5672 -s --timeout=0
 
         echo Starting the swh-lister Celery worker for ${SWH_WORKER_INSTANCE}
         exec python -m celery worker \
@@ -58,7 +61,7 @@ case "$1" in
                     --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
                     -Ofair --loglevel=${LOGLEVEL} --without-gossip \
                     --without-mingle \
-					--heartbeat-interval 10 \
+                    --heartbeat-interval 10 \
                     --hostname "${SWH_WORKER_INSTANCE}@%h"
         ;;
 esac

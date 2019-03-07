@@ -29,7 +29,7 @@ case "$1" in
         exec bash -i
         ;;
     *)
-		echo Starting the swh-scheduler $1
-		exec swh-scheduler --log-level ${LOGLEVEL} -C /scheduler.yml $@
-        ;;
+		  echo "Starting the swh-scheduler $1"
+		  exec wait-for-it amqp:5672 -s --timeout=0 -- swh-scheduler --log-level ${LOGLEVEL} -C /scheduler.yml $@
+      ;;
 esac

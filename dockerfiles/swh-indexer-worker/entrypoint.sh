@@ -18,6 +18,9 @@ case "$1" in
         exec bash -i
         ;;
     *)
+        echo Waiting for RabbitMQ to start
+        wait-for-it amqp:5672 -s --timeout=0
+
         echo Starting swh-indexer worker
         exec python -m celery worker \
              --app=swh.scheduler.celery_backend.config.app \
@@ -26,7 +29,7 @@ case "$1" in
              --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
              -Ofair --loglevel=${LOGLEVEL} --without-gossip \
              --without-mingle \
-			 --heartbeat-interval 10 \
+			       --heartbeat-interval 10 \
              --hostname "${SWH_WORKER_INSTANCE}@%h"
     ;;
 esac
