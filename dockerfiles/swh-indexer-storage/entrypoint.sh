@@ -44,6 +44,7 @@ case "$1" in
     exec gunicorn --bind 0.0.0.0:5007 \
          --reload \
          --log-level DEBUG \
+         --timeout 3600 \
          swh.indexer.storage.api.wsgi
     ;;
 esac

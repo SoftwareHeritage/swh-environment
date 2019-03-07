@@ -40,6 +40,7 @@ case "$1" in
       exec gunicorn --bind 0.0.0.0:5002 \
            --reload \
            --log-level DEBUG \
+           --timeout 3600 \
            swh.storage.api.wsgi
       ;;
 esac

@@ -20,10 +20,11 @@ if [ "$1" = 'shell' ] ; then
 	exec bash -i
 else
 	echo Starting the swh-objstorage API server
-        exec gunicorn --bind 0.0.0.0:5003 \
-           --worker-class aiohttp.worker.GunicornWebWorker \
-           --log-level DEBUG \
-           --reload \
-           swh.objstorage.api.wsgi
+  exec gunicorn --bind 0.0.0.0:5003 \
+       --worker-class aiohttp.worker.GunicornWebWorker \
+       --log-level DEBUG \
+       --reload \
+       --timeout 3600 \
+       swh.objstorage.api.wsgi
 
 fi

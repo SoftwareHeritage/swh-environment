@@ -20,5 +20,7 @@ case "$1" in
         ;;
      *)
         echo "starting the swh-web server"
-        exec gunicorn -b 0.0.0.0:5004 swh.web.wsgi
+        exec gunicorn --bind 0.0.0.0:5004 \
+             --timeout 3600 \
+             swh.web.wsgi
 esac

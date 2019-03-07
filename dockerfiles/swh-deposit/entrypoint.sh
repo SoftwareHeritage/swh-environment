@@ -36,5 +36,6 @@ else
     exec gunicorn --bind 0.0.0.0:5006 \
                   --reload \
                   --log-level DEBUG \
+                  --timeout 3600 \
                   swh.deposit.wsgi
 fi
