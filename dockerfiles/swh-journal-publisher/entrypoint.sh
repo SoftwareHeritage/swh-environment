@@ -18,7 +18,7 @@ case "$1" in
       exec bash -i
       ;;
     *)
-        echo "Starting swh-journal publisher"
-        exec python3 -m swh.journal.publisher
+        echo "Starting swh-journal-publisher"
+        exec wait-for-it kafka:9092 -s --timeout=0 -- python3 -m swh.journal.publisher
       ;;
 esac

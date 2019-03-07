@@ -30,9 +30,9 @@ case "$1" in
       ;;
     *)
       echo "Waiting for postgresql to start"
-      until psql postgresql:///?service=swh -c "select 1" 1>&2 >/dev/null; do sleep 0.1; done
+      wait-for-it swh-storage-db:5432 -s --timeout=0
 
-      echo "Starting swh-storage's listener"
-      exec python3 -m swh.storage.listener
+      echo "Starting swh-storage-listener"
+      exec wait-for-it kafka:9092 -s --timeout=0 -- python3 -m swh.storage.listener
       ;;
 esac

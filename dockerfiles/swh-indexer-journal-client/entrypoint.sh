@@ -18,8 +18,8 @@ case "$1" in
       exec bash -i
       ;;
     *)
-      echo "Starting swh-journal client"
-      python3 -m swh.indexer.journal_client
+      echo "Starting swh-indexer-journal client"
+      exec wait-for-it kafka:9092 -s --timeout=0 -- python3 -m swh.indexer.journal_client
       ;;
 esac
 
