@@ -3,6 +3,7 @@ FROM python:3.6
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && apt-get upgrade -y && \
   apt-get install -y libsystemd-dev && \
+  apt-get install -y pandoc && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
