@@ -26,7 +26,7 @@ On a debian system, docker-compose can be installed from debian repositories.
 On a stable (stretch) machine, it is recommended to install the version from
 [backports](https://backports.debian.org/Instructions/):
 
-``` bash
+```
 ~$ sudo apt install -t stretch-backports docker-compose
 ```
 
@@ -34,19 +34,21 @@ On a stable (stretch) machine, it is recommended to install the version from
 
 First, clone this repository.
 
-If you already have followed the [develop setup guide], then you should already
-have a copy of the swh-docker-env git repository. Use it:
+If you already have followed the
+[[https://docs.softwareheritage.org/devel/developer-setup.html|developer setup guide]],
+then you should already have a copy of the swh-docker-env git repository. Use
+it:
 
-``` bash
+```
 ~$ cd swh-environment/swh-docker-dev
 ```
 
 Otherwise, we suggest to create a `swh-environment`
 directory in which this repo will be cloned so you can later on run some
 component in docker containers with overrides code from local repositories (see
-[below](#using-docker-setup-development-and-integration-testing)):
+[[<#using-docker-setup-development-and-integration-testing>|below]]):
 
-``` bash
+```
 ~$ mkdir swh-environment
 ~$ cd swh-environment
 ~/swh-environment$ git clone https://forge.softwareheritage.org/source/swh-docker-dev.git
@@ -55,7 +57,7 @@ component in docker containers with overrides code from local repositories (see
 
 Then, start containers:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose up -d
 [...]
 Creating swh-docker-dev_amqp_1               ... done
@@ -69,7 +71,7 @@ Creating swh-docker-dev_swh-scheduler-db_1   ... done
 This will build docker images and run them.
 Check everything is running fine with:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose ps
                          Name                                       Command               State                                      Ports
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -88,7 +90,7 @@ just run the `docker-compose up -d` command again.
 If a container really refuses to start properly, you can check why using the
 `docker-compose logs` command. For example:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose logs swh-lister-debian
 Attaching to swh-docker-dev_swh-lister-debian_1
 [...]
@@ -104,7 +106,7 @@ At this point, the archive is empty and needs to be filled with some content.
 To do so, you can create tasks that will scrape a forge. For example, to inject
 the code from the https://0xacab.org gitlab forge:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
     swh-scheduler task add swh-lister-gitlab-full \
 	  -p oneshot api_baseurl=https://0xacab.org/api/v4
@@ -129,7 +131,7 @@ This will take a bit af time to complete.
 To increase the speed at wich git repositories are imported, you can spawn more
 `swh-loader-git` workers:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
     celery status
 listers@50ac2185c6c9: OK
@@ -150,7 +152,7 @@ vault@c9fef1bbfdc1: OK
 Now there are 4 workers ingesting git repositories.
 You can also increase the number of `swh-loader-git` containers:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose up -d --scale swh-loader=4
 [...]
 Creating swh-docker-dev_swh-loader_2        ... done
@@ -186,11 +188,9 @@ other:
 - swh-journal: Persistent logger of changes to the archive, with
   publish-subscribe support.
 
-That means, you can start doing the ingestion using those services
-using the same setup described in the getting-started starting
-directly at [1].
-
-[1] https://docs.softwareheritage.org/devel/getting-started.html#step-4-ingest-repositories
+That means, you can start doing the ingestion using those services using the
+same setup described in the getting-started starting directly at
+https://docs.softwareheritage.org/devel/getting-started.html#step-4-ingest-repositories
 
 ### Exposed Ports
 
@@ -214,7 +214,7 @@ docker network. This means that the same command executed from the host or from
 a docker container will not use the same urls to access services. For example,
 to use the `celery` utility from the host, you may type:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ CELERY_BROKER_URL=amqp://:5072// celery status
 loader@61704103668c: OK
 [...]
@@ -222,7 +222,7 @@ loader@61704103668c: OK
 
 To run the same command from within a container:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ celery-compose exec swh-scheduler-api celery status
 loader@61704103668c: OK
 [...]
@@ -267,7 +267,7 @@ and keep it up to date.
 For example, to add a (one shot) task that will list git repos on the
 0xacab.org gitlab instance, one can do (from this git repository):
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
     swh-scheduler task add swh-lister-gitlab-full \
 	  -p oneshot api_baseurl=https://0xacab.org/api/v4
@@ -287,7 +287,7 @@ Task 12
 This will insert a new task in the scheduler. To list existing tasks for a
 given task type:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
   swh-scheduler task list-pending swh-lister-gitlab-full
 
@@ -305,7 +305,7 @@ Task 12
 
 To list all existing task types:
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
   swh-scheduler task --list-types
 
@@ -369,7 +369,7 @@ If you cannot see any task being in fact executed, check the logs of the
 debian lister task not being properly registered on the swh-scheduler-runner
 service):
 
-``` bash
+```
 ~/swh-environment/swh-docker-dev$ docker-compose logs --tail=10 swh-scheduler-runner
 Attaching to swh-docker-dev_swh-scheduler-runner_1
 swh-scheduler-runner_1    |     "__main__", mod_spec)
@@ -388,15 +388,18 @@ swh-scheduler-runner_1    | celery.exceptions.NotRegistered: 'swh.lister.debian.
 ## Using docker setup development and integration testing
 
 If you hack the code of one or more components of the archive with a virtual
-env based setup as described in the [develop setup guide],
+env based setup as described in the
+[[https://docs.softwareheritage.org/devel/developer-setup.html|developer setup guide]],
 you may want to test your modifications in a working Software Heritage
 instance. The simplest way of achieving this is to use this docker-based
 environment.
 
-If you haven't followed the [develop setup guide], you must clone the the
-[swh-environment] repo in your `swh-environment` directory:
+If you haven't followed the
+[[https://docs.softwareheritage.org/devel/developer-setup.html|developer setup guide]],
+you must clone the the [swh-environment] repo in your `swh-environment`
+directory:
 
-``` bash
+```
 ~/swh-environment$ git clone https://forge.softwareheritage.org/source/swh-environment.git .
 ```
 
@@ -404,11 +407,11 @@ Note the `.` at the end of this command : we want the git repository to be
 cloned directly in the `~/swh-environment` directory, not in a sub directory.
 Also note that if you haven't done it yet and you want to hack the source code
 of one or more Software Heritage packages, you really should read the
-[develop setup guide].
+[[https://docs.softwareheritage.org/devel/developer-setup.html|developer setup guide]].
 
 From there, we will checkout or update all the swh packages:
 
-``` bash
+```
 ~/swh-environment$ ./bin/update
 ```
 
@@ -446,7 +449,7 @@ within the docker.
 The solution is to clean these files and directories before trying to spawn the
 docker.
 
-``` bash
+```
 ~/swh-environment$ find . -type d -name __pycache__ -exec rm -rf {} \;
 ~/swh-environment$ find . -type d -name .tox -exec rm -rf {} \;
 ~/swh-environment$ find . -type d -name .hypothesis -exec rm -rf {} \;
@@ -462,7 +465,7 @@ containers.
 For this, we just need to configure a few environment variables. First, ensure
 your Software Heritage virtualenv is activated (here, using virtualenvwrapper):
 
-``` bash
+```
 ~$ workon swh
 (swh) ~/swh-environment$ export SWH_SCHEDULER_URL=http://127.0.0.1:5008/
 (swh) ~/swh-environment$ export CELERY_BROKER_URL=amqp://127.0.0.1:5072/
@@ -471,7 +474,7 @@ your Software Heritage virtualenv is activated (here, using virtualenvwrapper):
 Now we can use the `celery` command directly to control the celery system
 running in the docker environment:
 
-``` bash
+```
 (swh) ~/swh-environment$ celery status
 vault@c9fef1bbfdc1: OK
 listers@ba66f18e7d02: OK
@@ -484,7 +487,7 @@ loader@61704103668c: OK
 
 And we can use the `swh-scheduler` command all the same:
 
-``` bash
+```
 (swh) ~/swh-environment$ swh-scheduler task-type list
 Known task types:
 indexer_fossology_license:
@@ -498,7 +501,7 @@ indexer_mimetype:
 
 When you use virtualenvwrapper, you can add postactivation commands:
 
-``` bash
+```
 (swh) ~/swh-environment$ cat >>$VIRTUAL_ENV/bin/postactivate <<EOF
 # unfortunately, the interface cmd for the click autocompletion
 # depends on the shell
@@ -554,14 +557,14 @@ So now you can easily:
 
 * Start the SWH platform:
 
-  ``` bash
+  ```
   (swh) ~/swh-environment$ docker-compose up -d
   [...]
   ```
 
 * Check celery:
 
-  ``` bash
+  ```
   (swh) ~/swh-environment$ celery status
   listers@50ac2185c6c9: OK
   loader@b164f9055637: OK
@@ -570,14 +573,14 @@ So now you can easily:
 
 * List task-types:
 
-  ``` bash
+  ```
   (swh) ~/swh-environment$ swh-scheduler task-type list
   [...]
   ```
 
 * Get more info on a task type:
 
-  ``` bash
+  ```
   (swh) ~/swh-environment$ swh-scheduler task-type list -v -t origin-update-hg
   Known task types:
   origin-update-hg: swh.loader.mercurial.tasks.LoadMercurial
@@ -591,7 +594,7 @@ So now you can easily:
 
 * Add a new task:
 
-  ``` bash
+  ```
   (swh) ~/swh-environment$ swh-scheduler task add origin-update-hg \
     origin_url=https://hg.logilab.org/master/cubicweb
   Created 1 tasks
@@ -606,9 +609,6 @@ So now you can easily:
 
 * Respawn a task:
 
-  ``` bash
+  ```
   (swh) ~/swh-environment$ swh-scheduler task respawn 1
   ```
-
-
-[develop setup guide](https://docs.softwareheritage.org/devel/developer-setup.html)
