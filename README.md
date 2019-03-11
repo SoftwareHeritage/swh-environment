@@ -361,13 +361,13 @@ indexer_origin_metadata:
 ### Monitoring activity
 
 You can monitor the workers activity by connecting to the RabbitMQ console on
-`http://localhost:5080/reaabitmq` or the grafan dashboard on
+`http://localhost:5080/rabbitmq` or the grafana dashboard on
 `http://localhost:5080/grafana`.
 
-If you cannot see any task being in fact executed, check the logs of the
-`swh-scheduler-runner` service (here is an ecample of failure due to the
-debian lister task not being properly registered on the swh-scheduler-runner
-service):
+If you cannot see any task being executed, check the logs of the
+`swh-scheduler-runner` service (here is a failure example due to the
+debian lister task not being properly registered on the
+swh-scheduler-runner service):
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose logs --tail=10 swh-scheduler-runner
@@ -387,12 +387,12 @@ swh-scheduler-runner_1    | celery.exceptions.NotRegistered: 'swh.lister.debian.
 
 ## Using docker setup development and integration testing
 
-If you hack the code of one or more components of the archive with a virtual
+If you hack the code of one or more archive components with a virtual
 env based setup as described in the
-[[https://docs.softwareheritage.org/devel/developer-setup.html|developer setup guide]],
-you may want to test your modifications in a working Software Heritage
-instance. The simplest way of achieving this is to use this docker-based
-environment.
+[[https://docs.softwareheritage.org/devel/developer-setup.html|developer
+setup guide]], you may want to test your modifications in a working
+Software Heritage instance. The simplest way to achieve this is to use
+this docker-based environment.
 
 If you haven't followed the
 [[https://docs.softwareheritage.org/devel/developer-setup.html|developer setup guide]],
@@ -403,7 +403,7 @@ directory:
 ~/swh-environment$ git clone https://forge.softwareheritage.org/source/swh-environment.git .
 ```
 
-Note the `.` at the end of this command : we want the git repository to be
+Note the `.` at the end of this command: we want the git repository to be
 cloned directly in the `~/swh-environment` directory, not in a sub directory.
 Also note that if you haven't done it yet and you want to hack the source code
 of one or more Software Heritage packages, you really should read the
@@ -418,9 +418,9 @@ From there, we will checkout or update all the swh packages:
 ### Install a swh package from sources in a container
 
 It is possible to run a docker container with some swh packages installed from
-sources instead of using lastest published packages from pypi. To do this you
-must write a docker-compose override file (`docker-compose.override.yml`). An
-example is given in the `docker-compose.override.yml.example` file:
+sources instead of using the latest published packages from pypi. To do this
+you must write a docker-compose override file (`docker-compose.override.yml`).
+An example is given in the `docker-compose.override.yml.example` file:
 
 ``` yaml
 version: '2'
@@ -428,17 +428,18 @@ version: '2'
 services:
   swh-objstorage:
     volumes:
-      - "/home/ddouard/src/swh-environment/swh-objstorage:/src/swh-objstorage"
+      - "$HOME/swh-environment/swh-objstorage:/src/swh-objstorage"
 ```
 
 The file named `docker-compose.override.yml` will automatically be loaded by
 `docker-compose`.
 
-This example shows the simple case of the `swh-objstorage` package: you just have to
-mount it in the container in `/src` and the entrypoint will ensure every
-swh-* package found in `/src/` is installed (using `pip install -e` so you can
-easily hack your code. If the application you play with have autoreload support,
-there is even no need for restarting the impacted container.)
+This example shows the simplest case of the `swh-objstorage` package:
+you just have to mount it in the container in `/src` and the
+entrypoint will ensure every swh-* package found in `/src/` is
+installed (using `pip install -e` so you can easily hack your
+code). If the application you play with has autoreload support, there
+is no need to restart the impacted container.)
 
 Note: if the docker fails to start when using local sources for one or more swh
 package, it's most probably due to permission problems on cache files. For
@@ -536,16 +537,16 @@ This postactivate script does:
 - install a shell completion handler for the swh-scheduler command,
 - preset a bunch of environment variables
 
-  - `SWH_SCHEDULER_URL` so that you can just run `sch-scheduler` against the
+  - `SWH_SCHEDULER_URL` so that you can just run `swh-scheduler` against the
     scheduler API instance running in docker, without having to specify the
     endpoint URL,
 
-  - `CELERY_BROKER` so you can execute the `celery` tool without options
+  - `CELERY_BROKER` so you can execute the `celery` tool (without cli options)
     against the rabbitmq server running in the docker environment,
 
   - `COMPOSE_FILE` so you can run `docker-compose` from everywhere,
 
-- create an alias `doco` for `docker-compose` because this later is way too
+- create an alias `doco` for `docker-compose` because this is way too
   long to type,
 
 - add a `swhclean` shell function to clean your source directories so that
@@ -558,7 +559,7 @@ So now you can easily:
 * Start the SWH platform:
 
   ```
-  (swh) ~/swh-environment$ docker-compose up -d
+  (swh) ~/swh-environment$ dodo up -d
   [...]
   ```
 
