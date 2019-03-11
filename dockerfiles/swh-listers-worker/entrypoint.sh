@@ -36,8 +36,10 @@ case "$1" in
         exec bash -i
         ;;
     *)
-        echo Setup ${POSTGRES_DB} database for ${SWH_WORKER_INSTANCE}
+        echo Waiting for postgresql to start
+        wait-for-it swh-listers-db:5432 -s --timeout=0
 
+        echo Setup ${POSTGRES_DB} database for ${SWH_WORKER_INSTANCE}
         if psql -lqt | cut -d \| -f 1 | grep -qw ${POSTGRES_DB}; then
             echo Database already exists, nothing to do
         else

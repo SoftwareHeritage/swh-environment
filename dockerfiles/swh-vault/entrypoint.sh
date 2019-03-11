@@ -44,8 +44,9 @@ case "$1" in
     "server")
         # ensure the pathslicing root dir for the cache exists
         mkdir -p /srv/softwareheritage/vault
+
         echo Waiting for postgresql to start
-        until psql postgresql:///?service=swh-vault -c "select 1" 2>&1 > /dev/null; do sleep 0.1; done
+        wait-for-it swh-vault-db:5432 -s --timeout=0
 
         echo Setup the swh-vault API database
         PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init vault \

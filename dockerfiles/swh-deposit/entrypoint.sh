@@ -27,7 +27,7 @@ if [ "$1" = 'shell' ] ; then
     exec bash -i
 else
     echo "Waiting for postgresql to start"
-    until psql postgresql:///?service=swh-deposit -c "select 1" > /dev/null 2> /dev/null; do sleep 0.1; done
+    wait-for-it swh-deposit-db:5432 -s --timeout=0
 
     echo "Migrating db"
     django-admin migrate --settings=swh.deposit.settings.production

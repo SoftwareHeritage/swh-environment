@@ -33,7 +33,7 @@ case "$1" in
         ;;
     *)
         echo Waiting for postgresql to start
-        until psql postgresql:///?service=swh-scheduler -c "select 1" 2>&1 > /dev/null; do sleep 0.1; done
+        wait-for-it swh-scheduler-db:5432 -s --timeout=0
 
         echo Setup the swh-scheduler API database
         PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init scheduler \
