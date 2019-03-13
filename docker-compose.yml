@@ -69,9 +69,10 @@ services:
       POSTGRES_DB: swh-scheduler
 
   swh-scheduler-api:
-    image: swh/scheduler-api
-    build: ./dockerfiles/swh-scheduler-api
+    image: swh/stack
+    build: ./
     env_file: ./env/scheduler.env
+    entrypoint: /swh-scheduler-api/entrypoint.sh
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
@@ -83,8 +84,9 @@ services:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
 
   swh-scheduler-listener:
-    image: swh/scheduler-worker
-    build: ./dockerfiles/swh-scheduler-worker
+    image: swh/stack
+    build: ./
+    entrypoint: /swh-scheduler-worker/entrypoint.sh
     env_file: ./env/scheduler.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
@@ -97,8 +99,9 @@ services:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
 
   swh-scheduler-runner:
-    image: swh/scheduler-worker
-    build: ./dockerfiles/swh-scheduler-worker
+    image: swh/stack
+    build: ./
+    entrypoint: /swh-scheduler-worker/entrypoint.sh
     env_file: ./env/scheduler.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
@@ -119,8 +122,9 @@ services:
       POSTGRES_DB: swh-storage
 
   swh-storage:
-    build: ./dockerfiles/swh-storage
-    image: swh/storage
+    build: ./
+    image: swh/stack
+    entrypoint: /swh-storage/entrypoint.sh
     ports:
       - 5002:5002
     depends_on:
@@ -133,8 +137,9 @@ services:
 # Object storage
 
   swh-objstorage:
-    build: ./dockerfiles/swh-objstorage
-    image: swh/objstorage
+    build: ./
+    image: swh/stack
+    entrypoint: /swh-objstorage/entrypoint.sh
     ports:
       - 5003:5003
     environment:
@@ -151,8 +156,9 @@ services:
       POSTGRES_DB: swh-idx-storage
 
   swh-idx-storage:
-    build: ./dockerfiles/swh-indexer-storage
-    image: swh/indexer-storage
+    build: ./
+    image: swh/stack
+    entrypoint: /swh-indexer-storage/entrypoint.sh
     ports:
       - 5007:5007
     depends_on:
@@ -169,9 +175,9 @@ services:
 # Web interface
 
   swh-web:
-    build: ./dockerfiles/swh-web
-    image: swh/web
-
+    build: ./
+    image: swh/stack
+    entrypoint: /swh-web/entrypoint.sh
     ports:
       - 5004:5004
     depends_on:
@@ -191,8 +197,9 @@ services:
     env_file: ./env/deposit.env
 
   swh-deposit:
-    build: ./dockerfiles/swh-deposit
-    image: swh/deposit
+    build: ./
+    entrypoint: /swh-deposit/entrypoint.sh
+    image: swh/stack
     ports:
       - 5006:5006
     depends_on:
@@ -211,8 +218,9 @@ services:
       POSTGRES_DB: swh-vault
 
   swh-vault-api:
-    build: ./dockerfiles/swh-vault
-    image: swh/vault
+    build: ./
+    image: swh/stack
+    entrypoint: /swh-vault/entrypoint.sh
     env_file: ./env/vault.env
     command: server
     ports:
@@ -226,8 +234,9 @@ services:
       - "./conf/vault-api.yml:/vault-api.yml:ro"
 
   swh-vault-worker:
-    build: ./dockerfiles/swh-vault
-    image: swh/vault
+    build: ./
+    image: swh/stack
+    entrypoint: /swh-vault/entrypoint.sh
     command: worker
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
@@ -246,9 +255,11 @@ services:
       POSTGRES_PASSWORD: testpassword
 
   swh-lister:
-    image: swh/listers-worker
-    build: ./dockerfiles/swh-listers-worker
+    image: swh/stack
+    build: ./
+    entrypoint: /swh-listers-worker/entrypoint.sh
     env_file: ./env/listers.env
+    user: swh
     environment:
       STATSD_HOST: prometheus-statsd-exporter
       STATSD_PORT: 9125
@@ -266,9 +277,11 @@ services:
 # Loader Celery workers
 
   swh-loader:
-    image: swh/loaders-worker
-    build: ./dockerfiles/swh-loaders-worker
+    image: swh/stack
+    build: ./
+    entrypoint: /swh-loaders-worker/entrypoint.sh
     env_file: ./env/listers.env
+    user: swh
     environment:
       STATSD_HOST: prometheus-statsd-exporter
       STATSD_PORT: 9125
@@ -283,8 +296,10 @@ services:
 # Indexer Celery workers
 
   swh-indexer:
-    image: swh/indexer-worker
-    build: ./dockerfiles/swh-indexer-worker
+    image: swh/stack
+    build: ./
+    user: swh
+    entrypoint: /swh-indexer-worker/entrypoint.sh
     env_file: ./env/indexers.env
     environment:
       STATSD_HOST: prometheus-statsd-exporter
@@ -301,8 +316,9 @@ services:
 # Journal related
 
   swh-storage-listener:
-    image: swh/storage-listener
-    build: ./dockerfiles/swh-storage-listener
+    image: swh/stack
+    build: ./
+    entrypoint: /swh-storage-listener/entrypoint.sh
     env_file: ./env/storage.env
     depends_on:
       - swh-storage-db
@@ -311,8 +327,9 @@ services:
       - "./conf/storage_listener.yml:/etc/softwareheritage/storage/listener.yml:ro"
 
   swh-journal-publisher:
-    image: swh/journal-publisher
-    build: ./dockerfiles/swh-journal-publisher
+    image: swh/stack
+    build: ./
+    entrypoint: /swh-journal-publisher/entrypoint.sh
     depends_on:
       - kafka
       - swh-storage-listener
@@ -320,16 +337,18 @@ services:
       - "./conf/journal_publisher.yml:/etc/softwareheritage/journal/publisher.yml:ro"
 
   swh-journal-client:
-    image: swh/journal-client
-    build: ./dockerfiles/swh-journal-client
+    image: swh/stack
+    build: ./
+    entrypoint: /swh-journal-client/entrypoint.sh
     depends_on:
       - swh-journal-publisher
     volumes:
       - "./conf/journal_client.yml:/etc/softwareheritage/journal/logger.yml:ro"
 
   swh-indexer-journal-client:
-    image: swh/indexer-journal-client
-    build: ./dockerfiles/swh-indexer-journal-client
+    image: swh/stack
+    build: ./
+    entrypoint: /swh-indexer-journal-client/entrypoint.sh
     depends_on:
       - swh-journal-publisher
       - swh-scheduler-api

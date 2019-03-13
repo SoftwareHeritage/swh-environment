@@ -18,7 +18,7 @@ case "$1" in
       exec bash -i
       ;;
     *)
-      echo "Starting an swh-journal client"
-      exec wait-for-it kafka:9092 -s --timeout=0 -- python3 -m client
+      echo "Starting a swh-journal client"
+      exec wait-for-it kafka:9092 -s --timeout=0 -- python3 /swh-journal-client/client.py
       ;;
 esac

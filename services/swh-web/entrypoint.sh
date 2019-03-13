@@ -19,6 +19,9 @@ case "$1" in
         exec bash -i
         ;;
      *)
+        echo "Migrating db"
+        django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
+
         echo "starting the swh-web server"
         exec gunicorn --bind 0.0.0.0:5004 \
              --timeout 3600 \
