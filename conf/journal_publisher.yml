@@ -2,13 +2,9 @@ brokers:
   - kafka
 
 temporary_prefix: swh.tmp.journal.new
-
-storage:
-  cls: remote
-  args:
-    url: http://swh-storage:5002/
-
-max_messages: 1
+final_prefix: swh.journal.objects
+consumer_id: swh.journal.publisher
+publisher_id: swh.journal.publisher
 
 object_types:
   - content
@@ -17,3 +13,10 @@ object_types:
   - origin
   - origin_visit
   - snapshot
+
+storage:
+  cls: remote
+  args:
+    url: http://swh-storage:5002/
+
+max_messages: 1

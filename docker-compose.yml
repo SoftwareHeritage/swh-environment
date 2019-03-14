@@ -330,11 +330,13 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /swh-journal-publisher/entrypoint.sh
+    environment:
+      SWH_CONFIG_FILENAME: /journal_publisher.yml
     depends_on:
       - kafka
       - swh-storage-listener
     volumes:
-      - "./conf/journal_publisher.yml:/etc/softwareheritage/journal/publisher.yml:ro"
+      - "./conf/journal_publisher.yml:/journal_publisher.yml:ro"
 
   swh-journal-client:
     image: swh/stack
