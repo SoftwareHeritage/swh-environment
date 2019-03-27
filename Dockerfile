@@ -9,7 +9,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsvn-dev \
     libsystemd-dev \
     postgresql-client \
-    wait-for-it && \
+    wait-for-it \
+    ngrep && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
