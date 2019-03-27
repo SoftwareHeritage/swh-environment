@@ -16,28 +16,16 @@ fi
 echo Installed Python packages:
 pip list
 
-export POSTGRES_DB=swh-lister-${SWH_WORKER_INSTANCE}
+source /swh-utils/pgsql.sh
 
-echo "${PGHOST}:5432:postgres:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass
-echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" >> ~/.pgpass
-cat > ~/.pg_service.conf <<EOF
-[swh]
-dbname=${POSTGRES_DB}
-host=${PGHOST}
-port=5432
-user=${PGUSER}
-EOF
-
-chmod 0600 ~/.pgpass
-
+setup_pgsql
 
 case "$1" in
     "shell")
         exec bash -i
         ;;
     *)
-        echo Waiting for postgresql to start
-        wait-for-it swh-listers-db:5432 -s --timeout=0
+        wait_pgsql
 
         echo Setup ${POSTGRES_DB} database for ${SWH_WORKER_INSTANCE}
         if psql -lqt | cut -d \| -f 1 | grep -qw ${POSTGRES_DB}; then

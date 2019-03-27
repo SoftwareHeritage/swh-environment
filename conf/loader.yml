@@ -2,10 +2,6 @@ storage:
   cls: remote
   args:
     url: http://swh-storage:5002/
-lister:
-  cls: local
-  args:
-    db: postgresql:///?service=swh
 celery:
   task_broker: amqp://guest:guest@amqp//
   task_modules:

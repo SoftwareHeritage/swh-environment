@@ -12,22 +12,15 @@ if [[ -d /src ]] ; then
     done
 fi
 
-echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass
-cat > ~/.pg_service.conf <<EOF
-[swh-deposit]
-host=${PGHOST}
-port=5432
-dbname=${POSTGRES_DB}
-user=${PGUSER}
-EOF
+source /swh-utils/pgsql.sh
 
-chmod 0600 ~/.pgpass
+setup_pgsql
 
 if [ "$1" = 'shell' ] ; then
     exec bash -i
 else
-    echo "Waiting for postgresql to start"
-    wait-for-it swh-deposit-db:5432 -s --timeout=0
+    
+    wait_pgsql
 
     echo "Migrating db"
     django-admin migrate --settings=swh.deposit.settings.production

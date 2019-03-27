@@ -13,6 +13,11 @@ if [[ -d /src ]] ; then
     done
 fi
 
+
+source /swh-utils/pgsql.sh
+
+setup_pgsql
+
 case "$1" in
     "shell")
         exec bash -i
@@ -20,6 +25,8 @@ case "$1" in
     *)
         echo Waiting for RabbitMQ to start
         wait-for-it amqp:5672 -s --timeout=0
+
+        wait_pgsql
 
         echo Starting swh-indexer worker
         exec python -m celery worker \

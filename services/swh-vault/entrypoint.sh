@@ -13,18 +13,9 @@ fi
 echo Installed Python packages:
 pip list
 
-if [[ -n $PGHOST ]]; then
-    echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass
-    cat > ~/.pg_service.conf <<EOF
-[swh-vault]
-dbname=${POSTGRES_DB}
-host=${PGHOST}
-port=5432
-user=${PGUSER}
-EOF
+source /swh-utils/pgsql.sh
 
-    chmod 0600 ~/.pgpass
-fi
+setup_pgsql
 
 case "$1" in
     "shell")
@@ -45,13 +36,12 @@ case "$1" in
         # ensure the pathslicing root dir for the cache exists
         mkdir -p /srv/softwareheritage/vault
 
-        echo Waiting for postgresql to start
-        wait-for-it swh-vault-db:5432 -s --timeout=0
+        wait_pgsql
 
         echo Setup the swh-vault API database
         PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init vault \
                   --db-name ${POSTGRES_DB}
 
         echo Starting the swh-vault API server
-        exec swh-vault -C /vault-api.yml
+        exec swh-vault -C ${SWH_CONFIG_FILENAME}
 esac

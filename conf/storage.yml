@@ -1,7 +1,7 @@
 storage:
   cls: local
   args:
-    db: postgresql:///?service=swh
+    db: postgresql:///?service=swh-storage
     objstorage:
       cls: remote
       args:

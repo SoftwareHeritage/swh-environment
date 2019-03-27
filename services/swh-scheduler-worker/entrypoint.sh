@@ -13,23 +13,18 @@ fi
 echo Installed Python packages:
 pip list
 
-echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass
-cat > ~/.pg_service.conf <<EOF
-[swh-scheduler]
-dbname=${POSTGRES_DB}
-host=${PGHOST}
-port=5432
-user=${PGUSER}
-EOF
+source /swh-utils/pgsql.sh
 
-chmod 0600 ~/.pgpass
+setup_pgsql
 
 case "$1" in
     "shell")
         exec bash -i
         ;;
     *)
-		  echo "Starting the swh-scheduler $1"
-		  exec wait-for-it amqp:5672 -s --timeout=0 -- swh-scheduler --log-level ${LOGLEVEL} -C /scheduler.yml $@
-      ;;
+        wait_pgsql
+
+        echo "Starting the swh-scheduler $1"
+        exec wait-for-it amqp:5672 -s --timeout=0 -- swh-scheduler --log-level ${LOGLEVEL} -C /scheduler.yml $@
+        ;;
 esac

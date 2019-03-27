@@ -64,14 +64,18 @@ services:
 
   swh-scheduler-db:
     image: postgres:11
+    env_file:
+      - ./env/scheduler-db.env
     environment:
-      POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: swh-scheduler
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
 
   swh-scheduler-api:
     image: swh/stack
     build: ./
-    env_file: ./env/scheduler.env
+    env_file:
+      - ./env/scheduler-db.env
+      - ./env/scheduler.env
     entrypoint: /swh-scheduler-api/entrypoint.sh
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
@@ -87,7 +91,9 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /swh-scheduler-worker/entrypoint.sh
-    env_file: ./env/scheduler.env
+    env_file:
+      - ./env/scheduler-db.env
+      - ./env/scheduler.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
@@ -102,7 +108,9 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /swh-scheduler-worker/entrypoint.sh
-    env_file: ./env/scheduler.env
+    env_file:
+      - ./env/scheduler-db.env
+      - ./env/scheduler.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
@@ -117,9 +125,11 @@ services:
 
   swh-storage-db:
     image: postgres:11
+    env_file:
+      - ./env/storage-db.env
     environment:
-      POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: swh-storage
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
 
   swh-storage:
     build: ./
@@ -130,7 +140,10 @@ services:
     depends_on:
       - swh-storage-db
       - swh-objstorage
-    env_file: ./env/storage.env
+    env_file:
+      - ./env/storage-db.env
+    environment:
+      SWH_CONFIG_FILENAME: /storage.yml
     volumes:
       - "./conf/storage.yml:/storage.yml:ro"
 
@@ -151,9 +164,11 @@ services:
 
   swh-idx-storage-db:
     image: postgres:11
+    env_file:
+      - ./env/indexers-db.env
     environment:
-      POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: swh-idx-storage
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
 
   swh-idx-storage:
     build: ./
@@ -163,11 +178,9 @@ services:
       - 5007:5007
     depends_on:
       - swh-idx-storage-db
+    env_file:
+      - ./env/indexers-db.env
     environment:
-      POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: swh-idx-storage
-      PGHOST: swh-idx-storage-db
-      PGUSER: postgres
       SWH_CONFIG_FILENAME: /indexer_storage.yml
     volumes:
       - "./conf/indexer_storage.yml:/indexer_storage.yml:ro"
@@ -194,7 +207,11 @@ services:
 
   swh-deposit-db:
     image: postgres:11
-    env_file: ./env/deposit.env
+    env_file:
+      - ./env/deposit-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
 
   swh-deposit:
     build: ./
@@ -205,23 +222,28 @@ services:
     depends_on:
       - swh-deposit-db
       - swh-scheduler-api
-    env_file: ./env/deposit.env
-    environment:
-      PGHOST: swh-deposit-db
+    env_file:
+      - ./env/deposit-db.env
+      - ./env/deposit.env
     volumes:
       - "./conf/deposit.yml:/deposit.yml:ro"
 
   swh-vault-db:
     image: postgres:11
+    env_file:
+      - ./env/vault-db.env
     environment:
-      POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: swh-vault
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
 
   swh-vault-api:
     build: ./
     image: swh/stack
     entrypoint: /swh-vault/entrypoint.sh
-    env_file: ./env/vault.env
+    env_file:
+      - ./env/vault-db.env
+    environment:
+      SWH_CONFIG_FILENAME: /vault-api.yml
     command: server
     ports:
       - 5005:5005
@@ -251,14 +273,19 @@ services:
 
   swh-listers-db:
     image: postgres:11
+    env_file:
+      - ./env/listers-db.env
     environment:
-      POSTGRES_PASSWORD: testpassword
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
 
   swh-lister:
     image: swh/stack
     build: ./
     entrypoint: /swh-listers-worker/entrypoint.sh
-    env_file: ./env/listers.env
+    env_file:
+      - ./env/listers-db.env
+      - ./env/listers.env
     user: swh
     environment:
       STATSD_HOST: prometheus-statsd-exporter
@@ -280,7 +307,8 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /swh-loaders-worker/entrypoint.sh
-    env_file: ./env/listers.env
+    env_file:
+      - ./env/listers.env
     user: swh
     environment:
       STATSD_HOST: prometheus-statsd-exporter
@@ -300,7 +328,9 @@ services:
     build: ./
     user: swh
     entrypoint: /swh-indexer-worker/entrypoint.sh
-    env_file: ./env/indexers.env
+    env_file:
+      - ./env/indexers-db.env
+      - ./env/indexers.env
     environment:
       STATSD_HOST: prometheus-statsd-exporter
       STATSD_PORT: 9125
@@ -319,7 +349,8 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /swh-storage-listener/entrypoint.sh
-    env_file: ./env/storage.env
+    env_file:
+      - ./env/storage-db.env
     depends_on:
       - swh-storage-db
       - kafka

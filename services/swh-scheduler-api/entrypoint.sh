@@ -13,16 +13,9 @@ fi
 echo Installed Python packages:
 pip list
 
-echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" > ~/.pgpass
-cat > ~/.pg_service.conf <<EOF
-[swh-scheduler]
-dbname=${POSTGRES_DB}
-host=${PGHOST}
-port=5432
-user=${PGUSER}
-EOF
+source /swh-utils/pgsql.sh
 
-chmod 0600 ~/.pgpass
+setup_pgsql
 
 case "$1" in
     "shell")
@@ -32,8 +25,7 @@ case "$1" in
         exec $@
         ;;
     *)
-        echo Waiting for postgresql to start
-        wait-for-it swh-scheduler-db:5432 -s --timeout=0
+        wait_pgsql
 
         echo Setup the swh-scheduler API database
         PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init scheduler \

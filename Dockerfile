@@ -39,6 +39,8 @@ COPY services/swh-web/entrypoint.sh /swh-web/entrypoint.sh
 
 COPY services/swh-journal-client/client.py /swh-journal-client/
 
+COPY utils/pgsql.sh /swh-utils/pgsql.sh
+
 RUN useradd -ms /bin/bash swh
 
 RUN mkdir -p /srv/softwareheritage/objects

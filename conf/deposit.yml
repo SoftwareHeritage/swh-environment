@@ -8,7 +8,7 @@ private:
   db:
     host: swh-deposit-db
     port: 5432
-    name: softwareheritage-deposit
+    name: swh-deposit
     user: postgres
     password: testpassword
   media_root: /tmp/swh-deposit/uploads
