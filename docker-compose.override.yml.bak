@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  swh-web:
+    volumes:
+      - "/home/antoine/swh/swh-environment/swh-web:/src/swh-web"
+
+  swh-loader:
+    volumes:
+      - "/home/antoine/swh/swh-environment/swh-loader-core:/src/swh-loader-core"
+      - "/home/antoine/swh/swh-environment/swh-loader-svn:/src/swh-loader-svn"
+
+  swh-objstorage:
+    volumes:
+      - "/home/antoine/swh/swh-environment/swh-objstorage:/src/swh-objstorage"
+
+  swh-scheduler-listener:
+    volumes:
+      - "/home/antoine/swh/swh-environment/swh-scheduler:/src/swh-scheduler"
+
+  swh-journal-client:
+    volumes:
+      - "/home/antoine/swh/swh-environment/swh-journal:/src/swh-journal"
