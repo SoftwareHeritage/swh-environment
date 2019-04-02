@@ -51,6 +51,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-git.git' 'swh-loader-git'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-loader-npm]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-npm.git' 'swh-loader-npm'
+fixup = ../bin/git-add-pre-commit-hook .
+
 [swh-loader-mercurial]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
 fixups = ../bin/git-add-pre-commit-hook .
