@@ -160,6 +160,18 @@ Creating swh-docker-dev_swh-loader_3        ... done
 Creating swh-docker-dev_swh-loader_4        ... done
 ```
 
+## Updating the docker image
+
+All containers started by `docker-compose` are bound to a docker image
+named `swh/stack` including all the software components of Software Heritage.
+When new versions of these components are released, the docker image will not
+be automatically updated. In order to update all Software heritage components
+to their latter version, the docker image needs to be explicitly rebuilt by
+issuing the following command inside the `swh-docker-dev` directory:
+
+```
+~/swh-environment/swh-docker-dev$ docker build --no-cache -t swh/stack .
+```
 
 ## Details
 
@@ -558,30 +570,30 @@ So now you can easily:
 
 * Start the SWH platform:
 
-  ```
-  (swh) ~/swh-environment$ dodo up -d
+```
+  (swh) ~/swh-environment$ doco up -d
   [...]
-  ```
+```
 
 * Check celery:
 
-  ```
+```
   (swh) ~/swh-environment$ celery status
   listers@50ac2185c6c9: OK
   loader@b164f9055637: OK
   indexer@33bc6067a5b8: OK
-  ```
+```
 
 * List task-types:
 
-  ```
+```
   (swh) ~/swh-environment$ swh-scheduler task-type list
   [...]
-  ```
+```
 
 * Get more info on a task type:
 
-  ```
+```
   (swh) ~/swh-environment$ swh-scheduler task-type list -v -t origin-update-hg
   Known task types:
   origin-update-hg: swh.loader.mercurial.tasks.LoadMercurial
@@ -591,11 +603,11 @@ So now you can easily:
     max_queue_length: 1000
     num_retries: None
     retry_delay: None
-  ```
+```
 
 * Add a new task:
 
-  ```
+```
   (swh) ~/swh-environment$ swh-scheduler task add origin-update-hg \
     origin_url=https://hg.logilab.org/master/cubicweb
   Created 1 tasks
@@ -607,9 +619,10 @@ So now you can easily:
      Args:
      Keyword args:
        origin_url: https://hg.logilab.org/master/cubicweb
+```
 
 * Respawn a task:
 
-  ```
+```
   (swh) ~/swh-environment$ swh-scheduler task respawn 1
-  ```
+```
