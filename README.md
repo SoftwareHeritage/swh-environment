@@ -128,7 +128,7 @@ each git repository found there.
 
 This will take a bit af time to complete.
 
-To increase the speed at wich git repositories are imported, you can spawn more
+To increase the speed at which git repositories are imported, you can spawn more
 `swh-loader-git` workers:
 
 ```
@@ -166,7 +166,7 @@ All containers started by `docker-compose` are bound to a docker image
 named `swh/stack` including all the software components of Software Heritage.
 When new versions of these components are released, the docker image will not
 be automatically updated. In order to update all Software heritage components
-to their latter version, the docker image needs to be explicitly rebuilt by
+to their latest version, the docker image needs to be explicitly rebuilt by
 issuing the following command inside the `swh-docker-dev` directory:
 
 ```
