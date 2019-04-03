@@ -15,7 +15,7 @@ pip list
 
 source /swh-utils/pgsql.sh
 
-wait_pgsql
+setup_pgsql
 
 case "$1" in
     "shell")
