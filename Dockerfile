@@ -20,7 +20,7 @@ RUN pip install swh-deposit swh-indexer swh-journal swh-lister swh-loader-debian
                 swh-loader-svn swh-loader-tar swh-storage swh-objstorage \
                 swh-scheduler swh-vault swh-web
 
-RUN pip install gunicorn psycopg2-binary  # to make pip silent
+RUN pip install gunicorn
 
 COPY services/swh-deposit/entrypoint.sh /swh-deposit/entrypoint.sh
 COPY services/swh-indexer-journal-client/entrypoint.sh /swh-indexer-journal-client/entrypoint.sh
