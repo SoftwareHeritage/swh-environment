@@ -1,7 +1,6 @@
 brokers:
   - kafka
-# small number of batch
-max_messages: 1
+max_messages: 50
 scheduler:
   cls: remote
   args:

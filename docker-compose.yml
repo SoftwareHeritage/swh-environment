@@ -395,4 +395,4 @@ services:
       - swh-journal-publisher
       - swh-scheduler-api
     volumes:
-      - "./conf/journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
+      - "./conf/indexer_journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"

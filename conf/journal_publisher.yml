@@ -19,4 +19,4 @@ storage:
   args:
     url: http://swh-storage:5002/
 
-max_messages: 1
+max_messages: 50
