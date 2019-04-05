@@ -21,10 +21,19 @@ services:
   kafka:
     image: wurstmeister/kafka
     ports:
-      - 5092:9092
+      - "5092:9092"
     env_file: ./env/kafka.env
     depends_on:
       - zookeeper
+
+  kafka-manager:
+    image: hlebalbau/kafka-manager:stable
+    ports:
+      - "5093:9000"
+    environment:
+      ZK_HOSTS: zookeeper:2181
+      APPLICATION_SECRET: random-secret
+    command: -Dpidfile.path=/dev/null
 
   prometheus:
     image: prom/prometheus
