@@ -15,10 +15,23 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   rm -rf /var/lib/apt/lists/*
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install swh-deposit swh-indexer swh-journal swh-lister swh-loader-debian \
-                swh-loader-dir swh-loader-git swh-loader-mercurial swh-loader-pypi \
-                swh-loader-svn swh-loader-tar swh-storage swh-objstorage \
-                swh-scheduler swh-vault swh-web
+RUN pip install \
+        swh-deposit \
+        swh-indexer \
+        swh-journal \
+        swh-lister \
+        swh-loader-debian \
+        swh-loader-dir \
+        swh-loader-git \
+        swh-loader-mercurial \
+        swh-loader-pypi \
+        swh-loader-svn \
+        swh-loader-tar \
+        swh-storage \
+        swh-objstorage \
+        swh-scheduler \
+        swh-vault \
+        swh-web
 
 RUN pip install gunicorn
 
