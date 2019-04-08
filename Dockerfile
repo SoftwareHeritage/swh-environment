@@ -35,19 +35,6 @@ RUN pip install \
 
 RUN pip install gunicorn
 
-COPY services/swh-deposit/entrypoint.sh /swh-deposit/entrypoint.sh
-COPY services/swh-indexer-journal-client/entrypoint.sh /swh-indexer-journal-client/entrypoint.sh
-COPY services/swh-indexer-storage/entrypoint.sh /swh-indexer-storage/entrypoint.sh
-COPY services/swh-indexer-worker/entrypoint.sh /swh-indexer-worker/entrypoint.sh
-COPY services/swh-listers-worker/entrypoint.sh /swh-listers-worker/entrypoint.sh
-COPY services/swh-loaders-worker/entrypoint.sh /swh-loaders-worker/entrypoint.sh
-COPY services/swh-objstorage/entrypoint.sh /swh-objstorage/entrypoint.sh
-COPY services/swh-scheduler-api/entrypoint.sh /swh-scheduler-api/entrypoint.sh
-COPY services/swh-scheduler-worker/entrypoint.sh /swh-scheduler-worker/entrypoint.sh
-COPY services/swh-storage/entrypoint.sh /swh-storage/entrypoint.sh
-COPY services/swh-vault/entrypoint.sh /swh-vault/entrypoint.sh
-COPY services/swh-web/entrypoint.sh /swh-web/entrypoint.sh
-
 COPY utils/pgsql.sh /swh-utils/pgsql.sh
 
 RUN useradd -ms /bin/bash swh

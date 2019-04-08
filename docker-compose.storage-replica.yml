@@ -1,15 +1,12 @@
 version: '2'
 
 services:
-
   # override web app to use the replica
   swh-web:
     environment:
       SWH_CONFIG_FILENAME: /web-replica.yml
     volumes:
       - "./conf/web-replica.yml:/web-replica.yml:ro"
-    depends_on:
-      - swh-storage-replica
 
   # create a dedicated db for the replica
   swh-storage-replica-db:
@@ -24,6 +21,7 @@ services:
   swh-storage-replica:
     build: ./
     image: swh/stack
+    entrypoint: /swh-storage/entrypoint.sh
     depends_on:
       - swh-storage-replica-db
       - swh-objstorage
@@ -33,13 +31,13 @@ services:
       SWH_CONFIG_FILENAME: /storage-replica.yml
     volumes:
       - "./conf/storage-replica.yml:/storage-replica.yml:ro"
-      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
   # and the background process that keeps the replica in sync with the
   # main graph
   swh-storage-replica-replayer:
     build: ./
     image: swh/stack
+    entrypoint: /entrypoint.sh
     depends_on:
       - swh-storage-replica-db
       - swh-objstorage
@@ -48,5 +46,5 @@ services:
     environment:
       SWH_CONFIG_FILENAME: /storage-replica.yml
     volumes:
-      - "./conf/storage-replica.yml:/storage-replica.yml:ro"
       - "./services/swh-storage-replayer/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/storage-replica.yml:/storage-replica.yml:ro"

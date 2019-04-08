@@ -85,50 +85,53 @@ services:
     env_file:
       - ./env/scheduler-db.env
       - ./env/scheduler.env
-    entrypoint: /swh-scheduler-api/entrypoint.sh
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+    entrypoint: /entrypoint.sh
     depends_on:
       - swh-scheduler-db
     ports:
       - 5008:5008
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler-api/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-scheduler-listener:
     image: swh/stack
     build: ./
-    entrypoint: /swh-scheduler-worker/entrypoint.sh
     env_file:
       - ./env/scheduler-db.env
       - ./env/scheduler.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+    entrypoint: /entrypoint.sh
     command: listener
     depends_on:
       - swh-scheduler-api
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-scheduler-runner:
     image: swh/stack
     build: ./
-    entrypoint: /swh-scheduler-worker/entrypoint.sh
     env_file:
       - ./env/scheduler-db.env
       - ./env/scheduler.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+    entrypoint: /entrypoint.sh
     command: runner -p 10
     depends_on:
       - swh-scheduler-api
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
 
 # Graph storage
 
@@ -141,9 +144,8 @@ services:
       PGHOST:
 
   swh-storage:
-    build: ./
     image: swh/stack
-    entrypoint: /swh-storage/entrypoint.sh
+    build: ./
     ports:
       - 5002:5002
     depends_on:
@@ -154,21 +156,24 @@ services:
       - ./env/storage-db.env
     environment:
       SWH_CONFIG_FILENAME: /storage.yml
+    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/storage.yml:/storage.yml:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
 # Object storage
 
   swh-objstorage:
     build: ./
     image: swh/stack
-    entrypoint: /swh-objstorage/entrypoint.sh
     ports:
       - 5003:5003
     environment:
       SWH_CONFIG_FILENAME: /objstorage.yml
+    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
+      - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
 
 # Indexer storage
 
@@ -181,9 +186,8 @@ services:
       PGHOST:
 
   swh-idx-storage:
-    build: ./
     image: swh/stack
-    entrypoint: /swh-indexer-storage/entrypoint.sh
+    build: ./
     ports:
       - 5007:5007
     depends_on:
@@ -192,15 +196,16 @@ services:
       - ./env/indexers-db.env
     environment:
       SWH_CONFIG_FILENAME: /indexer_storage.yml
+    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/indexer_storage.yml:/indexer_storage.yml:ro"
+      - "./services/swh-indexer-storage/entrypoint.sh:/entrypoint.sh:ro"
 
 # Web interface
 
   swh-web:
     build: ./
     image: swh/stack
-    entrypoint: /swh-web/entrypoint.sh
     ports:
       - 5004:5004
     depends_on:
@@ -215,6 +220,7 @@ services:
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/web.yml:/web.yml:ro"
+      - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
       - "./services/swh-web/settings.py:/srv/softwareheritage/localsettings.py:ro"
 
   swh-deposit-db:
@@ -226,9 +232,8 @@ services:
       PGHOST:
 
   swh-deposit:
-    build: ./
-    entrypoint: /swh-deposit/entrypoint.sh
     image: swh/stack
+    build: ./
     ports:
       - 5006:5006
     depends_on:
@@ -237,8 +242,10 @@ services:
     env_file:
       - ./env/deposit-db.env
       - ./env/deposit.env
+    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/deposit.yml:/deposit.yml:ro"
+      - "./services/swh-deposit/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-vault-db:
     image: postgres:11
@@ -249,9 +256,8 @@ services:
       PGHOST:
 
   swh-vault-api:
-    build: ./
     image: swh/stack
-    entrypoint: /swh-vault/entrypoint.sh
+    build: ./
     env_file:
       - ./env/vault-db.env
     environment:
@@ -264,21 +270,24 @@ services:
       - swh-objstorage
       - swh-storage
       - swh-scheduler-api
+    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/vault-api.yml:/vault-api.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-vault-worker:
-    build: ./
     image: swh/stack
-    entrypoint: /swh-vault/entrypoint.sh
+    build: ./
     command: worker
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
     depends_on:
       - swh-vault-api
       - swh-storage
+    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/vault-worker.yml:/cooker.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
 
 # Lister Celery workers
@@ -294,7 +303,6 @@ services:
   swh-lister:
     image: swh/stack
     build: ./
-    entrypoint: /swh-listers-worker/entrypoint.sh
     env_file:
       - ./env/listers-db.env
       - ./env/listers.env
@@ -310,15 +318,16 @@ services:
       - swh-scheduler-runner
       - swh-storage
       - amqp
+    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/lister.yml:/lister.yml:ro"
+      - "./services/swh-listers-worker/entrypoint.sh:/entrypoint.sh:ro"
 
 # Loader Celery workers
 
   swh-loader:
     image: swh/stack
     build: ./
-    entrypoint: /swh-loaders-worker/entrypoint.sh
     env_file:
       - ./env/listers.env
     user: swh
@@ -327,11 +336,13 @@ services:
       STATSD_PORT: 9125
       SWH_WORKER_INSTANCE: loader
       SWH_CONFIG_FILENAME: /loader.yml
+    entrypoint: /entrypoint.sh
     depends_on:
       - swh-storage
       - amqp
     volumes:
       - "./conf/loader.yml:/loader.yml:ro"
+      - "./services/swh-loaders-worker/entrypoint.sh:/entrypoint.sh:ro"
 
 # Indexer Celery workers
 
@@ -339,13 +350,13 @@ services:
     image: swh/stack
     build: ./
     user: swh
-    entrypoint: /swh-indexer-worker/entrypoint.sh
     env_file:
       - ./env/indexers-db.env
       - ./env/indexers.env
     environment:
       STATSD_HOST: prometheus-statsd-exporter
       STATSD_PORT: 9125
+    entrypoint: /entrypoint.sh
     depends_on:
       - swh-scheduler-runner
       - swh-idx-storage
@@ -354,16 +365,18 @@ services:
       - amqp
     volumes:
       - "./conf/indexer.yml:/indexer.yml:ro"
+      - "./services/swh-indexer-worker/entrypoint.sh:/entrypoint.sh:ro"
 
 # Journal related
 
   swh-indexer-journal-client:
     image: swh/stack
     build: ./
-    entrypoint: /swh-indexer-journal-client/entrypoint.sh
+    entrypoint: /entrypoint.sh
     depends_on:
       - kafka
       - swh-storage
       - swh-scheduler-api
     volumes:
       - "./conf/indexer_journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
+      - "./services/swh-indexer-journal-client/entrypoint.sh:/entrypoint.sh:ro"
