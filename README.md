@@ -626,3 +626,36 @@ So now you can easily:
 ```
   (swh) ~/swh-environment$ swh-scheduler task respawn 1
 ```
+
+
+## Starting a kafka-powered replica of the storage
+
+This repo comes with an optional `docker-compose.storage-replica.yml`
+docker compose file that can be used to test the kafka-powered replication
+mecanism for the main storage.
+
+This can be used like:
+
+```
+~/swh-environment/swh-docker-dev$ docker-compose -f docker-compose.yml -f docker-compose.storage-replica.yml up -d
+[...]
+```
+
+Compared to the original compose file, this will:
+
+- overrides the swh-storage service to activate the kafka direct writer
+  on swh.journal.objects prefixed topics using thw swh.storage.master ID,
+- overrides the swh-web service to make it use the replica instead of the
+  master storage,
+- starts a db for the replica,
+- starts a storage service based on this db,
+- starts a replayer service that runs the process that listen to kafka to
+  keeps the replica in sync.
+
+When using it, you will have a setup in which the master storage is used by
+workers and most other services, whereas the storage replica will be used to
+by the web application and should be kept in sync with the master storage
+by kafka.
+
+
+Note that the object storage is not replicated here, only the graph storage.

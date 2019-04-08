@@ -149,6 +149,7 @@ services:
     depends_on:
       - swh-storage-db
       - swh-objstorage
+      - kafka
     env_file:
       - ./env/storage-db.env
     environment:
