@@ -11,7 +11,7 @@ scheduler:
 lister:
   cls: local
   args:
-    db: postgresql:///?service=swh-listers
+    db: postgresql://postgres@swh-listers-db/swh-listers
 
 celery:
   task_broker: amqp://guest:guest@amqp//
