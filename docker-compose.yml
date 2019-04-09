@@ -354,30 +354,6 @@ services:
 
 # Journal related
 
-  swh-storage-listener:
-    image: swh/stack
-    build: ./
-    entrypoint: /swh-storage-listener/entrypoint.sh
-    env_file:
-      - ./env/storage-db.env
-    depends_on:
-      - swh-storage-db
-      - kafka
-    volumes:
-      - "./conf/storage_listener.yml:/etc/softwareheritage/storage/listener.yml:ro"
-
-  swh-journal-publisher:
-    image: swh/stack
-    build: ./
-    entrypoint: /swh-journal-publisher/entrypoint.sh
-    environment:
-      SWH_CONFIG_FILENAME: /journal_publisher.yml
-    depends_on:
-      - kafka
-      - swh-storage-listener
-    volumes:
-      - "./conf/journal_publisher.yml:/journal_publisher.yml:ro"
-
   swh-journal-client:
     image: swh/stack
     build: ./
@@ -392,7 +368,8 @@ services:
     build: ./
     entrypoint: /swh-indexer-journal-client/entrypoint.sh
     depends_on:
-      - swh-journal-publisher
+      - kafka
+      - swh-storage-api
       - swh-scheduler-api
     volumes:
       - "./conf/indexer_journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
