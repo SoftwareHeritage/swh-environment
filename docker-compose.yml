@@ -354,15 +354,6 @@ services:
 
 # Journal related
 
-  swh-journal-client:
-    image: swh/stack
-    build: ./
-    entrypoint: /swh-journal-client/entrypoint.sh
-    depends_on:
-      - swh-journal-publisher
-    volumes:
-      - "./conf/journal_client.yml:/etc/softwareheritage/journal/logger.yml:ro"
-
   swh-indexer-journal-client:
     image: swh/stack
     build: ./
