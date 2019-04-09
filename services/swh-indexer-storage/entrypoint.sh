@@ -1,23 +1,11 @@
 #!/bin/bash
 
 set -e
-export PATH=${HOME}/.local/bin:${PATH}
 
-if [[ -d /src ]] ; then
-    for srcrepo in /src/swh-* ; do
-        pushd $srcrepo
-        echo "WARNING: $srcrepo will NOT be pip installed in dev mode"
-        echo "         due to permission limitations."
-        pip install --user .
-        popd
-    done
-fi
-
-echo Installed Python packages:
-pip list
+source /srv/softwareheritage/utils/pyutils.sh
+setup_pip
 
 source /srv/softwareheritage/utils/pgsql.sh
-
 setup_pgsql
 
 case "$1" in

@@ -2,19 +2,10 @@
 
 set -e
 
-if [[ -d /src ]] ; then
-    for srcrepo in /src/swh-* ; do
-      pushd $srcrepo
-      pip install -e .
-      popd
-    done
-fi
-
-echo Installed Python packages:
-pip list
+source /srv/softwareheritage/utils/pyutils.sh
+setup_pip
 
 source /srv/softwareheritage/utils/pgsql.sh
-
 setup_pgsql
 
 case "$1" in
@@ -29,7 +20,9 @@ case "$1" in
           --db-name ${POSTGRES_DB}
 
       echo Starting the swh-storage Kafka storage replayer
-      exec swh-journal replay --broker kafka --prefix swh.journal.objects \
+      exec swh-journal replay \
+		   --broker kafka \
+		   --prefix swh.journal.objects \
 		   --consumer-id swh.storage.replica
       ;;
 esac

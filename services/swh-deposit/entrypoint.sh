@@ -2,18 +2,10 @@
 
 set -ex
 
-if [[ -d /src ]] ; then
-    pwd
-    for src_repo in /src/swh-* ; do
-        pushd $src_repo
-        echo "Installing ${src_repo}"
-        pip install -e .
-        popd
-    done
-fi
+source /srv/softwareheritage/utils/pyutils.sh
+setup_pip
 
 source /srv/softwareheritage/utils/pgsql.sh
-
 setup_pgsql
 
 if [ "$1" = 'shell' ] ; then
