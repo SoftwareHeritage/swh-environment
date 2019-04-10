@@ -19,9 +19,8 @@ services:
 
   # and an RPC server
   swh-storage-replica:
-    build: ./
     image: swh/stack
-    entrypoint: /swh-storage/entrypoint.sh
+    build: ./
     depends_on:
       - swh-storage-replica-db
       - swh-objstorage
@@ -29,15 +28,16 @@ services:
       - ./env/storage-db-replica.env
     environment:
       SWH_CONFIG_FILENAME: /storage-replica.yml
+    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/storage-replica.yml:/storage-replica.yml:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
   # and the background process that keeps the replica in sync with the
   # main graph
   swh-storage-replica-replayer:
-    build: ./
     image: swh/stack
-    entrypoint: /entrypoint.sh
+    build: ./
     depends_on:
       - swh-storage-replica-db
       - swh-objstorage
@@ -45,6 +45,7 @@ services:
       - ./env/storage-db-replica.env
     environment:
       SWH_CONFIG_FILENAME: /storage-replica.yml
+    entrypoint: /entrypoint.sh
     volumes:
-      - "./services/swh-storage-replayer/entrypoint.sh:/entrypoint.sh:ro"
       - "./conf/storage-replica.yml:/storage-replica.yml:ro"
+      - "./services/swh-storage-replayer/entrypoint.sh:/entrypoint.sh:ro"
