@@ -360,7 +360,7 @@ services:
     entrypoint: /swh-indexer-journal-client/entrypoint.sh
     depends_on:
       - kafka
-      - swh-storage-api
+      - swh-storage
       - swh-scheduler-api
     volumes:
       - "./conf/indexer_journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
