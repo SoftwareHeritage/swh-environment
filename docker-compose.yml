@@ -214,14 +214,12 @@ services:
       - swh-idx-storage
     environment:
       VERBOSITY: 3
-      DJANGO_SETTINGS_MODULE: localsettings
+      DJANGO_SETTINGS_MODULE: swh.web.settings.development
       SWH_CONFIG_FILENAME: /web.yml
-      PYTHONPATH: /srv/softwareheritage
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/web.yml:/web.yml:ro"
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
-      - "./services/swh-web/settings.py:/srv/softwareheritage/localsettings.py:ro"
 
   swh-deposit-db:
     image: postgres:11
