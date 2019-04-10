@@ -12,14 +12,14 @@ if [[ -d /src ]] ; then
     done
 fi
 
-source /swh-utils/pgsql.sh
+source /srv/softwareheritage/utils/pgsql.sh
 
 setup_pgsql
 
 if [ "$1" = 'shell' ] ; then
     exec bash -i
 else
-    
+
     wait_pgsql
 
     echo "Migrating db"

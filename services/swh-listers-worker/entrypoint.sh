@@ -16,7 +16,7 @@ fi
 echo Installed Python packages:
 pip list
 
-source /swh-utils/pgsql.sh
+source /srv/softwareheritage/utils/pgsql.sh
 
 setup_pgsql
 

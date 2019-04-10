@@ -14,7 +14,7 @@ if [[ -d /src ]] ; then
 fi
 
 
-source /swh-utils/pgsql.sh
+source /srv/softwareheritage/utils/pgsql.sh
 
 setup_pgsql
 
