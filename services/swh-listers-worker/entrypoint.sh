@@ -22,11 +22,12 @@ case "$1" in
             echo Creating database
             createdb ${POSTGRES_DB}
 
-            echo Initialize database
-            python -m swh.lister.cli \
-                   --db-url postgres://${PGUSER}@${PGHOST}/${POSTGRES_DB} \
-                   all
         fi
+
+        echo Initialize database
+        python -m swh.lister.cli \
+               --db-url postgres://${PGUSER}@${PGHOST}/${POSTGRES_DB} \
+               all
 
         echo Waiting for RabbitMQ to start
         wait-for-it amqp:5672 -s --timeout=0
