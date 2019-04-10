@@ -1,15 +1,14 @@
 #!/bin/bash
 
 setup_pip () {
-	export PATH=${HOME}/.local/bin:${PATH}
+  echo Using pip from $(which pip)
 
-	if [[ -d /src ]] ; then
+  if [[ -d /src ]] ; then
     for srcrepo in /src/swh-* ; do
-        pip install -e $srcrepo
+      pip install $srcrepo
     done
   fi
 
   echo Installed Python packages:
   pip list
-
 }

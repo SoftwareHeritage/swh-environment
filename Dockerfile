@@ -14,7 +14,14 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
+RUN useradd -md /srv/softwareheritage -s /bin/bash swh
+USER swh
+
+RUN python3 -m venv /srv/softwareheritage/venv
+ENV PATH="/srv/softwareheritage/venv/bin:${PATH}"
 RUN pip install --upgrade pip setuptools wheel
+RUN pip install gunicorn
+
 RUN pip install \
         swh-deposit \
         swh-indexer \
@@ -33,10 +40,5 @@ RUN pip install \
         swh-vault \
         swh-web
 
-RUN pip install gunicorn
-
-COPY utils/pgsql.sh /swh-utils/pgsql.sh
-
-RUN useradd -ms /bin/bash swh
-
+COPY utils/*.sh /srv/softwareheritage/utils/
 RUN mkdir -p /srv/softwareheritage/objects
