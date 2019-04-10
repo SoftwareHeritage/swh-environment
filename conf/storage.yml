@@ -6,10 +6,10 @@ storage:
       cls: remote
       args:
         url: http://swh-objstorage:5003/
-  journal_writer:
-    cls: kafka
-    args:
-      brokers:
-        - kafka
-      prefix: swh.journal.objects
-      client_id: swh.storage.master
+    journal_writer:
+      cls: kafka
+      args:
+        brokers:
+          - kafka
+        prefix: swh.journal.objects
+        client_id: swh.storage.master
