@@ -319,7 +319,7 @@ To list all existing task types:
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
-  swh-scheduler task --list-types
+  swh-scheduler task-type list
 
 Known task types:
 swh-loader-mount-dump-and-load-svn-repository:
