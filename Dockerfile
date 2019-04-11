@@ -31,6 +31,7 @@ RUN pip install \
         swh-loader-dir \
         swh-loader-git \
         swh-loader-mercurial \
+        swh-loader-npm \
         swh-loader-pypi \
         swh-loader-svn \
         swh-loader-tar \

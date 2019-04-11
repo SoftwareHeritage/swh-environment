@@ -9,9 +9,11 @@ celery:
     - swh.loader.dir.tasks
     - swh.loader.git.tasks
     - swh.loader.mercurial.tasks
+    - swh.loader.npm.tasks
     - swh.loader.pypi.tasks
     - swh.loader.svn.tasks
     - swh.loader.tar.tasks
+
   task_queues:
     - swh.loader.debian.tasks.LoadDebianPackage
     - swh.loader.dir.tasks.LoadDirRepository
@@ -20,6 +22,7 @@ celery:
     - swh.loader.git.tasks.UpdateGitRepository
     - swh.loader.mercurial.tasks.LoadArchiveMercurial
     - swh.loader.mercurial.tasks.LoadMercurial
+    - swh.loader.npm.tasks.LoadNpm
     - swh.loader.pypi.tasks.LoadPyPI
     - swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
     - swh.loader.svn.tasks.LoadSvnRepository
