@@ -3,6 +3,9 @@ scheduler:
   args:
     url: http://swh-scheduler-api:5008
 
+allowed_hosts:
+  - swh-deposit
+
 private:
   secret_key: prod-in-docker
   db:
