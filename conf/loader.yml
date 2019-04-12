@@ -30,3 +30,5 @@ celery:
     - swh.loader.tar.tasks.LoadTarRepository
 
 lister_db_url: postgresql://postgres@swh-listers-db/swh-listers
+
+url: 'http://swh-deposit:5006'
