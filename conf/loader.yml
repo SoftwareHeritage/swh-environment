@@ -13,6 +13,7 @@ celery:
     - swh.loader.pypi.tasks
     - swh.loader.svn.tasks
     - swh.loader.tar.tasks
+    - swh.deposit.loader.tasks
 
   task_queues:
     - swh.loader.debian.tasks.LoadDebianPackage
@@ -28,6 +29,8 @@ celery:
     - swh.loader.svn.tasks.LoadSvnRepository
     - swh.loader.svn.tasks.MountAndLoadSvnRepository
     - swh.loader.tar.tasks.LoadTarRepository
+    - swh.deposit.loader.tasks.LoadDepositArchiveTsk
+    - swh.deposit.loader.tasks.ChecksDepositTsk
 
 lister_db_url: postgresql://postgres@swh-listers-db/swh-listers
 
