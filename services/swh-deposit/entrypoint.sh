@@ -17,6 +17,13 @@ else
     echo "Migrating db"
     django-admin migrate --settings=swh.deposit.settings.production
 
+    swh-deposit admin user exists test || \
+        swh-deposit admin user create \
+                    --username test \
+                    --password test \
+                    --provider-url https://softwareheritage.org \
+                    --domain softwareheritage.org
+
     echo "starting swh-deposit server"
     exec gunicorn --bind 0.0.0.0:5006 \
                   --reload \
