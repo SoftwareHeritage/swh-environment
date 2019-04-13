@@ -659,3 +659,21 @@ by kafka.
 
 
 Note that the object storage is not replicated here, only the graph storage.
+
+## Starting the backfiller
+
+Reading from the storage the objects <object-type> from within range
+[start-object, end-object] to the kafka topics.
+
+```
+(swh) $ docker-compose \
+             -f docker-compose.yml \
+             -f docker-compose.storage-replica.yml \
+             -f docker-compose.storage-replica.override.yml \
+             run \
+             swh-journal-backfiller \
+             snapshot \
+             --start-object 000000 \
+             --end-object 000001 \
+             --dry-run
+```
