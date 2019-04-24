@@ -41,3 +41,21 @@ grecaptcha:
 serve_assets: yes
 
 development_db: /tmp/db.sqlite3
+
+throttling:
+  scopes:
+    swh_api:
+      limiter_rate:
+        default: 120/h
+      exempted_networks:
+        - 0.0.0.0/0
+    swh_vault_cooking:
+      limiter_rate:
+        default: 120/h
+      exempted_networks:
+        - 0.0.0.0/0
+    swh_save_origin:
+      limiter_rate:
+        default: 120/h
+      exempted_networks:
+        - 0.0.0.0/0
