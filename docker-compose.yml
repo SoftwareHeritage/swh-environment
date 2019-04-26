@@ -17,6 +17,7 @@ services:
 
   zookeeper:
     image: wurstmeister/zookeeper
+    restart: always
 
   kafka:
     image: wurstmeister/kafka
