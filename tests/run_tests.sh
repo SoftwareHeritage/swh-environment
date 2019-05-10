@@ -22,10 +22,12 @@ export COMPOSE_FILE=$TEST_SCRIPTS_DIR/../docker-compose.yml
 SWH_WEB_API_BASEURL="http://localhost:5004/api/1"
 CURRENT_TEST_SCRIPT=""
 
-# Colored output related variables and functions
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-NC='\033[0m'
+# Colored output related variables and functions (only if stdout is a terminal)
+if test -t 1; then
+  GREEN='\033[0;32m'
+  RED='\033[0;31m'
+  NC='\033[0m'
+fi
 
 function colored_output {
   local msg="$2"
