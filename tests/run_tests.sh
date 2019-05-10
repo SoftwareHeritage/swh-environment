@@ -152,13 +152,13 @@ docker-compose up -d
 
 # Ensure all swh services are up before running tests
 status_message "Waiting for swh services to be up"
-docker-compose exec swh-storage wait-for-it localhost:5002 -s --timeout=0
-docker-compose exec swh-objstorage wait-for-it localhost:5003 -s --timeout=0
-docker-compose exec swh-web wait-for-it localhost:5004 -s --timeout=0
-docker-compose exec swh-vault-api wait-for-it localhost:5005 -s --timeout=0
-docker-compose exec swh-deposit wait-for-it localhost:5006 -s --timeout=0
-docker-compose exec swh-idx-storage wait-for-it localhost:5007 -s --timeout=0
-docker-compose exec swh-scheduler-api wait-for-it localhost:5008 -s --timeout=0
+docker-compose exec -T swh-storage wait-for-it localhost:5002 -s --timeout=0
+docker-compose exec -T swh-objstorage wait-for-it localhost:5003 -s --timeout=0
+docker-compose exec -T swh-web wait-for-it localhost:5004 -s --timeout=0
+docker-compose exec -T swh-vault-api wait-for-it localhost:5005 -s --timeout=0
+docker-compose exec -T swh-deposit wait-for-it localhost:5006 -s --timeout=0
+docker-compose exec -T swh-idx-storage wait-for-it localhost:5007 -s --timeout=0
+docker-compose exec -T swh-scheduler-api wait-for-it localhost:5008 -s --timeout=0
 
 # Execute test scripts
 for test_script in $TEST_SCRIPTS_DIR/test_*; do
