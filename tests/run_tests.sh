@@ -29,6 +29,9 @@ if test -t 1; then
   NC='\033[0m'
 fi
 
+# Remove previously dumped service logs file if any
+rm -f $TEST_SCRIPTS_DIR/swh-docker-compose.logs
+
 function colored_output {
   local msg="$2"
   if [ "$CURRENT_TEST_SCRIPT" != "" ]; then
@@ -45,14 +48,18 @@ function error_message {
   colored_output ${RED} "$1"
 }
 
+function dump_docker_logs {
+  error_message "Dumping logs for all services in file $TEST_SCRIPTS_DIR/swh-docker-compose.logs"
+  docker-compose logs > $TEST_SCRIPTS_DIR/swh-docker-compose.logs
+}
+
 # Exit handler that will get called when this script terminates
 function finish {
   if [ $? -ne 0 ] && [ "$CURRENT_TEST_SCRIPT" != "" ]; then
     local SCRIPT_NAME=$CURRENT_TEST_SCRIPT
     CURRENT_TEST_SCRIPT=""
     error_message "An error occurred when running test script ${SCRIPT_NAME}"
-    error_message "Dumping logs for all services in file $TEST_SCRIPTS_DIR/swh-docker-compose.logs"
-    docker-compose logs > $TEST_SCRIPTS_DIR/swh-docker-compose.logs
+    dump_docker_logs
   fi
   docker-compose down
   rm -rf $WORKDIR
@@ -74,6 +81,7 @@ function listen_docker_events {
     elif [ "$event_type" = "die" ] ; then
       if [[ "$service" =~ ^swh.* ]]; then
         error_message "Service $service died unexpectedly, exiting"
+        dump_docker_logs
         kill -s SIGUSR1 $1; exit
       fi
     fi
