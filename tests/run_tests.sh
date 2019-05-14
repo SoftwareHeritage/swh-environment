@@ -27,6 +27,8 @@ if test -t 1; then
   GREEN='\033[0;32m'
   RED='\033[0;31m'
   NC='\033[0m'
+else
+  DOCO_OPTIONS='--no-ansi'
 fi
 
 # Remove previously dumped service logs file if any
@@ -61,7 +63,7 @@ function finish {
     error_message "An error occurred when running test script ${SCRIPT_NAME}"
     dump_docker_logs
   fi
-  docker-compose down
+  docker-compose $DOCO_OPTIONS down
   rm -rf $WORKDIR
 }
 trap finish EXIT
@@ -70,7 +72,7 @@ trap finish EXIT
 # Parameters:
 #   $1: PID of parent process
 function listen_docker_events {
-  docker-compose events | while read event
+  docker-compose $DOCO_OPTIONS events | while read event
   do
     service=$(echo $event | cut -d " " -f7 | sed 's/^name=swh-docker-dev_\(.*\)_1)/\1/')
     event_type=$(echo $event | cut -d ' ' -f4)
@@ -105,7 +107,7 @@ function wait_for_service_output {
     let nb_lines_to_skip=${SERVICE_LOGS_NB_LINES_READ[$2]}+1
   fi
   SECONDS=0
-  local service_logs=$(docker-compose logs $2 | tail -n +$nb_lines_to_skip)
+  local service_logs=$(docker-compose $DOCO_OPTIONS logs $2 | tail -n +$nb_lines_to_skip)
   until echo -ne "$service_logs" | grep -m 1 "$3" >/dev/null ; do
     sleep 1;
     if (( $SECONDS > $1 )); then
@@ -113,7 +115,7 @@ function wait_for_service_output {
       exit 1
     fi
     let nb_lines_to_skip+=$(echo -ne "$service_logs" | wc -l)
-    service_logs=$(docker-compose logs $2 | tail -n +$nb_lines_to_skip)
+    service_logs=$(docker-compose $DOCO_OPTIONS logs $2 | tail -n +$nb_lines_to_skip)
   done
   let nb_lines_to_skip+=$(echo -ne "$service_logs" | wc -l)
   SERVICE_LOGS_NB_LINES_READ[$2]=$nb_lines_to_skip
@@ -158,17 +160,17 @@ listen_docker_events $$ &
 
 # Start the docker-compose environment including the full Software Heritage stack
 status_message "Starting swh docker-compose environment"
-docker-compose up -d
+docker-compose $DOCO_OPTIONS up -d
 
 # Ensure all swh services are up before running tests
 status_message "Waiting for swh services to be up"
-docker-compose exec -T swh-storage wait-for-it localhost:5002 -s --timeout=0
-docker-compose exec -T swh-objstorage wait-for-it localhost:5003 -s --timeout=0
-docker-compose exec -T swh-web wait-for-it localhost:5004 -s --timeout=0
-docker-compose exec -T swh-vault-api wait-for-it localhost:5005 -s --timeout=0
-docker-compose exec -T swh-deposit wait-for-it localhost:5006 -s --timeout=0
-docker-compose exec -T swh-idx-storage wait-for-it localhost:5007 -s --timeout=0
-docker-compose exec -T swh-scheduler-api wait-for-it localhost:5008 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-storage wait-for-it localhost:5002 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-objstorage wait-for-it localhost:5003 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-web wait-for-it localhost:5004 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-vault-api wait-for-it localhost:5005 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-deposit wait-for-it localhost:5006 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-idx-storage wait-for-it localhost:5007 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-scheduler-api wait-for-it localhost:5008 -s --timeout=0
 
 # Execute test scripts
 for test_script in $TEST_SCRIPTS_DIR/test_*; do
