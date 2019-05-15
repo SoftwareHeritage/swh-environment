@@ -108,7 +108,7 @@ the code from the https://0xacab.org gitlab forge:
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
-    swh-scheduler task add swh-lister-gitlab-full \
+    swh scheduler task add swh-lister-gitlab-full \
 	  -p oneshot api_baseurl=https://0xacab.org/api/v4
 
 Created 1 tasks
@@ -281,7 +281,7 @@ For example, to add a (one shot) task that will list git repos on the
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
-    swh-scheduler task add swh-lister-gitlab-full \
+    swh scheduler task add swh-lister-gitlab-full \
 	  -p oneshot api_baseurl=https://0xacab.org/api/v4
 
 Created 1 tasks
@@ -301,7 +301,7 @@ given task type:
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
-  swh-scheduler task list-pending swh-lister-gitlab-full
+  swh scheduler task list-pending swh-lister-gitlab-full
 
 Found 1 swh-lister-gitlab-full tasks
 
@@ -319,7 +319,7 @@ To list all existing task types:
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
-  swh-scheduler task-type list
+  swh scheduler task-type list
 
 Known task types:
 swh-loader-mount-dump-and-load-svn-repository:
@@ -501,7 +501,7 @@ loader@61704103668c: OK
 And we can use the `swh-scheduler` command all the same:
 
 ```
-(swh) ~/swh-environment$ swh-scheduler task-type list
+(swh) ~/swh-environment$ swh scheduler task-type list
 Known task types:
 indexer_fossology_license:
   Fossology license indexer task
@@ -530,7 +530,7 @@ case "$shell" in
         ;;
 esac
 
-eval "$(_SWH_SCHEDULER_COMPLETE=$autocomplete_cmd swh-scheduler)"
+eval "$(_SWH_COMPLETE=$autocomplete_cmd swh)"
 export SWH_SCHEDULER_URL=http://127.0.0.1:5008/
 export CELERY_BROKER_URL=amqp://127.0.0.1:5072/
 export COMPOSE_FILE=~/swh-environment/swh-docker-dev/docker-compose.yml:~/swh-environment/swh-docker-dev/docker-compose.override.yml
@@ -549,7 +549,7 @@ This postactivate script does:
 - install a shell completion handler for the swh-scheduler command,
 - preset a bunch of environment variables
 
-  - `SWH_SCHEDULER_URL` so that you can just run `swh-scheduler` against the
+  - `SWH_SCHEDULER_URL` so that you can just run `swh scheduler` against the
     scheduler API instance running in docker, without having to specify the
     endpoint URL,
 
@@ -587,14 +587,14 @@ So now you can easily:
 * List task-types:
 
 ```
-  (swh) ~/swh-environment$ swh-scheduler task-type list
+  (swh) ~/swh-environment$ swh scheduler task-type list
   [...]
 ```
 
 * Get more info on a task type:
 
 ```
-  (swh) ~/swh-environment$ swh-scheduler task-type list -v -t origin-update-hg
+  (swh) ~/swh-environment$ swh scheduler task-type list -v -t origin-update-hg
   Known task types:
   origin-update-hg: swh.loader.mercurial.tasks.LoadMercurial
     Loading mercurial repository swh-loader-mercurial
@@ -608,7 +608,7 @@ So now you can easily:
 * Add a new task:
 
 ```
-  (swh) ~/swh-environment$ swh-scheduler task add origin-update-hg \
+  (swh) ~/swh-environment$ swh scheduler task add origin-update-hg \
     origin_url=https://hg.logilab.org/master/cubicweb
   Created 1 tasks
   Task 1
@@ -624,7 +624,7 @@ So now you can easily:
 * Respawn a task:
 
 ```
-  (swh) ~/swh-environment$ swh-scheduler task respawn 1
+  (swh) ~/swh-environment$ swh scheduler task respawn 1
 ```
 
 
