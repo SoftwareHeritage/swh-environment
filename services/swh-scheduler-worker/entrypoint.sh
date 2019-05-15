@@ -16,6 +16,6 @@ case "$1" in
         wait_pgsql
 
         echo "Starting the swh-scheduler $1"
-        exec wait-for-it amqp:5672 -s --timeout=0 -- swh-scheduler --log-level ${LOGLEVEL} -C /scheduler.yml $@
+        exec wait-for-it amqp:5672 -s --timeout=0 -- swh --log-level ${LOGLEVEL} scheduler -C /scheduler.yml $@
         ;;
 esac
