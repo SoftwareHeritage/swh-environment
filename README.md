@@ -108,7 +108,7 @@ the code from the https://0xacab.org gitlab forge:
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
-    swh scheduler task add swh-lister-gitlab-full \
+    swh scheduler task add list-gitlab-full \
 	  -p oneshot api_baseurl=https://0xacab.org/api/v4
 
 Created 1 tasks
@@ -116,7 +116,7 @@ Created 1 tasks
 Task 1
   Next run: just now (2018-12-19 14:58:49+00:00)
   Interval: 90 days, 0:00:00
-  Type: swh-lister-gitlab-full
+  Type: list-gitlab-full
   Policy: oneshot
   Args:
   Keyword args:
@@ -281,7 +281,7 @@ For example, to add a (one shot) task that will list git repos on the
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
-    swh scheduler task add swh-lister-gitlab-full \
+    swh scheduler task add list-gitlab-full \
 	  -p oneshot api_baseurl=https://0xacab.org/api/v4
 
 Created 1 tasks
@@ -289,7 +289,7 @@ Created 1 tasks
 Task 12
   Next run: just now (2018-12-19 14:58:49+00:00)
   Interval: 90 days, 0:00:00
-  Type: swh-lister-gitlab-full
+  Type: list-gitlab-full
   Policy: oneshot
   Args:
   Keyword args:
@@ -301,14 +301,14 @@ given task type:
 
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
-  swh scheduler task list-pending swh-lister-gitlab-full
+  swh scheduler task list-pending list-gitlab-full
 
-Found 1 swh-lister-gitlab-full tasks
+Found 1 list-gitlab-full tasks
 
 Task 12
   Next run: 2 minutes ago (2018-12-19 14:58:49+00:00)
   Interval: 90 days, 0:00:00
-  Type: swh-lister-gitlab-full
+  Type: list-gitlab-full
   Policy: oneshot
   Args:
   Keyword args:
@@ -322,49 +322,49 @@ To list all existing task types:
   swh scheduler task-type list
 
 Known task types:
-swh-loader-mount-dump-and-load-svn-repository:
+load-svn-from-archive:
   Loading svn repositories from svn dump
-origin-update-svn:
+load-svn:
   Create dump of a remote svn repository, mount it and load it
-swh-deposit-archive-loading:
+load-deposit:
   Loading deposit archive into swh through swh-loader-tar
-swh-deposit-archive-checks:
+check-deposit:
   Pre-checking deposit step before loading into swh archive
-swh-vault-cooking:
+cook-vault-bundle:
   Cook a Vault bundle
-origin-update-hg:
+load-hg:
   Loading mercurial repository swh-loader-mercurial
-origin-load-archive-hg:
+load-hg-from-archive:
   Loading archive mercurial repository swh-loader-mercurial
-origin-update-git:
+load-git:
   Update an origin of type git
-swh-lister-github-incremental:
+list-github-incremental:
   Incrementally list GitHub
-swh-lister-github-full:
+list-github-full:
   Full update of GitHub repos list
-swh-lister-debian:
+list-debian-distribution:
   List a Debian distribution
-swh-lister-gitlab-incremental:
+list-gitlab-incremental:
   Incrementally list a Gitlab instance
-swh-lister-gitlab-full:
+list-gitlab-full:
   Full update of a Gitlab instance's repos list
-swh-lister-pypi:
+list-pypi:
   Full pypi lister
-origin-update-pypi:
+load-pypi:
   Load Pypi origin
-indexer_mimetype:
+index-mimetype:
   Mimetype indexer task
-indexer_range_mimetype:
+index-mimetype-for-range:
   Mimetype Range indexer task
-indexer_fossology_license:
+index-fossology-license:
   Fossology license indexer task
-indexer_range_fossology_license:
+index-fossology-license-for-range:
   Fossology license range indexer task
-indexer_origin_head:
+index-origin-head:
   Origin Head indexer task
-indexer_revision_metadata:
+index-revision-metadata:
   Revision Metadata indexer task
-indexer_origin_metadata:
+index-origin-metadata:
   Origin Metadata indexer task
 
 ```
@@ -503,9 +503,9 @@ And we can use the `swh-scheduler` command all the same:
 ```
 (swh) ~/swh-environment$ swh scheduler task-type list
 Known task types:
-indexer_fossology_license:
+index-fossology-license:
   Fossology license indexer task
-indexer_mimetype:
+index-mimetype:
   Mimetype indexer task
 [...]
 ```
@@ -594,9 +594,9 @@ So now you can easily:
 * Get more info on a task type:
 
 ```
-  (swh) ~/swh-environment$ swh scheduler task-type list -v -t origin-update-hg
+  (swh) ~/swh-environment$ swh scheduler task-type list -v -t load-hg
   Known task types:
-  origin-update-hg: swh.loader.mercurial.tasks.LoadMercurial
+  load-hg: swh.loader.mercurial.tasks.LoadMercurial
     Loading mercurial repository swh-loader-mercurial
     interval: 1 day, 0:00:00 [1 day, 0:00:00, 1 day, 0:00:00]
     backoff_factor: 1.0
@@ -608,13 +608,13 @@ So now you can easily:
 * Add a new task:
 
 ```
-  (swh) ~/swh-environment$ swh scheduler task add origin-update-hg \
+  (swh) ~/swh-environment$ swh scheduler task add load-hg \
     origin_url=https://hg.logilab.org/master/cubicweb
   Created 1 tasks
   Task 1
      Next run: just now (2019-02-06 12:36:58+00:00)
      Interval: 1 day, 0:00:00
-     Type: origin-update-hg
+     Type: load-hg
      Policy: recurring
      Args:
      Keyword args:
