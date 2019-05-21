@@ -23,6 +23,7 @@ RUN pip install --upgrade pip setuptools wheel
 RUN pip install gunicorn
 
 RUN pip install \
+        swh-core[db,http] \
         swh-deposit \
         swh-indexer \
         swh-journal \
