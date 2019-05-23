@@ -3,10 +3,6 @@
 [snippets]
 checkout = git clone 'https://forge.softwareheritage.org/source/snippets.git' 'snippets'
 
-[swh-archiver]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-archiver.git' 'swh-archiver'
-fixups = ../bin/git-add-pre-commit-hook .
-
 [swh-core]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-core.git' 'swh-core'
 fixups = ../bin/git-add-pre-commit-hook .
