@@ -34,10 +34,6 @@ allowed_hosts:
 
 debug: yes
 
-grecaptcha:
-  activated: false
-  site_key: ''
-
 serve_assets: yes
 
 development_db: /tmp/db.sqlite3
