@@ -91,12 +91,12 @@ If a container really refuses to start properly, you can check why using the
 `docker-compose logs` command. For example:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose logs swh-lister-debian
-Attaching to swh-docker-dev_swh-lister-debian_1
+~/swh-environment/swh-docker-dev$ docker-compose logs swh-lister
+Attaching to swh-docker-dev_swh-lister_1
 [...]
-swh-lister-debian_1                      | Processing /src/swh-scheduler
-swh-lister-debian_1                      | Could not install packages due to an EnvironmentError: [('/src/swh-scheduler/.hypothesis/unicodedata/8.0.0/charmap.json.gz', '/tmp/pip-req-build-pm7nsax3/.hypothesis/unicodedata/8.0.0/charmap.json.gz', "[Errno 13] Permission denied: '/src/swh-scheduler/.hypothesis/unicodedata/8.0.0/charmap.json.gz'")]
-swh-lister-debian_1                      |
+swh-lister_1                      | Processing /src/swh-scheduler
+swh-lister_1                      | Could not install packages due to an EnvironmentError: [('/src/swh-scheduler/.hypothesis/unicodedata/8.0.0/charmap.json.gz', '/tmp/pip-req-build-pm7nsax3/.hypothesis/unicodedata/8.0.0/charmap.json.gz', "[Errno 13] Permission denied: '/src/swh-scheduler/.hypothesis/unicodedata/8.0.0/charmap.json.gz'")]
+swh-lister_1                      |
 ```
 
 Once all containers are running, you can use the web interface by opening
