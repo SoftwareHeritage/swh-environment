@@ -22,6 +22,8 @@ case "$1" in
       echo Starting the swh-storage API server
       exec gunicorn --bind 0.0.0.0:5002 \
            --reload \
+           --threads 4 \
+           --workers 2 \
            --log-level DEBUG \
            --timeout 3600 \
            swh.storage.api.wsgi

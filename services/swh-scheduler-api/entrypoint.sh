@@ -25,6 +25,8 @@ case "$1" in
         echo Starting the swh-scheduler API server
         exec gunicorn --bind 0.0.0.0:5008 \
              --log-level DEBUG \
+             --threads 2 \
+             --workers 2 \
              --reload \
              --timeout 3600 \
              swh.scheduler.api.wsgi

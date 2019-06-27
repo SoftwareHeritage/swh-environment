@@ -23,6 +23,8 @@ case "$1" in
     echo Starting the swh-indexer-storage API server
     exec gunicorn --bind 0.0.0.0:5007 \
          --reload \
+         --threads 2 \
+         --workers 2 \
          --log-level DEBUG \
          --timeout 3600 \
          swh.indexer.storage.api.wsgi

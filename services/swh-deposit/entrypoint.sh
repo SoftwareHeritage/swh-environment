@@ -27,6 +27,8 @@ else
     echo "starting swh-deposit server"
     exec gunicorn --bind 0.0.0.0:5006 \
                   --reload \
+                  --threads 2 \
+                  --workers 2 \
                   --log-level DEBUG \
                   --timeout 3600 \
                   swh.deposit.wsgi

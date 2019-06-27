@@ -18,6 +18,8 @@ case "$1" in
 
         echo "starting the swh-web server"
         exec gunicorn --bind 0.0.0.0:5004 \
+             --threads 2 \
+             --workers 2 \
              --timeout 3600 \
              swh.web.wsgi
 esac
