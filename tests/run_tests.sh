@@ -80,11 +80,14 @@ function listen_docker_events {
     if [ "$event_type" = "kill" ] ; then
       exit
     # a swh service crashed, sending signal to parent process to exit with error
-    elif [ "$event_type" = "die" ] ; then
+    elif [ "$event_type" = "die" ]; then
       if [[ "$service" =~ ^swh.* ]]; then
-        error_message "Service $service died unexpectedly, exiting"
-        dump_docker_logs
-        kill -s SIGUSR1 $1; exit
+        exit_code=$(docker-compose ps | grep $service | awk '{print $4}')
+        if [ "$exit_code" != "0" ]; then
+          error_message "Service $service died unexpectedly, exiting"
+          dump_docker_logs
+          kill -s SIGUSR1 $1; exit
+        fi
       fi
     fi
   done
