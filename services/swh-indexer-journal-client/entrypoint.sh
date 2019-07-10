@@ -19,7 +19,7 @@ case "$1" in
       ;;
     *)
       echo "Starting swh-indexer-journal client"
-      exec wait-for-it kafka:9092 -s --timeout=0 -- python3 -m swh.indexer.journal_client
+      exec wait-for-it kafka:9092 -s --timeout=0 -- swh indexer --config-file /etc/softwareheritage/indexer/journal_client.yml journal-client
       ;;
 esac
 
