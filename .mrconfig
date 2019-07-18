@@ -19,6 +19,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-docs.git' 'swh-docs'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-graph]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-graph.git' 'swh-graph'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-indexer]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-indexer.git' 'swh-indexer'
 fixups = ../bin/git-add-pre-commit-hook .
