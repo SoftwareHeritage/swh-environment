@@ -5,19 +5,33 @@ set -e
 source /srv/softwareheritage/utils/pyutils.sh
 setup_pip
 
-source /srv/softwareheritage/utils/pgsql.sh
-setup_pgsql
+if [ "$STORAGE_BACKEND" = "postgresql" ]; then
+    source /srv/softwareheritage/utils/pgsql.sh
+    setup_pgsql
+
+elif [ "$STORAGE_BACKEND" = "cassandra" ]; then
+    echo Waiting for Cassandra to start
+    wait-for-it ${CASSANDRA_SEED}:9042 -s --timeout=0
+    echo Creating keyspace
+    cat << EOF | python3
+from swh.storage.cassandra import create_keyspace
+create_keyspace(['cassandra-seed'], 'swh')
+EOF
+
+fi
 
 case "$1" in
     "shell")
       exec bash -i
       ;;
     *)
-      wait_pgsql
+      if [ "$STORAGE_BACKEND" = "postgresql" ]; then
+          wait_pgsql
 
-      echo Setup the database
-      PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init storage \
-          --db-name ${POSTGRES_DB}
+          echo Setup the database
+          PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init storage \
+              --db-name ${POSTGRES_DB}
+      fi
 
       echo Starting the swh-storage API server
       exec gunicorn --bind 0.0.0.0:5002 \

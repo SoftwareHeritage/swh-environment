@@ -14,6 +14,7 @@ services:
     volumes:
         - "./services/cassandra/swh_entrypoint.sh:/swh_entrypoint.sh:ro"
         - "./conf/cassandra.yaml:/cassandra.yaml:ro"
+
   cassandra:
     # Additional Cassandra instance(s), which may be scaled up, but not
     # down. They will automatically connect to 'cassandra-seed', and
@@ -26,3 +27,20 @@ services:
         - "./conf/cassandra.yaml:/cassandra.yaml:ro"
     env_file:
     - ./env/cassandra.env
+
+  swh-storage:
+    volumes:
+      # note: you need to be on the cassandra-backend2 branch
+      - "/home/dev/swh-environment/swh-storage:/src/swh-storage"
+      - "/home/dev/swh-environment/swh-model:/src/swh-model"
+      - "./conf/storage_cassandra.yml:/storage.yml:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
+    depends_on:
+      - swh-storage-db
+      - cassandra-seed
+      - swh-objstorage
+      - kafka
+    environment:
+      CASSANDRA_SEED: cassandra-seed
+      STORAGE_BACKEND: cassandra
+      PYTHONUNBUFFERED: 1

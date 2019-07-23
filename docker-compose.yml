@@ -157,6 +157,7 @@ services:
       - ./env/storage-db.env
     environment:
       SWH_CONFIG_FILENAME: /storage.yml
+      STORAGE_BACKEND: postgresql
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/storage.yml:/storage.yml:ro"
