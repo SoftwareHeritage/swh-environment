@@ -28,6 +28,22 @@ services:
     env_file:
     - ./env/cassandra.env
 
+  prometheus:
+    # just to add the dep on the cassandra-jmx-exporter-cassandra
+    depends_on:
+    - prometheus-statsd-exporter
+    - prometheus-jmx-exporter-cassandra
+
+  prometheus-jmx-exporter-cassandra:
+    image: sscaling/jmx-prometheus-exporter
+    environment:
+      JVM_OPTS: "-Djava.util.logging.config.file=/logging.properties"
+    volumes:
+      - "./conf/prometheus-jmx-exporter-cassandra.yml:/opt/jmx_exporter/config.yml:ro"
+      - "./conf/prometheus-jmx-exporter-logging.properties:/logging.properties:ro"
+    ports:
+    - "5556:5556"
+
   swh-storage:
     volumes:
       # note: you need to be on the cassandra-backend2 branch

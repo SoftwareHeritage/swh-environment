@@ -38,6 +38,8 @@ services:
 
   prometheus:
     image: prom/prometheus
+    depends_on:
+    - prometheus-statsd-exporter
     command:
       # Needed for the reverse-proxy
       - "--web.external-url=/prometheus"
@@ -57,6 +59,8 @@ services:
   grafana:
     image: grafana/grafana
     restart: unless-stopped
+    depends_on:
+    - prometheus
     environment:
       GF_SERVER_ROOT_URL: http://localhost:5080/grafana
     volumes:

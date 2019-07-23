@@ -15,3 +15,8 @@ scrape_configs:
     static_configs:
     - targets:
         - prometheus-statsd-exporter:9102
+
+  - job_name: jmx-exporter-cassandra
+    static_configs:
+    - targets:
+        - prometheus-jmx-exporter-cassandra:5556
