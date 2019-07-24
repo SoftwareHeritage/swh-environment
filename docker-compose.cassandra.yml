@@ -47,8 +47,7 @@ services:
   swh-storage:
     volumes:
       # note: you need to be on the cassandra-backend2 branch
-      - "/home/dev/swh-environment/swh-storage:/src/swh-storage"
-      - "/home/dev/swh-environment/swh-model:/src/swh-model"
+      - "../swh-storage:/src/swh-storage"
       - "./conf/storage_cassandra.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
     depends_on:
