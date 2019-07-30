@@ -30,9 +30,9 @@ case "$1" in
         wait_pgsql
 
         echo Setup the swh-vault API database
-        PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init vault \
+        PGPASSWORD=${POSTGRES_PASSWORD} swh db-init vault \
                   --db-name ${POSTGRES_DB}
 
         echo Starting the swh-vault API server
-        exec swh-vault -C ${SWH_CONFIG_FILENAME}
+        exec swh vault rpc-serve -C ${SWH_CONFIG_FILENAME}
 esac
