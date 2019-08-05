@@ -2,6 +2,19 @@
 
 set -e
 
+create_admin_script="
+from django.contrib.auth import get_user_model;
+
+username = 'admin';
+password = 'admin';
+email = 'admin@swh-web.org';
+
+User = get_user_model();
+
+if not User.objects.filter(username = username).exists():
+    User.objects.create_superuser(username, email, password);
+"
+
 source /srv/softwareheritage/utils/pyutils.sh
 setup_pip
 
@@ -14,7 +27,7 @@ case "$1" in
         django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
 
         echo "Creating admin user"
-        echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@swh-web.org', 'admin')" | python3 -m swh.web.manage shell || true
+        echo "$create_admin_script" | python3 -m swh.web.manage shell
 
         echo "starting the swh-web server"
         exec gunicorn --bind 0.0.0.0:5004 \
