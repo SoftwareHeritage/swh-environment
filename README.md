@@ -515,7 +515,7 @@ index-mimetype:
 When you use virtualenvwrapper, you can add postactivation commands:
 
 ```
-(swh) ~/swh-environment$ cat >>$VIRTUAL_ENV/bin/postactivate <<EOF
+(swh) ~/swh-environment$ cat >>$VIRTUAL_ENV/bin/postactivate <<'EOF'
 # unfortunately, the interface cmd for the click autocompletion
 # depends on the shell
 # https://click.palletsprojects.com/en/7.x/bashcomplete/#activation
