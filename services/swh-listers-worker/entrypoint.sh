@@ -21,13 +21,13 @@ case "$1" in
         else
             echo Creating database
             createdb ${POSTGRES_DB}
-
         fi
 
         echo Initialize database
-        python -m swh.lister.cli \
-               --db-url postgres://${PGUSER}@${PGHOST}/${POSTGRES_DB} \
-               all
+        swh lister -C ${SWH_CONFIG_FILENAME} db-init
+
+        echo Register lister task types in scheduler database
+        swh lister -C ${SWH_CONFIG_FILENAME} register-task-types
 
         echo Waiting for RabbitMQ to start
         wait-for-it amqp:5672 -s --timeout=0
