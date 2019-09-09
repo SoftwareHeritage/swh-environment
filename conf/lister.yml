@@ -17,12 +17,14 @@ celery:
   task_broker: amqp://guest:guest@amqp//
   task_modules:
     - swh.lister.bitbucket.tasks
+    - swh.lister.cgit.tasks
     - swh.lister.cran.tasks
     - swh.lister.debian.tasks
     - swh.lister.github.tasks
     - swh.lister.gitlab.tasks
     - swh.lister.gnu.tasks
     - swh.lister.npm.tasks
+    - swh.lister.packagist.tasks
     - swh.lister.phabricator.tasks
     - swh.lister.pypi.tasks
   task_queues:
@@ -30,6 +32,8 @@ celery:
     - swh.lister.bitbucket.tasks.IncrementalBitBucketLister
     - swh.lister.bitbucket.tasks.RangeBitBucketLister
     - swh.lister.bitbucket.tasks.ping
+    - swh.lister.cgit.tasks.CGitListerTask
+    - swh.lister.cgit.tasks.ping
     - swh.lister.cran.tasks.CRANListerTask
     - swh.lister.cran.tasks.ping
     - swh.lister.debian.tasks.DebianListerTask
@@ -47,6 +51,8 @@ celery:
     - swh.lister.npm.tasks.NpmIncrementalListerTask
     - swh.lister.npm.tasks.NpmListerTask
     - swh.lister.npm.tasks.ping
+    - swh.lister.packagist.tasks.PackagistListerTask
+    - swh.lister.packagist.tasks.ping
     - swh.lister.phabricator.tasks.FullPhabricatorLister
     - swh.lister.phabricator.tasks.IncrementalPhabricatorLister
     - swh.lister.phabricator.tasks.ping
