@@ -109,7 +109,7 @@ the code from the https://0xacab.org gitlab forge:
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
     swh scheduler task add list-gitlab-full \
-	  -p oneshot api_baseurl=https://0xacab.org/api/v4
+	  -p oneshot url=https://0xacab.org/api/v4
 
 Created 1 tasks
 
@@ -120,7 +120,7 @@ Task 1
   Policy: oneshot
   Args:
   Keyword args:
-    api_baseurl=https://0xacab.org/api/v4
+    url=https://0xacab.org/api/v4
 ```
 
 This task will scrape the forge's project list and create subtasks to inject
@@ -282,7 +282,7 @@ For example, to add a (one shot) task that will list git repos on the
 ```
 ~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
     swh scheduler task add list-gitlab-full \
-	  -p oneshot api_baseurl=https://0xacab.org/api/v4
+	  -p oneshot url=https://0xacab.org/api/v4
 
 Created 1 tasks
 
@@ -293,7 +293,7 @@ Task 12
   Policy: oneshot
   Args:
   Keyword args:
-    api_baseurl=https://0xacab.org/api/v4
+    url=https://0xacab.org/api/v4
 ```
 
 This will insert a new task in the scheduler. To list existing tasks for a
@@ -312,7 +312,7 @@ Task 12
   Policy: oneshot
   Args:
   Keyword args:
-    api_baseurl=https://0xacab.org/api/v4
+    url=https://0xacab.org/api/v4
 ```
 
 To list all existing task types:
