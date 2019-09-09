@@ -17,8 +17,8 @@ case "$1" in
     wait_pgsql
 
     echo Setup the database
-    PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init indexer \
-          --db-name ${POSTGRES_DB}
+    PGPASSWORD=${POSTGRES_PASSWORD} swh db-init \
+          --db-name ${POSTGRES_DB} indexer
 
     echo Starting the swh-indexer-storage API server
     exec gunicorn --bind 0.0.0.0:5007 \

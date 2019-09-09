@@ -19,8 +19,8 @@ case "$1" in
         wait_pgsql
 
         echo Setup the swh-scheduler API database
-        PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init scheduler \
-                  --db-name ${POSTGRES_DB}
+        PGPASSWORD=${POSTGRES_PASSWORD} swh db-init \
+            --db-name ${POSTGRES_DB} scheduler
 
         echo Starting the swh-scheduler API server
         exec gunicorn --bind 0.0.0.0:5008 \

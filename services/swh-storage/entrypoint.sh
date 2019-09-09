@@ -29,8 +29,8 @@ case "$1" in
           wait_pgsql
 
           echo Setup the database
-          PGPASSWORD=${POSTGRES_PASSWORD} swh-db-init storage \
-              --db-name ${POSTGRES_DB}
+          PGPASSWORD=${POSTGRES_PASSWORD} swh db-init \
+              --db-name ${POSTGRES_DB} storage
       fi
 
       echo Starting the swh-storage API server
