@@ -11,6 +11,7 @@ doc:
 	make -C doc/
 
 check: $(patsubst %,check/%,$(PYMODULES))
+typecheck: $(patsubst %,typecheck/%,$(PYMODULES))
 distclean: $(patsubst %,distclean/%,$(PYMODULES))
 test: $(patsubst %,test/%,$(PYMODULES))
 
@@ -21,6 +22,8 @@ docs-clean: $(patsubst %,docs-clean/%,$(filter-out $(DOC_MODULE),$(PYMODULES)))
 
 check/%:
 	make -C $* check
+typecheck/%:
+	make -C $* typecheck
 distclean/%:
 	make -C $* distclean
 test/%:

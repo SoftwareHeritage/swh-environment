@@ -14,6 +14,8 @@ FLAKE = python3 -m flake8
 FLAKEFLAGS =
 LINT = pylint3
 LINTFLAGS = --rcfile=../pylintrc
+MYPY = mypy
+MYPYFLAGS = --config-file ../mypy.ini
 
 all:
 
@@ -32,6 +34,9 @@ check-flake:
 check-codespell:
 	find swh docs -name '*.py' -o -name '*.rst' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
 	find . -maxdepth 1 -iname 'readme*' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
+typecheck:
+	@echo PYTHONPATH=... $(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
+	@MYPYPATH=$(shell bash ../pythonpath.sh --print) $(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
 
 .PHONY: check-staged
 check-staged:
