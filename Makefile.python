@@ -16,7 +16,11 @@ LINT = pylint3
 LINTFLAGS = --rcfile=../pylintrc
 MYPY = mypy
 MYPYFLAGS = --config-file ../mypy.ini
-MYPYPATH := $(shell pip list | grep '^swh\.' | awk '{print $$3}' | paste -sd:)
+
+# MYPYPATH is not needed if all swh.* packages that support typing are
+# annotated with PEP 561 py.typed marker files
+#
+# MYPYPATH := $(shell pip list | grep '^swh\.' | awk '{print $$3}' | paste -sd:)
 
 all:
 
@@ -36,8 +40,7 @@ check-codespell:
 	find swh docs -name '*.py' -o -name '*.rst' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
 	find . -maxdepth 1 -iname 'readme*' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
 typecheck:
-	@echo MYPYPATH=... $(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
-	@MYPYPATH=$(MYPYPATH) $(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
+	$(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
 
 .PHONY: check-staged
 check-staged:
