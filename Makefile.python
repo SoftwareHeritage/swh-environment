@@ -16,6 +16,7 @@ LINT = pylint3
 LINTFLAGS = --rcfile=../pylintrc
 MYPY = mypy
 MYPYFLAGS = --config-file ../mypy.ini
+MYPYPATH := $(shell pip list | grep '^swh\.' | awk '{print $$3}' | paste -sd:)
 
 all:
 
@@ -35,8 +36,8 @@ check-codespell:
 	find swh docs -name '*.py' -o -name '*.rst' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
 	find . -maxdepth 1 -iname 'readme*' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
 typecheck:
-	@echo PYTHONPATH=... $(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
-	@MYPYPATH=$(shell bash ../pythonpath.sh --print) $(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
+	@echo MYPYPATH=... $(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
+	@MYPYPATH=$(MYPYPATH) $(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
 
 .PHONY: check-staged
 check-staged:
