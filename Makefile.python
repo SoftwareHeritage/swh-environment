@@ -15,7 +15,7 @@ FLAKEFLAGS =
 LINT = pylint3
 LINTFLAGS = --rcfile=../pylintrc
 MYPY = mypy
-MYPYFLAGS = --config-file ../mypy.ini
+MYPYFLAGS =
 
 # MYPYPATH is not needed if all swh.* packages that support typing are
 # annotated with PEP 561 py.typed marker files
