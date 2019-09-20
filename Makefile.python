@@ -40,7 +40,7 @@ check-codespell:
 	find swh docs -name '*.py' -o -name '*.rst' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
 	find . -maxdepth 1 -iname 'readme*' | xargs -r $(CODESPELL) $(CODESPELLFLAGS)
 typecheck:
-	$(MYPY) $(MYPYFLAGS) -p $(PYMODULE)
+	$(MYPY) $(MYPYFLAGS) -p swh
 
 .PHONY: check-staged
 check-staged:
