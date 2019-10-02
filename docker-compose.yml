@@ -112,7 +112,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
-    command: listener
+    command: start-listener
     depends_on:
       - swh-scheduler-api
       - amqp
@@ -130,7 +130,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
-    command: runner -p 10
+    command: start-runner -p 10
     depends_on:
       - swh-scheduler-api
       - amqp
