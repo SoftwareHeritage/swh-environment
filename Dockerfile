@@ -9,6 +9,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsvn-dev \
     libsystemd-dev \
     postgresql-client \
+    r-base-core \
+    r-cran-jsonlite \
     wait-for-it \
     ngrep && \
   apt-get clean && \
