@@ -29,6 +29,6 @@ case "$1" in
              --workers 2 \
              --reload \
              --timeout 3600 \
-             swh.scheduler.api.wsgi
+             'swh.scheduler.api.server:make_app_from_configfile()'
 
 esac
