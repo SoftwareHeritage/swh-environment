@@ -27,7 +27,7 @@ RUN pip install gunicorn
 RUN pip install \
         swh-core[db,http] \
         cassandra-driver \
-        swh-deposit \
+        swh-deposit[server] \
         swh-indexer \
         swh-journal \
         swh-lister \

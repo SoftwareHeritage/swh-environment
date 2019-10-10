@@ -243,9 +243,12 @@ services:
     depends_on:
       - swh-deposit-db
       - swh-scheduler-api
+    environment:
+      VERBOSITY: 3
+      SWH_CONFIG_FILENAME: /deposit.yml
+      DJANGO_SETTINGS_MODULE: swh.deposit.settings.production
     env_file:
       - ./env/deposit-db.env
-      - ./env/deposit.env
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/deposit.yml:/deposit.yml:ro"
