@@ -31,5 +31,5 @@ else
                   --workers 2 \
                   --log-level DEBUG \
                   --timeout 3600 \
-                  swh.deposit.wsgi
+                  'django.core.wsgi:get_wsgi_application()'
 fi

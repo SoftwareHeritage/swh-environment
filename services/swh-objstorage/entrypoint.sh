@@ -19,6 +19,6 @@ else
        --workers 2 \
        --reload \
        --timeout 3600 \
-       swh.objstorage.api.wsgi
+       'swh.objstorage.api.server:make_app_from_configfile()'
 
 fi

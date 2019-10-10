@@ -34,5 +34,5 @@ case "$1" in
              --threads 2 \
              --workers 2 \
              --timeout 3600 \
-             swh.web.wsgi
+             'django.core.wsgi:get_wsgi_application()'
 esac

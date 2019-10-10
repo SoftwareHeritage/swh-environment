@@ -27,6 +27,6 @@ case "$1" in
          --workers 2 \
          --log-level DEBUG \
          --timeout 3600 \
-         swh.indexer.storage.api.wsgi
+         'swh.indexer.storage.api.server:make_app_from_configfile()'
     ;;
 esac

@@ -40,6 +40,6 @@ case "$1" in
            --workers 2 \
            --log-level DEBUG \
            --timeout 3600 \
-           swh.storage.api.wsgi
+           'swh.storage.api.server:make_app_from_configfile()'
       ;;
 esac
