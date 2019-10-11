@@ -95,6 +95,10 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-scheduler.git' 'swh-scheduler'
 fixups = ../bin/git-add-pre-commit-hook .
 
+[swh-search]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-search.git' 'swh-search'
+fixups = ../bin/git-add-pre-commit-hook .
+
 [swh-storage]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-storage.git' 'swh-storage'
 fixups = ../bin/git-add-pre-commit-hook .
