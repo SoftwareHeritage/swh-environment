@@ -17,11 +17,6 @@ LINTFLAGS = --rcfile=../pylintrc
 MYPY = mypy
 MYPYFLAGS =
 
-# MYPYPATH is not needed if all swh.* packages that support typing are
-# annotated with PEP 561 py.typed marker files
-#
-# MYPYPATH := $(shell pip list | grep '^swh\.' | awk '{print $$3}' | paste -sd:)
-
 all:
 
 .PHONY: test
