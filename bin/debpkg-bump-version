@@ -1,0 +1,75 @@
+#!/bin/bash
+
+set -e
+
+if [ $# -lt 2 -o $# -gt 3 ]; then
+    echo "usage: $0 <new-version> <sdist> [<tagname>]"
+    exit 2
+fi
+
+newver="$1"
+shift
+sdist="$1"
+shift
+if [ $# -eq 1 ]; then
+    upstream_tag=$1
+    shift
+else
+    upstream_tag="v${newver}"
+fi
+
+debian_tag="debian/upstream/${newver}"
+
+echo 'Updating tags...'
+git fetch --tags
+
+if git show-ref --quiet "refs/tags/${debian_tag}"; then
+    echo "Tag ${debian_tag} already exists!"
+    exit 0
+fi
+
+if ! git show-ref --quiet "refs/tags/${upstream_tag}"; then
+    echo "No tag ${upstream_tag} exists, aborting!"
+    exit 3
+fi
+
+if ! git diff-index --quiet HEAD --; then
+    echo "Git repository not clean, aborting!"
+    git status
+    exit 4
+fi
+
+author_name=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggername)%(else)%(authorname)%(end)" "${upstream_tag}")
+author_email=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggeremail)%(else)%(authoremail)%(end)" "${upstream_tag}")
+# Strip <>
+author_email=${author_email:1:-1}
+author_date=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggerdate:iso)%(else)%(authordate:iso)%(end)" "${upstream_tag}")
+
+export DEBEMAIL="${author_email}"
+export DEBFULLNAME="${author_name}"
+export GIT_AUTHOR_NAME="${author_name}"
+export GIT_AUTHOR_EMAIL="${author_email}"
+export GIT_AUTHOR_DATE="${author_date}"
+export GIT_COMMITTER_NAME="${author_name}"
+export GIT_COMMITTER_EMAIL="${author_email}"
+export GIT_COMMITTER_DATE="${author_date}"
+
+git checkout debian/unstable-swh
+gbp import-orig -u "${newver}" "${sdist}"
+faketime "${author_date}" dch -v "${newver}-1~swh1" ''
+git tag -l --format="%(contents:subject)%(if)%(contents:body)%(then)%0a%(contents:body)%(end)" "${upstream_tag}" | sed -E -e '/^$/d' -e 's/^ *(- *)?//' | while read line; do
+  faketime "${author_date}" dch "${line}"
+done
+faketime "${author_date}" dch -D unstable-swh --force-distribution ''
+git add debian/changelog
+git commit --no-verify -m "Updated debian directory for version ${newver}"
+
+git checkout debian/stretch-swh
+git merge debian/unstable-swh --no-commit --no-edit || true
+git checkout debian/unstable-swh -- debian/changelog
+git add debian/changelog
+git commit --no-verify --no-edit
+
+faketime "${author_date}" dch --bpo -D stretch-swh --force-distribution ''
+git add debian/changelog
+git commit --no-verify -m "Updated debian stretch backport directory for version ${newver}"
