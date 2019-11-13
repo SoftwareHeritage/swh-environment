@@ -1,0 +1,10 @@
+search:
+  cls: remote
+  args:
+    url: http://swh-search:5010/
+journal:
+  brokers:
+    - kafka
+  group_id: swh.search.journal_client.objects
+  prefix: swh.journal.objects
+

@@ -1,0 +1,39 @@
+version: '2'
+
+services:
+  elasticsearch:
+    image: elasticsearch:7.3.2
+    env_file:
+      - ./env/elasticsearch.env
+    ports:
+      - 9200:9200
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+
+  swh-search:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    ports:
+      - 5010:5010
+    depends_on:
+      - elasticsearch
+    environment:
+      SWH_CONFIG_FILENAME: /search.yml
+    volumes:
+      - "./conf/search.yml:/search.yml:ro"
+      - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-search-journal-client-objects:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - swh-search
+      - kafka
+    volumes:
+      - "./conf/search_journal_client_objects.yml:/etc/softwareheritage/search/journal_client_objects.yml:ro"
+      - "./services/swh-search-journal-client-objects/entrypoint.sh:/entrypoint.sh:ro"
+
+volumes:
+  elasticsearch-data:
