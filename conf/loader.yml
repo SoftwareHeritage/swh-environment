@@ -5,7 +5,6 @@ storage:
 celery:
   task_broker: amqp://guest:guest@amqp//
   task_modules:
-    - swh.loader.debian.tasks
     - swh.loader.dir.tasks
     - swh.loader.git.tasks
     - swh.loader.mercurial.tasks
@@ -14,9 +13,10 @@ celery:
     - swh.loader.svn.tasks
     - swh.loader.tar.tasks
     - swh.deposit.loader.tasks
+    - swh.loader.package.tasks
 
   task_queues:
-    - swh.loader.debian.tasks.LoadDebianPackage
+    - swh.loader.package.tasks.LoadDebian
     - swh.loader.dir.tasks.LoadDirRepository
     - swh.loader.git.tasks.LoadDiskGitRepository
     - swh.loader.git.tasks.UncompressAndLoadDiskGitRepository
