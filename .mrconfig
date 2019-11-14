@@ -43,10 +43,6 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-core.git' 'swh-loader-core'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-loader-debian]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-debian.git' 'swh-loader-debian'
-fixups = ../bin/git-add-pre-commit-hook .
-
 [swh-loader-dir]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-dir.git' 'swh-loader-dir'
 fixups = ../bin/git-add-pre-commit-hook .
