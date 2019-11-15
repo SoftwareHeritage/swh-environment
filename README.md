@@ -235,7 +235,7 @@ loader@61704103668c: OK
 To run the same command from within a container:
 
 ```
-~/swh-environment/swh-docker-dev$ celery-compose exec swh-scheduler-api celery status
+~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api celery status
 loader@61704103668c: OK
 [...]
 ```
