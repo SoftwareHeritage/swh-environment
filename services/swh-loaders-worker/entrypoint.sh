@@ -13,6 +13,9 @@ case "$1" in
         echo Waiting for RabbitMQ to start
         wait-for-it amqp:5672 -s --timeout=0
 
+        echo Register task types in scheduler database
+        swh scheduler -C ${SWH_CONFIG_FILENAME} task-type register
+
         echo Starting the swh-loader Celery worker for ${SWH_WORKER_INSTANCE}
         exec python -m celery worker \
                     --app=swh.scheduler.celery_backend.config.app \

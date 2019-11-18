@@ -26,8 +26,8 @@ case "$1" in
         echo Initialize database
         swh lister -C ${SWH_CONFIG_FILENAME} db-init
 
-        echo Register lister task types in scheduler database
-        swh lister -C ${SWH_CONFIG_FILENAME} register-task-types
+        echo Register task types in scheduler database
+        swh scheduler -C ${SWH_CONFIG_FILENAME} task-type register
 
         echo Waiting for RabbitMQ to start
         wait-for-it amqp:5672 -s --timeout=0

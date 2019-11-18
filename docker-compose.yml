@@ -346,6 +346,7 @@ services:
     entrypoint: /entrypoint.sh
     depends_on:
       - swh-storage
+      - swh-scheduler-api
       - amqp
     volumes:
       - "./conf/loader.yml:/loader.yml:ro"
