@@ -32,14 +32,9 @@ RUN pip install \
         swh-indexer \
         swh-journal \
         swh-lister \
-        swh-loader-debian \
-        swh-loader-dir \
         swh-loader-git \
         swh-loader-mercurial \
-        swh-loader-npm \
-        swh-loader-pypi \
         swh-loader-svn \
-        swh-loader-tar \
         swh-storage \
         swh-objstorage \
         swh-scheduler \
