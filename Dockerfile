@@ -9,10 +9,11 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsvn-dev \
     libsystemd-dev \
     postgresql-client \
-    r-base-core \
-    r-cran-jsonlite \
     wait-for-it \
     ngrep && \
+  apt-get install -y --no-install-recommends \
+    r-base-core \
+    r-cran-jsonlite && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
