@@ -43,32 +43,16 @@ fixups = ../bin/git-add-pre-commit-hook .
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-core.git' 'swh-loader-core'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-loader-dir]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-dir.git' 'swh-loader-dir'
-fixups = ../bin/git-add-pre-commit-hook .
-
 [swh-loader-git]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-git.git' 'swh-loader-git'
 fixups = ../bin/git-add-pre-commit-hook .
-
-[swh-loader-npm]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-npm.git' 'swh-loader-npm'
-fixup = ../bin/git-add-pre-commit-hook .
 
 [swh-loader-mercurial]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
 fixups = ../bin/git-add-pre-commit-hook .
 
-[swh-loader-pypi]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-pypi.git' 'swh-loader-pypi'
-fixup = ../bin/git-add-pre-commit-hook .
-
 [swh-loader-svn]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-svn.git' 'swh-loader-svn'
-fixups = ../bin/git-add-pre-commit-hook .
-
-[swh-loader-tar]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-tar.git' 'swh-loader-tar'
 fixups = ../bin/git-add-pre-commit-hook .
 
 [swh-mirror-forge]
