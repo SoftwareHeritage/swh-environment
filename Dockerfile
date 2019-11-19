@@ -32,6 +32,7 @@ RUN pip install \
         swh-indexer \
         swh-journal \
         swh-lister \
+        swh-loader-core \
         swh-loader-git \
         swh-loader-mercurial \
         swh-loader-svn \

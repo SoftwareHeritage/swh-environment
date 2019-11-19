@@ -22,30 +22,26 @@ scheduler:
 celery:
   task_broker: amqp://guest:guest@amqp//
   task_modules:
-    - swh.loader.dir.tasks
     - swh.loader.git.tasks
     - swh.loader.mercurial.tasks
-    - swh.loader.npm.tasks
-    - swh.loader.pypi.tasks
     - swh.loader.svn.tasks
-    - swh.loader.tar.tasks
     - swh.deposit.loader.tasks
     - swh.loader.package.tasks
 
   task_queues:
-    - swh.loader.package.tasks.LoadDebian
     - swh.loader.dir.tasks.LoadDirRepository
     - swh.loader.git.tasks.LoadDiskGitRepository
     - swh.loader.git.tasks.UncompressAndLoadDiskGitRepository
     - swh.loader.git.tasks.UpdateGitRepository
     - swh.loader.mercurial.tasks.LoadArchiveMercurial
     - swh.loader.mercurial.tasks.LoadMercurial
-    - swh.loader.npm.tasks.LoadNpm
-    - swh.loader.pypi.tasks.LoadPyPI
+    - swh.loader.package.tasks.LoadArchive
+    - swh.loader.package.tasks.LoadDebian
+    - swh.loader.package.tasks.LoadNpm
+    - swh.loader.package.tasks.LoadPyPI
     - swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
     - swh.loader.svn.tasks.LoadSvnRepository
     - swh.loader.svn.tasks.MountAndLoadSvnRepository
-    - swh.loader.tar.tasks.LoadTarRepository
     - swh.deposit.loader.tasks.LoadDepositArchiveTsk
     - swh.deposit.loader.tasks.ChecksDepositTsk
 
