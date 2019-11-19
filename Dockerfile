@@ -24,10 +24,10 @@ RUN python3 -m venv /srv/softwareheritage/venv
 ENV PATH="/srv/softwareheritage/venv/bin:${PATH}"
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install 'gunicorn<20'
+RUN pip install cassandra-driver
 
 RUN pip install \
         swh-core[db,http] \
-        cassandra-driver \
         swh-deposit[server] \
         swh-indexer \
         swh-journal \
