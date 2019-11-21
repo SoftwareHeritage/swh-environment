@@ -5,84 +5,84 @@ checkout = git clone 'https://forge.softwareheritage.org/source/snippets.git' 's
 
 [swh-core]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-core.git' 'swh-core'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-dataset]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-dataset.git' 'swh-dataset'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-deposit]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-deposit.git' 'swh-deposit'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-docker-dev]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-docker-dev.git' 'swh-docker-dev'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-docs]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-docs.git' 'swh-docs'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-graph]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-graph.git' 'swh-graph'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-indexer]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-indexer.git' 'swh-indexer'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-journal]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-journal.git' 'swh-journal'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-lister]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-lister.git' 'swh-lister'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-loader-core]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-core.git' 'swh-loader-core'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-loader-git]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-git.git' 'swh-loader-git'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-loader-mercurial]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-loader-svn]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-svn.git' 'swh-loader-svn'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-model]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-model.git' 'swh-model'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-objstorage]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-objstorage.git' 'swh-objstorage'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-py-template]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-py-template.git' 'swh-py-template'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-scheduler]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-scheduler.git' 'swh-scheduler'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-search]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-search.git' 'swh-search'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-storage]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-storage.git' 'swh-storage'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-vault]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-vault.git' 'swh-vault'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
 
 [swh-web]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-web.git' 'swh-web'
-fixups = ../bin/git-add-pre-commit-hook .
+fixups = pre-commit install
