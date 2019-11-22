@@ -1,7 +1,7 @@
 #!/bin/bash
 shopt -s nullglob extglob
 
-TEST_GIT_REPO_NAME="swh-loader-tar"
+TEST_GIT_REPO_NAME="swh-loader-core"
 TEST_GIT_REPO_URL="https://forge.softwareheritage.org/source/${TEST_GIT_REPO_NAME}.git"
 
 status_message "Scheduling the loading of the git repository located at ${TEST_GIT_REPO_URL}"
