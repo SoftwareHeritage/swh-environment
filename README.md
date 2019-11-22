@@ -9,32 +9,58 @@ file), and the `mr` command.
 
 [1]: http://myrepos.branchable.com/
 
+The provided mr config will also install a [pre-commit][2] hook in cloned
+repositories, so the `pre-commit` tool must be available as well.
+
+[2]: https://pre-commit.com/
+
 In Debian, the "mr" command is shipped in the "mr" package.
 
-Once you have installed "mr", just use the following helper for both initial
-code checkout and subsequent updates:
+Unfortunately, "pre-commit" itself is not available in Debian for now.
 
-    cd swh-environment
-    bin/update
+However, we strongly suggest you use a [virtualenv][3] to manage your SWH
+development environment. You can create it using virtualenv, or you can
+use a virtualenv wrapper tool like [virtualenvwrapper][4] or [pipenv][5] (or
+any other similar tool). In Debian, both these tools are available as
+"virtualenvwrapper" and "pipenv".
+
+[3]: https://virtualenv.pypa.io/
+[4]: https://virtualenvwrapper.readthedocs.io/
+[5]: https://pipenv.readthedocs.io/
+
+In the example below we are using virtualenv directly:
+
+```lang=shell
+git clone https://forge.softwareheritage.org/source/swh-environment.git
+cd swh-environment
+python3 -m venv .venv
+. .venv/bin/activate
+pip install pre-commit
+```
+
+then you can use the following helper for both initial code checkout and
+subsequent updates:
+
+```lang=shell
+bin/update
+```
 
 Note that the first time you run `bin/update` it will add the
 `swh-environment/.mrconfig` file to your `~/.mrtrust` (we use this to be able
-to setup pre-commit hooks upon repository checkouts). See `MR(1)` for more
-information about trusted `mr` repositories.
+to setup pre-commit hooks upon repository checkouts) and install "pre-commit"
+as git precommit hook in each git repository. See `MR(1)` for more information
+about trusted `mr` repositories.
 
 You can also checkout/update repositories by hand using `mr up`.
 
 See `.mrconfig` for the actual list of repositories.
 
 
-PYTHONPATH
-----------
+Upgrade from makefile-based hooks
+---------------------------------
 
-We use several Python modules, that should all be in the PYTHONPATH to be
-found. To that extent, we provide in this repository a script to set the
-PYTHONPATH variable to the correct value. You can use it as follows:
-
-    . pythonpath.sh
+Git pre commit hooks used to be makefile-based scripts. Running `mr update`
+will automatically replace these by the `pre-commit` tool,
 
 
 Initialize a new Python package repository
