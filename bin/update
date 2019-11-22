@@ -7,5 +7,11 @@ if ! grep -q "$mrconf" "$mrtrust" &> /dev/null ; then
     echo "$mrconf" >> "$mrtrust"
 fi
 
+if ! which pre-commit &> /dev/null ; then
+	echo "The pre-commit command is required, please install it before"
+	echo "running this command. See README.md for more information."
+	exit 1
+fi
+
 git pull
 mr -j 4 update
