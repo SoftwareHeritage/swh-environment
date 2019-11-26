@@ -28,8 +28,12 @@ mr -t list \
 find . -mindepth 1 -maxdepth 1 -type d -not -path '*/\.*' |
     while read dir ; do
 	dir=${dir#./}  # strip "./" prefix
-	if [ "$dir" == ".git" -o "$dir" == "bin" -o "$dir" == "packages" \
-		    -o "$dir" == "doc" ] ; then
+	if [ "$dir" == ".git" \
+	     -o "$dir" == "bin" \
+	     -o "$dir" == "doc" \
+	     -o "$dir" == "docker" \
+	     -o "$dir" == "packages" \
+	   ] ; then
 	    continue
 	fi
 	if ! grep -q "^\[${dir}\]" .mrconfig ; then
