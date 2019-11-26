@@ -3,4 +3,4 @@ version: '2'
 services:
   swh-objstorage:
     volumes:
-      - "/home/ddouard/src/swh-environment/swh-objstorage:/src/swh-objstorage"
+      - "../swh-objstorage:/src/swh-objstorage"

@@ -1,3 +1,0 @@
-docker-compose.override.yml
-docker-compose.storage-replica.override.yml
-tests/swh-docker-compose.logs

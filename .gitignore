@@ -3,5 +3,6 @@ packages/*
 snippets/
 !packages/README
 !packages/keys/
-
 .venv
+docker/*.override.yml
+docker/tests/*.logs

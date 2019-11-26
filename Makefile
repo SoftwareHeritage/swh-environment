@@ -45,3 +45,7 @@ update:
 
 clean:
 	make -C doc/ clean
+
+.PHONY: check-staged
+check-staged:
+	make -C docker/ check-staged

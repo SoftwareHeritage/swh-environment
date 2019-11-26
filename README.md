@@ -80,3 +80,9 @@ Initialize a new Python package repository
    make an initial commit
 
 5. cd REPO_NAME ; git push
+
+
+Docker based test environment
+-----------------------------
+
+Check the README file in the docker/ directory.
