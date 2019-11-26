@@ -15,10 +15,6 @@ fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-deposit.git' 'swh-deposit'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
-[swh-docker-dev]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-docker-dev.git' 'swh-docker-dev'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
-
 [swh-docs]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-docs.git' 'swh-docs'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
