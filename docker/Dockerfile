@@ -24,6 +24,11 @@ RUN python3 -m venv /srv/softwareheritage/venv
 ENV PATH="/srv/softwareheritage/venv/bin:${PATH}"
 RUN pip install --upgrade pip setuptools wheel
 RUN pip install 'gunicorn<20'
+
+ARG CASS_DRIVER_NO_CYTHON
+ENV CASS_DRIVER_NO_CYTHON ${CASS_DRIVER_NO_CYTHON}
+ARG CASS_DRIVER_BUILD_CONCURRENCY
+ENV CASS_DRIVER_BUILD_CONCURRENCY ${CASS_DRIVER_BUILD_CONCURRENCY:1}
 RUN pip install cassandra-driver
 
 RUN pip install \
