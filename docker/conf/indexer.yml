@@ -1,0 +1,31 @@
+storage:
+  cls: remote
+  args:
+    url: http://swh-storage:5002/
+objstorage:
+  cls: remote
+  args:
+    url: http://swh-objstorage:5003/
+indexer_storage:
+  cls: remote
+  args:
+    url: http://swh-idx-storage:5007/
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler-api:5008/
+celery:
+  task_broker: amqp://guest:guest@amqp//
+  task_modules:
+    - swh.indexer.tasks
+  task_queues:
+    - swh.indexer.tasks.ContentFossologyLicense
+    - swh.indexer.tasks.ContentLanguage
+    - swh.indexer.tasks.ContentMimetype
+    - swh.indexer.tasks.ContentRangeFossologyLicense
+    - swh.indexer.tasks.ContentRangeMimetype
+    - swh.indexer.tasks.Ctags
+    - swh.indexer.tasks.OriginHead
+    - swh.indexer.tasks.OriginMetadata
+    - swh.indexer.tasks.RecomputeChecksums
+    - swh.indexer.tasks.RevisionMetadata

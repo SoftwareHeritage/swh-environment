@@ -1,0 +1,5 @@
+search:
+  cls: elasticsearch
+  args:
+    hosts:
+        - elasticsearch:9200

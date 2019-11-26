@@ -1,0 +1,390 @@
+version: '2'
+
+services:
+
+  amqp:
+    image: rabbitmq:3.6-management
+    ports:
+      - 5072:5672
+
+#  flower:
+#    image: mher/flower
+#    command: --broker=amqp://guest:guest@amqp:5672// --url_prefix=flower
+#    ports:
+#      - 5055:5555
+#    depends_on:
+#      - amqp
+
+  zookeeper:
+    image: wurstmeister/zookeeper
+    restart: always
+
+  kafka:
+    image: wurstmeister/kafka
+    ports:
+      - "5092:9092"
+    env_file: ./env/kafka.env
+    depends_on:
+      - zookeeper
+
+  kafka-manager:
+    image: hlebalbau/kafka-manager:stable
+    ports:
+      - "5093:9000"
+    environment:
+      ZK_HOSTS: zookeeper:2181
+      APPLICATION_SECRET: random-secret
+    command: -Dpidfile.path=/dev/null
+
+  prometheus:
+    image: prom/prometheus
+    depends_on:
+    - prometheus-statsd-exporter
+    command:
+      # Needed for the reverse-proxy
+      - "--web.external-url=/prometheus"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - "./conf/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+    restart: unless-stopped
+
+  prometheus-statsd-exporter:
+    image: prom/statsd-exporter
+    command:
+      - "--statsd.mapping-config=/etc/prometheus/statsd-mapping.yml"
+    volumes:
+      - "./conf/prometheus-statsd-mapping.yml:/etc/prometheus/statsd-mapping.yml:ro"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    restart: unless-stopped
+    depends_on:
+    - prometheus
+    environment:
+      GF_SERVER_ROOT_URL: http://localhost:5080/grafana
+    volumes:
+      - "./conf/grafana/provisioning:/etc/grafana/provisioning:ro"
+      - "./conf/grafana/dashboards:/var/lib/grafana/dashboards"
+
+  nginx:
+    image: nginx
+    volumes:
+      - "./conf/nginx.conf:/etc/nginx/nginx.conf:ro"
+    ports:
+      - 5080:5080
+
+# Scheduler
+
+  swh-scheduler-db:
+    image: postgres:11
+    env_file:
+      - ./env/scheduler-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+
+  swh-scheduler-api:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/scheduler-db.env
+      - ./env/scheduler.env
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - swh-scheduler-db
+    ports:
+      - 5008:5008
+    volumes:
+      - "./conf/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler-api/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-listener:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/scheduler-db.env
+      - ./env/scheduler.env
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+    entrypoint: /entrypoint.sh
+    command: start-listener
+    depends_on:
+      - swh-scheduler-api
+      - amqp
+    volumes:
+      - "./conf/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-runner:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/scheduler-db.env
+      - ./env/scheduler.env
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+    entrypoint: /entrypoint.sh
+    command: start-runner -p 10
+    depends_on:
+      - swh-scheduler-api
+      - amqp
+    volumes:
+      - "./conf/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
+
+# Graph storage
+
+  swh-storage-db:
+    image: postgres:11
+    env_file:
+      - ./env/storage-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+
+  swh-storage:
+    image: swh/stack
+    build: ./
+    ports:
+      - 5002:5002
+    depends_on:
+      - swh-storage-db
+      - swh-objstorage
+      - kafka
+    env_file:
+      - ./env/storage-db.env
+    environment:
+      SWH_CONFIG_FILENAME: /storage.yml
+      STORAGE_BACKEND: postgresql
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/storage.yml:/storage.yml:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
+
+# Object storage
+
+  swh-objstorage:
+    build: ./
+    image: swh/stack
+    ports:
+      - 5003:5003
+    environment:
+      SWH_CONFIG_FILENAME: /objstorage.yml
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/objstorage.yml:/objstorage.yml:ro"
+      - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
+
+# Indexer storage
+
+  swh-idx-storage-db:
+    image: postgres:11
+    env_file:
+      - ./env/indexers-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+
+  swh-idx-storage:
+    image: swh/stack
+    build: ./
+    ports:
+      - 5007:5007
+    depends_on:
+      - swh-idx-storage-db
+    env_file:
+      - ./env/indexers-db.env
+    environment:
+      SWH_CONFIG_FILENAME: /indexer_storage.yml
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/indexer_storage.yml:/indexer_storage.yml:ro"
+      - "./services/swh-indexer-storage/entrypoint.sh:/entrypoint.sh:ro"
+
+# Web interface
+
+  swh-web:
+    build: ./
+    image: swh/stack
+    ports:
+      - 5004:5004
+    depends_on:
+      - swh-objstorage
+      - swh-storage
+      - swh-idx-storage
+    environment:
+      VERBOSITY: 3
+      DJANGO_SETTINGS_MODULE: swh.web.settings.development
+      SWH_CONFIG_FILENAME: /web.yml
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/web.yml:/web.yml:ro"
+      - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-deposit-db:
+    image: postgres:11
+    env_file:
+      - ./env/deposit-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+
+  swh-deposit:
+    image: swh/stack
+    build: ./
+    ports:
+      - 5006:5006
+    depends_on:
+      - swh-deposit-db
+      - swh-scheduler-api
+    environment:
+      VERBOSITY: 3
+      SWH_CONFIG_FILENAME: /deposit.yml
+      DJANGO_SETTINGS_MODULE: swh.deposit.settings.production
+    env_file:
+      - ./env/deposit-db.env
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/deposit.yml:/deposit.yml:ro"
+      - "./services/swh-deposit/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-vault-db:
+    image: postgres:11
+    env_file:
+      - ./env/vault-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+
+  swh-vault-api:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/vault-db.env
+    environment:
+      SWH_CONFIG_FILENAME: /vault-api.yml
+    command: server
+    ports:
+      - 5005:5005
+    depends_on:
+      - swh-vault-db
+      - swh-objstorage
+      - swh-storage
+      - swh-scheduler-api
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/vault-api.yml:/vault-api.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-vault-worker:
+    image: swh/stack
+    build: ./
+    command: worker
+    environment:
+      SWH_CONFIG_FILENAME: /cooker.yml
+    depends_on:
+      - swh-vault-api
+      - swh-storage
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/vault-worker.yml:/cooker.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
+
+
+# Lister Celery workers
+
+  swh-listers-db:
+    image: postgres:11
+    env_file:
+      - ./env/listers-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+
+  swh-lister:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/listers-db.env
+      - ./env/listers.env
+    user: swh
+    environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
+      SWH_WORKER_INSTANCE: listers
+      SWH_CONFIG_FILENAME: /lister.yml
+    depends_on:
+      - swh-listers-db
+      - swh-scheduler-api
+      - swh-scheduler-runner
+      - swh-storage
+      - amqp
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/lister.yml:/lister.yml:ro"
+      - "./services/swh-listers-worker/entrypoint.sh:/entrypoint.sh:ro"
+
+# Loader Celery workers
+
+  swh-loader:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/listers.env
+    user: swh
+    environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
+      SWH_WORKER_INSTANCE: loader
+      SWH_CONFIG_FILENAME: /loader.yml
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - swh-storage
+      - swh-scheduler-api
+      - amqp
+    volumes:
+      - "./conf/loader.yml:/loader.yml:ro"
+      - "./services/swh-loaders-worker/entrypoint.sh:/entrypoint.sh:ro"
+
+# Indexer Celery workers
+
+  swh-indexer:
+    image: swh/stack
+    build: ./
+    user: swh
+    env_file:
+      - ./env/indexers-db.env
+      - ./env/indexers.env
+    environment:
+      STATSD_HOST: prometheus-statsd-exporter
+      STATSD_PORT: 9125
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - swh-scheduler-runner
+      - swh-idx-storage
+      - swh-storage
+      - swh-objstorage
+      - amqp
+    volumes:
+      - "./conf/indexer.yml:/indexer.yml:ro"
+      - "./services/swh-indexer-worker/entrypoint.sh:/entrypoint.sh:ro"
+
+# Journal related
+
+  swh-indexer-journal-client:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - kafka
+      - swh-storage
+      - swh-scheduler-api
+    volumes:
+      - "./conf/indexer_journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
+      - "./services/swh-indexer-journal-client/entrypoint.sh:/entrypoint.sh:ro"

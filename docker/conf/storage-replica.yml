@@ -1,0 +1,8 @@
+storage:
+  cls: local
+  args:
+    db: postgresql:///?service=swh-storage-replica
+    objstorage:
+      cls: remote
+      args:
+        url: http://swh-objstorage:5003/

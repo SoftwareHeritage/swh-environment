@@ -1,0 +1,11 @@
+journal:
+  brokers:
+    - kafka
+  group_id: swh.indexer.journal_client
+
+max_messages: 50
+
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler-api:5008/

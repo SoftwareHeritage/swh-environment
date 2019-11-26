@@ -1,0 +1,4 @@
+indexer_storage:
+  cls: local
+  args:
+    db: postgresql:///?service=swh-indexers

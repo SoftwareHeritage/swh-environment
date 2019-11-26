@@ -1,0 +1,61 @@
+version: '2'
+
+services:
+  cassandra-seed:
+    # This container starts a Cassandra instance that must be used as the
+    # contact-point for clients. This container will then make the client
+    # discover other cassandra containers.
+    # This container must not be scaled up; scale up th 'cassandra'
+    # container instead.
+    image: cassandra
+    env_file:
+    - ./env/cassandra.env
+    entrypoint: /swh_entrypoint.sh
+    volumes:
+        - "./services/cassandra/swh_entrypoint.sh:/swh_entrypoint.sh:ro"
+        - "./conf/cassandra.yaml:/cassandra.yaml:ro"
+
+  cassandra:
+    # Additional Cassandra instance(s), which may be scaled up, but not
+    # down. They will automatically connect to 'cassandra-seed', and
+    # 'cassandra-seed' will tell clients to connect to these 'cassandra'
+    # containers to load-balance.
+    image: cassandra
+    entrypoint: /swh_entrypoint.sh
+    volumes:
+        - "./services/cassandra/swh_entrypoint.sh:/swh_entrypoint.sh:ro"
+        - "./conf/cassandra.yaml:/cassandra.yaml:ro"
+    env_file:
+    - ./env/cassandra.env
+
+  prometheus:
+    # just to add the dep on the cassandra-jmx-exporter-cassandra
+    depends_on:
+    - prometheus-statsd-exporter
+    - prometheus-jmx-exporter-cassandra
+
+  prometheus-jmx-exporter-cassandra:
+    image: sscaling/jmx-prometheus-exporter
+    environment:
+      JVM_OPTS: "-Djava.util.logging.config.file=/logging.properties"
+    volumes:
+      - "./conf/prometheus-jmx-exporter-cassandra.yml:/opt/jmx_exporter/config.yml:ro"
+      - "./conf/prometheus-jmx-exporter-logging.properties:/logging.properties:ro"
+    ports:
+    - "5556:5556"
+
+  swh-storage:
+    volumes:
+      # note: you need to be on the cassandra-backend2 branch
+      - "../swh-storage:/src/swh-storage"
+      - "./conf/storage_cassandra.yml:/storage.yml:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
+    depends_on:
+      - swh-storage-db
+      - cassandra-seed
+      - swh-objstorage
+      - kafka
+    environment:
+      CASSANDRA_SEED: cassandra-seed
+      STORAGE_BACKEND: cassandra
+      PYTHONUNBUFFERED: 1

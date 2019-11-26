@@ -1,0 +1,17 @@
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler-api:5008
+
+allowed_hosts:
+  - swh-deposit
+
+private:
+  secret_key: prod-in-docker
+  db:
+    host: swh-deposit-db
+    port: 5432
+    name: swh-deposit
+    user: postgres
+    password: testpassword
+  media_root: /tmp/swh-deposit/uploads
