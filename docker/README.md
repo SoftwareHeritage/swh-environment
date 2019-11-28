@@ -1,10 +1,8 @@
-# swh-docker-dev
+# Docker environment
 
-This repo contains Dockerfiles to allow developers to run a small
-Software Heritage instance on their development computer.
-
-The end goal is to smooth the contributors/developers workflow. Focus
-on coding, not configuring!
+This directory contains Dockerfiles to run a small Software Heritage instance
+on development machines.  The end goal is to smooth the contributors/developers
+workflow. Focus on coding, not configuring!
 
 WARNING: Running a Software Heritage instance on your machine can consume
          quite a bit of resources: if you play a bit too hard (e.g., if you
@@ -22,49 +20,30 @@ We recommend using the latest version of docker, so please read
 https://docs.docker.com/install/linux/docker-ce/debian/ for more details on how
 to install docker on your machine.
 
-On a debian system, docker-compose can be installed from debian repositories.
-On a stable (stretch) machine, it is recommended to install the version from
-[backports](https://backports.debian.org/Instructions/):
+On a debian system, docker-compose can be installed from Debian repositories:
 
 ```
-~$ sudo apt install -t stretch-backports docker-compose
+~$ sudo apt install docker-compose
 ```
 
 ## Quick start
 
-First, clone this repository.
-
-If you already have followed the
-[[https://docs.softwareheritage.org/devel/developer-setup.html|developer setup guide]],
-then you should already have a copy of the swh-docker-env git repository. Use
-it:
+First, change to the docker dir if you aren't there yet:
 
 ```
-~$ cd swh-environment/swh-docker-dev
-```
-
-Otherwise, we suggest to create a `swh-environment`
-directory in which this repo will be cloned so you can later on run some
-component in docker containers with overrides code from local repositories (see
-[[<#using-docker-setup-development-and-integration-testing>|below]]):
-
-```
-~$ mkdir swh-environment
-~$ cd swh-environment
-~/swh-environment$ git clone https://forge.softwareheritage.org/source/swh-docker-dev.git
-~/swh-environment$ cd swh-docker-dev
+~$ cd swh-environment/docker
 ```
 
 Then, start containers:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose up -d
+~/swh-environment/docker$ docker-compose up -d
 [...]
-Creating swh-docker-dev_amqp_1               ... done
-Creating swh-docker-dev_zookeeper_1          ... done
-Creating swh-docker-dev_kafka_1              ... done
-Creating swh-docker-dev_flower_1             ... done
-Creating swh-docker-dev_swh-scheduler-db_1   ... done
+Creating docker_amqp_1               ... done
+Creating docker_zookeeper_1          ... done
+Creating docker_kafka_1              ... done
+Creating docker_flower_1             ... done
+Creating docker_swh-scheduler-db_1   ... done
 [...]
 ```
 
@@ -72,27 +51,27 @@ This will build docker images and run them.
 Check everything is running fine with:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose ps
+~/swh-environment/docker$ docker-compose ps
                          Name                                       Command               State                                      Ports
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-swh-docker-dev_amqp_1                                    docker-entrypoint.sh rabbi ...   Up      15671/tcp, 0.0.0.0:5018->15672/tcp, 25672/tcp, 4369/tcp, 5671/tcp, 5672/tcp
-swh-docker-dev_flower_1                                  flower --broker=amqp://gue ...   Up      0.0.0.0:5555->5555/tcp
-swh-docker-dev_kafka_1                                   start-kafka.sh                   Up      0.0.0.0:9092->9092/tcp
-swh-docker-dev_swh-deposit-db_1                          docker-entrypoint.sh postgres    Up      5432/tcp
-swh-docker-dev_swh-deposit_1                             /entrypoint.sh                   Up      0.0.0.0:5006->5006/tcp
+docker_amqp_1                                    docker-entrypoint.sh rabbi ...   Up      15671/tcp, 0.0.0.0:5018->15672/tcp, 25672/tcp, 4369/tcp, 5671/tcp, 5672/tcp
+docker_flower_1                                  flower --broker=amqp://gue ...   Up      0.0.0.0:5555->5555/tcp
+docker_kafka_1                                   start-kafka.sh                   Up      0.0.0.0:9092->9092/tcp
+docker_swh-deposit-db_1                          docker-entrypoint.sh postgres    Up      5432/tcp
+docker_swh-deposit_1                             /entrypoint.sh                   Up      0.0.0.0:5006->5006/tcp
 [...]
 ```
 
-At the time of writing this guide, the startup of some containers may fail the
-first time for dependency-related problems. If some containers failed to start,
-just run the `docker-compose up -d` command again.
+The startup of some containers may fail the first time for dependency-related
+problems. If some containers failed to start, just run the `docker-compose up
+-d` command again.
 
 If a container really refuses to start properly, you can check why using the
 `docker-compose logs` command. For example:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose logs swh-lister
-Attaching to swh-docker-dev_swh-lister_1
+~/swh-environment/docker$ docker-compose logs swh-lister
+Attaching to docker_swh-lister_1
 [...]
 swh-lister_1                      | Processing /src/swh-scheduler
 swh-lister_1                      | Could not install packages due to an EnvironmentError: [('/src/swh-scheduler/.hypothesis/unicodedata/8.0.0/charmap.json.gz', '/tmp/pip-req-build-pm7nsax3/.hypothesis/unicodedata/8.0.0/charmap.json.gz', "[Errno 13] Permission denied: '/src/swh-scheduler/.hypothesis/unicodedata/8.0.0/charmap.json.gz'")]
@@ -107,7 +86,7 @@ To do so, you can create tasks that will scrape a forge. For example, to inject
 the code from the https://0xacab.org gitlab forge:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
     swh scheduler task add list-gitlab-full \
 	  -p oneshot url=https://0xacab.org/api/v4
 
@@ -132,7 +111,7 @@ To increase the speed at which git repositories are imported, you can spawn more
 `swh-loader-git` workers:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
     celery status
 listers@50ac2185c6c9: OK
 loader@b164f9055637: OK
@@ -140,11 +119,11 @@ indexer@33bc6067a5b8: OK
 vault@c9fef1bbfdc1: OK
 
 4 nodes online.
-~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
     celery control pool_grow 3 -d loader@b164f9055637
 -> loader@b164f9055637: OK
         pool will grow
-~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
     celery inspect -d loader@b164f9055637 stats | grep prefetch_count
        "prefetch_count": 4
 ```
@@ -153,41 +132,39 @@ Now there are 4 workers ingesting git repositories.
 You can also increase the number of `swh-loader-git` containers:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose up -d --scale swh-loader=4
+~/swh-environment/docker$ docker-compose up -d --scale swh-loader=4
 [...]
-Creating swh-docker-dev_swh-loader_2        ... done
-Creating swh-docker-dev_swh-loader_3        ... done
-Creating swh-docker-dev_swh-loader_4        ... done
+Creating docker_swh-loader_2        ... done
+Creating docker_swh-loader_3        ... done
+Creating docker_swh-loader_4        ... done
 ```
 
 ## Updating the docker image
 
-All containers started by `docker-compose` are bound to a docker image
-named `swh/stack` including all the software components of Software Heritage.
-When new versions of these components are released, the docker image will not
-be automatically updated. In order to update all Software heritage components
-to their latest version, the docker image needs to be explicitly rebuilt by
-issuing the following command inside the `swh-docker-dev` directory:
+All containers started by `docker-compose` are bound to a docker image named
+`swh/stack` including all the software components of Software Heritage.  When
+new versions of these components are released, the docker image will not be
+automatically updated. In order to update all Software Heritage components to
+their latest version, the docker image needs to be explicitly rebuilt by
+issuing the following command from within the `docker` directory:
 
 ```
-~/swh-environment/swh-docker-dev$ docker build --no-cache -t swh/stack .
+~/swh-environment/docker$ docker build --no-cache -t swh/stack .
 ```
 
 ## Details
 
-This runs the following services on their respectively standard ports,
-all of the following services are configured to communicate with each
-other:
+This runs the following services on their respectively standard ports, all of
+the following services are configured to communicate with each other:
 
-- swh-storage-db: a `softwareheritage` instance db that stores the
-  Merkle DAG,
+- swh-storage-db: a `softwareheritage` instance db that stores the Merkle DAG,
 
 - swh-objstorage: Content-addressable object storage,
 
-- swh-storage: Abstraction layer over the archive, allowing to access
-  all stored source code artifacts as well as their metadata,
+- swh-storage: Abstraction layer over the archive, allowing to access all
+  stored source code artifacts as well as their metadata,
 
-- swh-web: the swh's web interface over the storage,
+- swh-web: the Software Heritage web user interface,
 
 - swh-scheduler: the API service as well as 2 utilities,
   the runner and the listener,
@@ -200,9 +177,10 @@ other:
 - swh-journal: Persistent logger of changes to the archive, with
   publish-subscribe support.
 
-That means, you can start doing the ingestion using those services using the
+That means you can start doing the ingestion using those services using the
 same setup described in the getting-started starting directly at
 https://docs.softwareheritage.org/devel/getting-started.html#step-4-ingest-repositories
+
 
 ### Exposed Ports
 
@@ -227,7 +205,7 @@ a docker container will not use the same urls to access services. For example,
 to use the `celery` utility from the host, you may type:
 
 ```
-~/swh-environment/swh-docker-dev$ CELERY_BROKER_URL=amqp://:5072// celery status
+~/swh-environment/docker$ CELERY_BROKER_URL=amqp://:5072// celery status
 loader@61704103668c: OK
 [...]
 ```
@@ -235,10 +213,11 @@ loader@61704103668c: OK
 To run the same command from within a container:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api celery status
+~/swh-environment/docker$ docker-compose exec swh-scheduler-api celery status
 loader@61704103668c: OK
 [...]
 ```
+
 
 ## Managing tasks
 
@@ -280,7 +259,7 @@ For example, to add a (one shot) task that will list git repos on the
 0xacab.org gitlab instance, one can do (from this git repository):
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
     swh scheduler task add list-gitlab-full \
 	  -p oneshot url=https://0xacab.org/api/v4
 
@@ -300,7 +279,7 @@ This will insert a new task in the scheduler. To list existing tasks for a
 given task type:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
   swh scheduler task list-pending list-gitlab-full
 
 Found 1 list-gitlab-full tasks
@@ -318,7 +297,7 @@ Task 12
 To list all existing task types:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
   swh scheduler task-type list
 
 Known task types:
@@ -382,8 +361,8 @@ debian lister task not being properly registered on the
 swh-scheduler-runner service):
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose logs --tail=10 swh-scheduler-runner
-Attaching to swh-docker-dev_swh-scheduler-runner_1
+~/swh-environment/docker$ docker-compose logs --tail=10 swh-scheduler-runner
+Attaching to docker_swh-scheduler-runner_1
 swh-scheduler-runner_1    |     "__main__", mod_spec)
 swh-scheduler-runner_1    |   File "/usr/local/lib/python3.7/runpy.py", line 85, in _run_code
 swh-scheduler-runner_1    |     exec(code, run_globals)
@@ -427,6 +406,7 @@ From there, we will checkout or update all the swh packages:
 ~/swh-environment$ ./bin/update
 ```
 
+
 ### Install a swh package from sources in a container
 
 It is possible to run a docker container with some swh packages installed from
@@ -467,6 +447,7 @@ docker.
 ~/swh-environment$ find . -type d -name .tox -exec rm -rf {} \;
 ~/swh-environment$ find . -type d -name .hypothesis -exec rm -rf {} \;
 ```
+
 
 ### Using locally installed swh tools with docker
 
@@ -510,6 +491,7 @@ index-mimetype:
 [...]
 ```
 
+
 ### Make your life a bit easier
 
 When you use virtualenvwrapper, you can add postactivation commands:
@@ -533,7 +515,7 @@ esac
 eval "$(_SWH_COMPLETE=$autocomplete_cmd swh)"
 export SWH_SCHEDULER_URL=http://127.0.0.1:5008/
 export CELERY_BROKER_URL=amqp://127.0.0.1:5072/
-export COMPOSE_FILE=~/swh-environment/swh-docker-dev/docker-compose.yml:~/swh-environment/swh-docker-dev/docker-compose.override.yml
+export COMPOSE_FILE=~/swh-environment/docker/docker-compose.yml:~/swh-environment/docker/docker-compose.override.yml
 alias doco=docker-compose
 
 function swhclean {
@@ -637,7 +619,7 @@ mecanism for the main storage.
 This can be used like:
 
 ```
-~/swh-environment/swh-docker-dev$ docker-compose -f docker-compose.yml -f docker-compose.storage-replica.yml up -d
+~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.storage-replica.yml up -d
 [...]
 ```
 
@@ -660,13 +642,14 @@ by kafka.
 
 Note that the object storage is not replicated here, only the graph storage.
 
+
 ## Starting the backfiller
 
 Reading from the storage the objects <object-type> from within range
 [start-object, end-object] to the kafka topics.
 
 ```
-(swh) $ docker-compose \
+(swh)$ docker-compose \
              -f docker-compose.yml \
              -f docker-compose.storage-replica.yml \
              -f docker-compose.storage-replica.override.yml \
