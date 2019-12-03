@@ -45,6 +45,11 @@ throttling:
         default: 120/h
       exempted_networks:
         - 0.0.0.0/0
+    swh_api_origin_search:
+      limiter_rate:
+        default: 70/m
+      exempted_networks:
+        - 0.0.0.0/0
     swh_api_origin_visit_latest:
       limiter_rate:
         default: 700/m
