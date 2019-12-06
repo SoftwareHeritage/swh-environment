@@ -6,6 +6,8 @@ scheduler:
 allowed_hosts:
   - swh-deposit
 
+loader-version: 2
+
 private:
   secret_key: prod-in-docker
   db:
