@@ -49,3 +49,4 @@ RUN pip install \
 
 COPY utils/*.sh /srv/softwareheritage/utils/
 RUN mkdir -p /srv/softwareheritage/objects
+RUN rm -rd /srv/softwareheritage/.cache
