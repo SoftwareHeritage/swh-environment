@@ -56,6 +56,14 @@ services:
       - "./conf/prometheus-statsd-mapping.yml:/etc/prometheus/statsd-mapping.yml:ro"
     restart: unless-stopped
 
+  prometheus-rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter
+    restart: unless-stopped
+    environment:
+      SKIP_QUEUES: "RPC_.*"
+      MAX_QUEUES: 5000
+      RABBIT_URL: http://amqp:15672
+
   grafana:
     image: grafana/grafana
     restart: unless-stopped
