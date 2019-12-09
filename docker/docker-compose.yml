@@ -84,7 +84,7 @@ services:
       # unset PGHOST as db service crashes otherwise
       PGHOST:
 
-  swh-scheduler-api:
+  swh-scheduler:
     image: swh/stack
     build: ./
     env_file:
@@ -100,7 +100,7 @@ services:
       - 5008:5008
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
-      - "./services/swh-scheduler-api/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-scheduler-listener:
     image: swh/stack
@@ -114,7 +114,7 @@ services:
     entrypoint: /entrypoint.sh
     command: start-listener
     depends_on:
-      - swh-scheduler-api
+      - swh-scheduler
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
@@ -132,7 +132,7 @@ services:
     entrypoint: /entrypoint.sh
     command: start-runner -p 10
     depends_on:
-      - swh-scheduler-api
+      - swh-scheduler
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
@@ -242,7 +242,7 @@ services:
       - 5006:5006
     depends_on:
       - swh-deposit-db
-      - swh-scheduler-api
+      - swh-scheduler
     environment:
       VERBOSITY: 3
       SWH_CONFIG_FILENAME: /deposit.yml
@@ -262,13 +262,13 @@ services:
       # unset PGHOST as db service crashes otherwise
       PGHOST:
 
-  swh-vault-api:
+  swh-vault:
     image: swh/stack
     build: ./
     env_file:
       - ./env/vault-db.env
     environment:
-      SWH_CONFIG_FILENAME: /vault-api.yml
+      SWH_CONFIG_FILENAME: /vault.yml
     command: server
     ports:
       - 5005:5005
@@ -276,10 +276,10 @@ services:
       - swh-vault-db
       - swh-objstorage
       - swh-storage
-      - swh-scheduler-api
+      - swh-scheduler
     entrypoint: /entrypoint.sh
     volumes:
-      - "./conf/vault-api.yml:/vault-api.yml:ro"
+      - "./conf/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-vault-worker:
@@ -289,7 +289,7 @@ services:
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
     depends_on:
-      - swh-vault-api
+      - swh-vault
       - swh-storage
     entrypoint: /entrypoint.sh
     volumes:
@@ -321,7 +321,7 @@ services:
       SWH_CONFIG_FILENAME: /lister.yml
     depends_on:
       - swh-listers-db
-      - swh-scheduler-api
+      - swh-scheduler
       - swh-scheduler-runner
       - swh-storage
       - amqp
@@ -346,7 +346,7 @@ services:
     entrypoint: /entrypoint.sh
     depends_on:
       - swh-storage
-      - swh-scheduler-api
+      - swh-scheduler
       - amqp
     volumes:
       - "./conf/loader.yml:/loader.yml:ro"
@@ -384,7 +384,7 @@ services:
     depends_on:
       - kafka
       - swh-storage
-      - swh-scheduler-api
+      - swh-scheduler
     volumes:
       - "./conf/indexer_journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
       - "./services/swh-indexer-journal-client/entrypoint.sh:/entrypoint.sh:ro"

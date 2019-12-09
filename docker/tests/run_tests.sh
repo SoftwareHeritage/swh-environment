@@ -170,10 +170,10 @@ status_message "Waiting for swh services to be up"
 docker-compose $DOCO_OPTIONS exec -T swh-storage wait-for-it localhost:5002 -s --timeout=0
 docker-compose $DOCO_OPTIONS exec -T swh-objstorage wait-for-it localhost:5003 -s --timeout=0
 docker-compose $DOCO_OPTIONS exec -T swh-web wait-for-it localhost:5004 -s --timeout=0
-docker-compose $DOCO_OPTIONS exec -T swh-vault-api wait-for-it localhost:5005 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-vault wait-for-it localhost:5005 -s --timeout=0
 docker-compose $DOCO_OPTIONS exec -T swh-deposit wait-for-it localhost:5006 -s --timeout=0
 docker-compose $DOCO_OPTIONS exec -T swh-idx-storage wait-for-it localhost:5007 -s --timeout=0
-docker-compose $DOCO_OPTIONS exec -T swh-scheduler-api wait-for-it localhost:5008 -s --timeout=0
+docker-compose $DOCO_OPTIONS exec -T swh-scheduler wait-for-it localhost:5008 -s --timeout=0
 
 # Execute test scripts
 for test_script in $TEST_SCRIPTS_DIR/test_*; do

@@ -6,7 +6,7 @@ storage:
 scheduler:
   cls: remote
   args:
-    url: http://swh-scheduler-api:5008/
+    url: http://swh-scheduler:5008/
 
 lister:
   cls: local

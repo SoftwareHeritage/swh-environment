@@ -6,7 +6,7 @@ TEST_GIT_REPO_URL="https://forge.softwareheritage.org/source/${TEST_GIT_REPO_NAM
 
 status_message "Scheduling the loading of the git repository located at ${TEST_GIT_REPO_URL}"
 
-docker-compose $DOCO_OPTIONS exec -T swh-scheduler-api swh scheduler task add load-git repo_url=$TEST_GIT_REPO_URL
+docker-compose $DOCO_OPTIONS exec -T swh-scheduler swh scheduler task add load-git repo_url=$TEST_GIT_REPO_URL
 
 status_message "Waiting for the git loading task to complete"
 

@@ -5,7 +5,7 @@ storage:
 vault:
   cls: remote
   args:
-    url: http://swh-vault-api:5005/
+    url: http://swh-vault:5005/
 celery:
   task_broker: amqp://guest:guest@amqp//
   task_modules:

@@ -86,7 +86,7 @@ To do so, you can create tasks that will scrape a forge. For example, to inject
 the code from the https://0xacab.org gitlab forge:
 
 ```
-~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler \
     swh scheduler task add list-gitlab-full \
 	  -p oneshot url=https://0xacab.org/api/v4
 
@@ -111,7 +111,7 @@ To increase the speed at which git repositories are imported, you can spawn more
 `swh-loader-git` workers:
 
 ```
-~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler \
     celery status
 listers@50ac2185c6c9: OK
 loader@b164f9055637: OK
@@ -119,11 +119,11 @@ indexer@33bc6067a5b8: OK
 vault@c9fef1bbfdc1: OK
 
 4 nodes online.
-~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler \
     celery control pool_grow 3 -d loader@b164f9055637
 -> loader@b164f9055637: OK
         pool will grow
-~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler \
     celery inspect -d loader@b164f9055637 stats | grep prefetch_count
        "prefetch_count": 4
 ```
@@ -213,7 +213,7 @@ loader@61704103668c: OK
 To run the same command from within a container:
 
 ```
-~/swh-environment/docker$ docker-compose exec swh-scheduler-api celery status
+~/swh-environment/docker$ docker-compose exec swh-scheduler celery status
 loader@61704103668c: OK
 [...]
 ```
@@ -259,7 +259,7 @@ For example, to add a (one shot) task that will list git repos on the
 0xacab.org gitlab instance, one can do (from this git repository):
 
 ```
-~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler \
     swh scheduler task add list-gitlab-full \
 	  -p oneshot url=https://0xacab.org/api/v4
 
@@ -279,7 +279,7 @@ This will insert a new task in the scheduler. To list existing tasks for a
 given task type:
 
 ```
-~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler \
   swh scheduler task list-pending list-gitlab-full
 
 Found 1 list-gitlab-full tasks
@@ -297,7 +297,7 @@ Task 12
 To list all existing task types:
 
 ```
-~/swh-environment/docker$ docker-compose exec swh-scheduler-api \
+~/swh-environment/docker$ docker-compose exec swh-scheduler \
   swh scheduler task-type list
 
 Known task types:
