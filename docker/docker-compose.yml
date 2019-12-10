@@ -87,6 +87,7 @@ services:
   swh-scheduler-db:
     image: postgres:11
     env_file:
+      - ./env/common_python.env
       - ./env/scheduler-db.env
     environment:
       # unset PGHOST as db service crashes otherwise
@@ -96,6 +97,7 @@ services:
     image: swh/stack
     build: ./
     env_file:
+      - ./env/common_python.env
       - ./env/scheduler-db.env
       - ./env/scheduler.env
       - ./env/statsd.env
@@ -115,6 +117,7 @@ services:
     image: swh/stack
     build: ./
     env_file:
+      - ./env/common_python.env
       - ./env/scheduler-db.env
       - ./env/scheduler.env
       - ./env/statsd.env
@@ -134,6 +137,7 @@ services:
     image: swh/stack
     build: ./
     env_file:
+      - ./env/common_python.env
       - ./env/scheduler-db.env
       - ./env/scheduler.env
       - ./env/statsd.env
@@ -169,6 +173,7 @@ services:
       - swh-objstorage
       - kafka
     env_file:
+      - ./env/common_python.env
       - ./env/storage-db.env
       - ./env/statsd.env
     environment:
@@ -187,6 +192,7 @@ services:
     ports:
       - 5003:5003
     env_file:
+      - ./env/common_python.env
       - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /objstorage.yml
@@ -213,6 +219,7 @@ services:
     depends_on:
       - swh-idx-storage-db
     env_file:
+      - ./env/common_python.env
       - ./env/indexers-db.env
     environment:
       SWH_CONFIG_FILENAME: /indexer_storage.yml
@@ -233,6 +240,7 @@ services:
       - swh-storage
       - swh-idx-storage
     env_file:
+      - ./env/common_python.env
       - ./env/statsd.env
     environment:
       VERBOSITY: 3
@@ -260,13 +268,13 @@ services:
       - swh-deposit-db
       - swh-scheduler
     env_file:
+      - ./env/common_python.env
       - ./env/statsd.env
+      - ./env/deposit-db.env
     environment:
       VERBOSITY: 3
       SWH_CONFIG_FILENAME: /deposit.yml
       DJANGO_SETTINGS_MODULE: swh.deposit.settings.production
-    env_file:
-      - ./env/deposit-db.env
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/deposit.yml:/deposit.yml:ro"
@@ -284,6 +292,7 @@ services:
     image: swh/stack
     build: ./
     env_file:
+      - ./env/common_python.env
       - ./env/vault-db.env
       - ./env/statsd.env
     environment:
@@ -306,6 +315,7 @@ services:
     build: ./
     command: worker
     env_file:
+      - ./env/common_python.env
       - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
@@ -332,6 +342,7 @@ services:
     image: swh/stack
     build: ./
     env_file:
+      - ./env/common_python.env
       - ./env/listers-db.env
       - ./env/listers.env
       - ./env/statsd.env
@@ -356,6 +367,7 @@ services:
     image: swh/stack
     build: ./
     env_file:
+      - ./env/common_python.env
       - ./env/listers.env
       - ./env/statsd.env
     user: swh
@@ -378,6 +390,7 @@ services:
     build: ./
     user: swh
     env_file:
+      - ./env/common_python.env
       - ./env/indexers-db.env
       - ./env/indexers.env
       - ./env/statsd.env
@@ -398,6 +411,8 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
+    env_file:
+      - ./env/common_python.env
     depends_on:
       - kafka
       - swh-storage

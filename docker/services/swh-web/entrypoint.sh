@@ -34,5 +34,6 @@ case "$1" in
              --threads 2 \
              --workers 2 \
              --timeout 3600 \
+             --config 'python:swh.web.gunicorn_config' \
              'django.core.wsgi:get_wsgi_application()'
 esac

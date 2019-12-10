@@ -660,3 +660,14 @@ Reading from the storage the objects <object-type> from within range
              --end-object 000001 \
              --dry-run
 ```
+
+## Using Sentry
+
+All entrypoints to SWH code (CLI, gunicorn, celery, ...) are, or should be,
+intrumented using Sentry. By default this is disabled, but if you run your
+own Sentry instance, you can use it.
+
+To do so, you must get a DSN from your Sentry instance, and set it as the
+value of `SWH_SENTRY_DSN` in the file `env/common_python.env`.
+You may also set it per-service in the `environment` section of each services
+in `docker-compose.override.yml`.

@@ -29,6 +29,7 @@ case "$1" in
              --workers 2 \
              --reload \
              --timeout 3600 \
+             --config 'python:swh.core.api.gunicorn_config' \
              'swh.scheduler.api.server:make_app_from_configfile()'
 
 esac

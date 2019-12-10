@@ -31,5 +31,6 @@ else
                   --workers 2 \
                   --log-level DEBUG \
                   --timeout 3600 \
+                  --config 'python:swh.core.api.gunicorn_config' \
                   'django.core.wsgi:get_wsgi_application()'
 fi

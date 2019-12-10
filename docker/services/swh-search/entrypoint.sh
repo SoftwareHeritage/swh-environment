@@ -26,6 +26,7 @@ EOF
            --workers 2 \
            --log-level DEBUG \
            --timeout 3600 \
+           --config 'python:swh.core.api.gunicorn_config' \
            'swh.search.api.server:make_app_from_configfile()'
       ;;
 esac

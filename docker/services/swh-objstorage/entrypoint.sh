@@ -19,6 +19,7 @@ else
        --workers 2 \
        --reload \
        --timeout 3600 \
+       --config 'python:swh.core.api.gunicorn_config' \
        'swh.objstorage.api.server:make_app_from_configfile()'
 
 fi
