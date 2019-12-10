@@ -19,6 +19,9 @@ scheduler:
   args:
     url: http://swh-scheduler:5008/
 
+deposit:
+  url: http://swh-deposit:5006/1/private
+
 celery:
   task_broker: amqp://guest:guest@amqp//
 
