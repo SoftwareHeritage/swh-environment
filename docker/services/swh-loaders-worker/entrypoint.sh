@@ -24,7 +24,7 @@ case "$1" in
                     --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
                     -Ofair --loglevel=${LOGLEVEL} --without-gossip \
                     --without-mingle \
-					          --heartbeat-interval 10 \
+                    --heartbeat-interval 10 \
                     --hostname "${SWH_WORKER_INSTANCE}@%h"
         ;;
 esac
