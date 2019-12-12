@@ -100,7 +100,6 @@ services:
       - ./env/common_python.env
       - ./env/scheduler-db.env
       - ./env/scheduler.env
-      - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
@@ -120,7 +119,6 @@ services:
       - ./env/common_python.env
       - ./env/scheduler-db.env
       - ./env/scheduler.env
-      - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
@@ -140,7 +138,6 @@ services:
       - ./env/common_python.env
       - ./env/scheduler-db.env
       - ./env/scheduler.env
-      - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
@@ -175,7 +172,6 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/storage-db.env
-      - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /storage.yml
       STORAGE_BACKEND: postgresql
@@ -193,7 +189,6 @@ services:
       - 5003:5003
     env_file:
       - ./env/common_python.env
-      - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /objstorage.yml
     entrypoint: /entrypoint.sh
@@ -241,7 +236,6 @@ services:
       - swh-idx-storage
     env_file:
       - ./env/common_python.env
-      - ./env/statsd.env
     environment:
       VERBOSITY: 3
       DJANGO_SETTINGS_MODULE: swh.web.settings.development
@@ -269,7 +263,6 @@ services:
       - swh-scheduler
     env_file:
       - ./env/common_python.env
-      - ./env/statsd.env
       - ./env/deposit-db.env
     environment:
       VERBOSITY: 3
@@ -294,7 +287,6 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/vault-db.env
-      - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /vault.yml
     command: server
@@ -316,7 +308,6 @@ services:
     command: worker
     env_file:
       - ./env/common_python.env
-      - ./env/statsd.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
     depends_on:
@@ -344,8 +335,7 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/listers-db.env
-      - ./env/listers.env
-      - ./env/statsd.env
+      - ./env/workers.env
     user: swh
     environment:
       SWH_WORKER_INSTANCE: listers
@@ -361,15 +351,14 @@ services:
       - "./conf/lister.yml:/lister.yml:ro"
       - "./services/swh-listers-worker/entrypoint.sh:/entrypoint.sh:ro"
 
-# Loader Celery workers
+# Loader + deposit checker Celery workers
 
   swh-loader:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/listers.env
-      - ./env/statsd.env
+      - ./env/workers.env
     user: swh
     environment:
       SWH_WORKER_INSTANCE: loader
@@ -378,10 +367,11 @@ services:
     depends_on:
       - swh-storage
       - swh-scheduler
+      - swh-deposit
       - amqp
     volumes:
       - "./conf/loader.yml:/loader.yml:ro"
-      - "./services/swh-loaders-worker/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
 
 # Indexer Celery workers
 
@@ -392,8 +382,11 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/indexers-db.env
-      - ./env/indexers.env
-      - ./env/statsd.env
+      - ./env/workers.env
+    environment:
+      SWH_WORKER_INSTANCE: indexer
+      SWH_CONFIG_FILENAME: /indexer.yml
+      CONCURRENCY: 4
     entrypoint: /entrypoint.sh
     depends_on:
       - swh-scheduler-runner
