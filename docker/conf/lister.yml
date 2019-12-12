@@ -15,46 +15,23 @@ lister:
 
 celery:
   task_broker: amqp://guest:guest@amqp//
-  task_modules:
-    - swh.lister.bitbucket.tasks
-    - swh.lister.cgit.tasks
-    - swh.lister.cran.tasks
-    - swh.lister.debian.tasks
-    - swh.lister.github.tasks
-    - swh.lister.gitlab.tasks
-    - swh.lister.gnu.tasks
-    - swh.lister.npm.tasks
-    - swh.lister.packagist.tasks
-    - swh.lister.phabricator.tasks
-    - swh.lister.pypi.tasks
   task_queues:
     - swh.lister.bitbucket.tasks.FullBitBucketRelister
     - swh.lister.bitbucket.tasks.IncrementalBitBucketLister
     - swh.lister.bitbucket.tasks.RangeBitBucketLister
-    - swh.lister.bitbucket.tasks.ping
     - swh.lister.cgit.tasks.CGitListerTask
-    - swh.lister.cgit.tasks.ping
     - swh.lister.cran.tasks.CRANListerTask
-    - swh.lister.cran.tasks.ping
     - swh.lister.debian.tasks.DebianListerTask
-    - swh.lister.debian.tasks.ping
     - swh.lister.github.tasks.FullGitHubRelister
     - swh.lister.github.tasks.IncrementalGitHubLister
     - swh.lister.github.tasks.RangeGitHubLister
-    - swh.lister.github.tasks.ping
     - swh.lister.gitlab.tasks.FullGitLabRelister
     - swh.lister.gitlab.tasks.IncrementalGitLabLister
     - swh.lister.gitlab.tasks.RangeGitLabLister
-    - swh.lister.gitlab.tasks.ping
     - swh.lister.gnu.tasks.GNUListerTask
-    - swh.lister.gnu.tasks.ping
     - swh.lister.npm.tasks.NpmIncrementalListerTask
     - swh.lister.npm.tasks.NpmListerTask
-    - swh.lister.npm.tasks.ping
     - swh.lister.packagist.tasks.PackagistListerTask
-    - swh.lister.packagist.tasks.ping
     - swh.lister.phabricator.tasks.FullPhabricatorLister
     - swh.lister.phabricator.tasks.IncrementalPhabricatorLister
-    - swh.lister.phabricator.tasks.ping
     - swh.lister.pypi.tasks.PyPIListerTask
-    - swh.lister.pypi.tasks.ping

@@ -21,16 +21,6 @@ scheduler:
 
 celery:
   task_broker: amqp://guest:guest@amqp//
-  task_modules:
-    - swh.loader.git.tasks
-    - swh.loader.mercurial.tasks
-    - swh.loader.svn.tasks
-    - swh.deposit.loader.tasks
-    - swh.loader.package.archive.tasks
-    - swh.loader.package.debian.tasks
-    - swh.loader.package.deposit.tasks
-    - swh.loader.package.npm.tasks
-    - swh.loader.package.pypi.tasks
 
   task_queues:
     - swh.loader.dir.tasks.LoadDirRepository
