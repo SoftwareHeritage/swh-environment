@@ -2,7 +2,7 @@ version: '2'
 
 services:
   elasticsearch:
-    image: elasticsearch:7.3.2
+    image: elasticsearch:7.5.0
     env_file:
       - ./env/elasticsearch.env
     ports:
