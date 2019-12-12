@@ -661,6 +661,7 @@ Reading from the storage the objects <object-type> from within range
              --dry-run
 ```
 
+
 ## Using Sentry
 
 All entrypoints to SWH code (CLI, gunicorn, celery, ...) are, or should be,
@@ -671,3 +672,26 @@ To do so, you must get a DSN from your Sentry instance, and set it as the
 value of `SWH_SENTRY_DSN` in the file `env/common_python.env`.
 You may also set it per-service in the `environment` section of each services
 in `docker-compose.override.yml`.
+
+
+## Caveats
+
+Running a lister task can lead to a lot of loading tasks, which can fill your
+hard drive pretty fast. Make sure to monitor your available storage space
+regularly when playing with this stack.
+
+Also, a few containers (`swh-storage`, `swh-xxx-db`) use a volume for storing
+the blobs or the database files. With the default configuration provided in the
+`docker-compose.yml` file, these volumes are not persistant. So removing the
+containers will delete the volumes!
+
+Also note that for the `swh-objstorage`, since the volume can be pretty big,
+the remove operation can be quite long (several minutes is not uncommon), which
+may mess a bit with the `docker-compose` command.
+
+If you have an error message like:
+
+  Error response from daemon: removal of container 928de3110381 is already in progress
+
+it means that you need to wait for this process to finish before being able to
+(re)start your docker stack again.
