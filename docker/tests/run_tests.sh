@@ -19,7 +19,7 @@ TEST_SCRIPTS_DIR=$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)
 export COMPOSE_FILE=$TEST_SCRIPTS_DIR/../docker-compose.yml
 
 # Useful global variables
-SWH_WEB_API_BASEURL="http://localhost:5004/api/1"
+SWH_WEB_API_BASEURL="http://localhost:5080/api/1"
 CURRENT_TEST_SCRIPT=""
 
 # Colored output related variables and functions (only if stdout is a terminal)

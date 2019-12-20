@@ -9,7 +9,12 @@ source /srv/softwareheritage/utils/pgsql.sh
 setup_pgsql
 
 if [ "$1" = 'shell' ] ; then
-    exec bash -i
+	shift
+	if (( $# == 0)); then
+		exec bash -i
+	else
+		"$@"
+	fi
 else
 
     wait_pgsql
