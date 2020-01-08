@@ -176,7 +176,7 @@ docker-compose $DOCO_OPTIONS exec -T swh-idx-storage wait-for-it localhost:5007 
 docker-compose $DOCO_OPTIONS exec -T swh-scheduler wait-for-it localhost:5008 -s --timeout=0
 
 # Execute test scripts
-for test_script in $TEST_SCRIPTS_DIR/test_*; do
+for test_script in $TEST_SCRIPTS_DIR/test_*.sh; do
   run_test_script ${test_script}
   CURRENT_TEST_SCRIPT=""
 done
