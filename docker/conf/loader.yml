@@ -33,6 +33,7 @@ celery:
     - swh.loader.mercurial.tasks.LoadArchiveMercurial
     - swh.loader.mercurial.tasks.LoadMercurial
     - swh.loader.package.archive.tasks.LoadArchive
+    - swh.loader.package.cran.tasks.LoadCRAN
     - swh.loader.package.debian.tasks.LoadDebian
     - swh.loader.package.deposit.tasks.LoadDeposit
     - swh.loader.package.npm.tasks.LoadNpm
