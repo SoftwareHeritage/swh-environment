@@ -21,6 +21,9 @@ scheduler:
 
 deposit:
   url: http://swh-deposit:5006/1/private
+  auth:
+    username: test
+    password: test
 
 celery:
   task_broker: amqp://guest:guest@amqp//
