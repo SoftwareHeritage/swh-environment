@@ -23,6 +23,10 @@ fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-graph.git' 'swh-graph'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
+[swh-icinga-plugins]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-icinga-plugins.git' 'swh-icinga-plugins'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
 [swh-indexer]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-indexer.git' 'swh-indexer'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
