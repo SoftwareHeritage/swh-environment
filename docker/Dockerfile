@@ -31,6 +31,10 @@ ARG CASS_DRIVER_BUILD_CONCURRENCY
 ENV CASS_DRIVER_BUILD_CONCURRENCY ${CASS_DRIVER_BUILD_CONCURRENCY:-1}
 RUN pip install cassandra-driver
 
+# Enforce installation of django 1 otherwise pip will choose django 2 when
+# installing the swh stack due to poor version dependency support in pip
+RUN pip install 'Django<2'
+
 RUN pip install \
         swh-core[db,http] \
         swh-deposit[server] \
