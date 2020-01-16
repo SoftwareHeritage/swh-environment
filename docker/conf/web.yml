@@ -65,3 +65,5 @@ throttling:
         default: 120/h
       exempted_networks:
         - 0.0.0.0/0
+
+search: {}
