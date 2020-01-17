@@ -9,6 +9,8 @@ import time
 
 import requests
 
+from os.path import join
+from typing import Generator, Mapping, Tuple
 from urllib.parse import urljoin
 
 import pytest
@@ -124,3 +126,28 @@ def apiget(path: str, verb: str = 'GET', **kwargs):
     resp = requests.request(verb, url, **kwargs)
     assert resp.status_code == 200, f'failed to retrieve {url} ({resp})'
     return resp.json()
+
+
+def pollapi(path: str, verb: str = 'GET', **kwargs):
+    """Poll the API at path until it returns an OK result"""
+    url = urljoin(APIURL, path)
+    for i in range(60):
+        resp = requests.request(verb, url, **kwargs)
+        if resp.ok:
+            break
+        time.sleep(1)
+    else:
+        assert False, f"Polling {url} failed"
+    return resp
+
+
+def getdirectory(dirid: str, currentpath: str = '') \
+        -> Generator[Tuple[str, Mapping], None, None]:
+    """Recursively retrieve directory description from the archive"""
+    directory = apiget(f'directory/{dirid}')
+    for direntry in directory:
+        path = join(currentpath, direntry['name'])
+        if direntry['type'] != 'dir':
+            yield (path, direntry)
+        else:
+            yield from getdirectory(direntry['target'], path)

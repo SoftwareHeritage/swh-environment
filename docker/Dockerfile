@@ -23,7 +23,7 @@ USER swh
 RUN python3 -m venv /srv/softwareheritage/venv
 ENV PATH="/srv/softwareheritage/venv/bin:${PATH}"
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install gunicorn
+RUN pip install gunicorn httpie
 
 ARG CASS_DRIVER_NO_CYTHON
 ENV CASS_DRIVER_NO_CYTHON ${CASS_DRIVER_NO_CYTHON}
