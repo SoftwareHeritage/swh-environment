@@ -4,51 +4,7 @@
 # See top-level LICENSE file for more information
 
 import json
-import subprocess
 import time
-
-import pytest
-import testinfra
-
-
-SAMPLE_METADATA = '''\
-<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:codemeta="https://doi.org/10.5063/SCHEMA/CODEMETA-2.0">
-  <title>Test Software</title>
-  <client>swh</client>
-  <external_identifier>test-software</external_identifier>
-  <codemeta:author>
-    <codemeta:name>No One</codemeta:name>
-  </codemeta:author>
-</entry>
-'''
-
-
-# scope='session' so we use the same container for all the tests;
-@pytest.fixture(scope='session')
-def deposit_host(request):
-    # start the whole cluster
-    subprocess.check_output(['docker-compose', 'up', '-d'])
-    # run a container in which test commands are executed
-    docker_id = subprocess.check_output(
-        ['docker-compose', 'run', '-d',
-         'swh-deposit', 'shell', 'sleep', '1h']).decode().strip()
-    deposit_host = testinfra.get_host("docker://" + docker_id)
-    deposit_host.check_output(
-        'echo \'print("Hello World!")\n\' > /tmp/hello.py')
-    deposit_host.check_output(
-        'tar -C /tmp -czf /tmp/archive.tgz /tmp/hello.py')
-    deposit_host.check_output(
-        f'echo \'{SAMPLE_METADATA}\' > /tmp/metadata.xml')
-    deposit_host.check_output('wait-for-it swh-deposit:5006 -t 30')
-    # return a testinfra connection to the container
-    yield deposit_host
-
-    # at the end of the test suite, destroy the container
-    subprocess.check_call(['docker', 'rm', '-f', docker_id])
-    # and the wole cluster
-    subprocess.check_call(['docker-compose', 'down'])
 
 
 def test_admin_collection(deposit_host):
