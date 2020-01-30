@@ -111,7 +111,8 @@ def git_origin(scheduler_host, git_url):
                     ['docker-compose', 'logs', 'swh-loader'])
                 assert False, ('Loading execution failed\n'
                                f'status: {status}\n'
-                               f'loader logs: {loader_logs}')
+                               f'loader logs: '
+                               + loader_logs.decode(errors='replace'))
             assert False, f'Loading execution failed, task status is {status}'
     return git_url
 
