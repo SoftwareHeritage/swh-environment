@@ -125,7 +125,7 @@ def apiget(path: str, verb: str = 'GET', **kwargs):
 
     url = urljoin(APIURL, path)
     resp = requests.request(verb, url, **kwargs)
-    assert resp.status_code == 200, f'failed to retrieve {url} ({resp})'
+    assert resp.status_code == 200, f'failed to retrieve {url}: {resp.text}'
     return resp.json()
 
 
