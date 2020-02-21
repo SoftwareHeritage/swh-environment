@@ -1,18 +1,17 @@
 storage:
-  cls: filter
-  args:
-    storage:
-      cls: buffer
-      args:
-        storage:
-          cls: remote
-          args:
-            url: http://swh-storage:5002/
-        min_batch_size:
-          content: 10000
-          content_bytes: 104857600
-          directory: 1000
-          revision: 1000
+  cls: pipeline
+  steps:
+    - cls: validate
+    - cls: filter
+    - cls: buffer
+      min_batch_size:
+        content: 10000
+        content_bytes: 104857600
+        directory: 1000
+        revision: 1000
+    - cls: remote
+      url: http://swh-storage:5002/
+
 
 scheduler:
   cls: remote
