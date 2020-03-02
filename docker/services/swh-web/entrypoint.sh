@@ -23,6 +23,9 @@ case "$1" in
         exec bash -i
         ;;
      *)
+        echo "Starting memcached"
+        memcached&
+
         echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"
         django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
 

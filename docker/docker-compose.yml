@@ -238,7 +238,7 @@ services:
       - ./env/common_python.env
     environment:
       VERBOSITY: 3
-      DJANGO_SETTINGS_MODULE: swh.web.settings.development
+      DJANGO_SETTINGS_MODULE: swh.web.settings.production
       SWH_CONFIG_FILENAME: /web.yml
     entrypoint: /entrypoint.sh
     volumes:

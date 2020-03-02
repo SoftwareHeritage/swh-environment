@@ -37,8 +37,10 @@ debug: yes
 serve_assets: yes
 
 development_db: /tmp/db.sqlite3
+production_db: /tmp/db.sqlite3
 
 throttling:
+  cache_uri: 127.0.0.1:11211
   scopes:
     swh_api:
       limiter_rate:

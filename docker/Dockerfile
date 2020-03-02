@@ -8,6 +8,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libpq-dev \
     libsvn-dev \
     libsystemd-dev \
+    memcached \
     postgresql-client \
     wait-for-it \
     ngrep && \
