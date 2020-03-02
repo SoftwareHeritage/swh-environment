@@ -1,7 +1,6 @@
 storage:
   cls: pipeline
   steps:
-    - cls: validate
     - cls: filter
     - cls: buffer
       min_batch_size:
