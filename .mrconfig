@@ -67,6 +67,10 @@ fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-py-template.git' 'swh-py-template'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
+[swh-scanner]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-scanner.git' 'swh-scanner'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
 [swh-scheduler]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-scheduler.git' 'swh-scheduler'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
