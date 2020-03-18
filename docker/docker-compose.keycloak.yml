@@ -1,0 +1,35 @@
+version: '2'
+
+services:
+
+  keycloak-db:
+    image: postgres:11
+    env_file:
+      - ./env/keycloak-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+
+  keycloak:
+    build: services/keycloak
+    env_file:
+      - ./env/keycloak.env
+    entrypoint: /entrypoint.sh
+    environment:
+      JAVA_TOOL_OPTIONS: "-Dkeycloak.profile=preview
+                          -Dkeycloak.profile.feature.token_exchange=enabled"
+    volumes:
+      - "./services/keycloak/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/keycloak/keycloak_swh_setup.py:/keycloak_swh_setup.py:ro"
+    expose:
+      - "8080"
+    depends_on:
+      - keycloak-db
+
+  swh-web:
+    depends_on:
+      - keycloak
+    environment:
+      SWH_CONFIG_FILENAME: /web-keycloak.yml
+    volumes:
+      - "./conf/web-keycloak.yml:/web-keycloak.yml:ro"

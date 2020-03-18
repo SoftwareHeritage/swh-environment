@@ -1,0 +1,65 @@
+storage:
+  cls: remote
+  args:
+    url: http://swh-storage:5002/
+    timeout: 1
+
+objstorage:
+  cls: remote
+  args:
+    url: http://swh-objstorage:5003/
+
+indexer_storage:
+  cls: remote
+  args:
+    url: http://swh-idx-storage:5007/
+
+scheduler:
+  cls: remote
+  args:
+    url: http://swh-scheduler:5008/
+
+vault:
+  cls: remote
+  args:
+    url: http://swh-vault:5005/
+
+deposit:
+  private_api_url: https://swh-deposit:5006/1/private/
+  private_api_user: swhworker
+  private_api_password: ''
+
+allowed_hosts:
+  - "*"
+
+debug: yes
+
+serve_assets: yes
+
+development_db: /tmp/db.sqlite3
+production_db: /tmp/db.sqlite3
+
+throttling:
+  cache_uri: 127.0.0.1:11211
+  scopes:
+    swh_api:
+      limiter_rate:
+        default: 120/h
+    swh_api_origin_search:
+      limiter_rate:
+        default: 70/m
+    swh_api_origin_visit_latest:
+      limiter_rate:
+        default: 700/m
+    swh_vault_cooking:
+      limiter_rate:
+        default: 120/h
+    swh_save_origin:
+      limiter_rate:
+        default: 120/h
+
+search: {}
+
+keycloak:
+  server_url: http://keycloak:8080/keycloak/auth/
+  realm_name: SoftwareHeritage

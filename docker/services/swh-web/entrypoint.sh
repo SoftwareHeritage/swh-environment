@@ -29,7 +29,7 @@ case "$1" in
         echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"
         django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
 
-        echo "Creating admin user"
+        echo "Creating Django admin user"
         echo "$create_admin_script" | python3 -m swh.web.manage shell
 
         echo "starting the swh-web server"
