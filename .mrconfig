@@ -90,3 +90,7 @@ fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 [swh-web]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-web.git' 'swh-web'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
+[swh-web-client]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-web-client.git' 'swh-web-client'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
