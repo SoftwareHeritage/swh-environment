@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 LS_MODS="bin/ls-py-modules"
 if ! [ -x "$LS_MODS" ] ; then

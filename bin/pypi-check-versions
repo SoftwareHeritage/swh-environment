@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 mr -m run bash -c '
 if [[ $(basename $PWD) =~ ^(swh-docs|swh-py-template)$ ]]; then
 echo SKIP $(basename $PWD)

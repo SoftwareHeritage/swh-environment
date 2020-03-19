@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # generate dependency graph (in DOT(1) format) for all known python modules
 #
