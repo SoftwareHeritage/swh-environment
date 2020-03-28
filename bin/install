@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+pip install $(./bin/pip-swh-packages --with-testing)

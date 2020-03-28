@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+if [ "$1" = "-h" -o "$1" = "--help" ] ; then
+    echo "Usage: bin/update [OPTION].."
+    echo "Options:"
+    echo "  -i/--install: install packages after update"
+    exit 0
+fi
+
 mrconf=$(readlink -f .mrconfig)
 mrtrust="${HOME}/.mrtrust"
 if ! grep -q "$mrconf" "$mrtrust" &> /dev/null ; then
@@ -15,3 +22,7 @@ fi
 
 git pull
 mr -j 4 update
+
+if [ "$1" = "-i" -o "$1" = "--install" ] ; then
+    ./bin/install
+fi
