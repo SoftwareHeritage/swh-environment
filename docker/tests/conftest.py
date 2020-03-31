@@ -103,7 +103,7 @@ def git_origin(scheduler_host, git_url):
         if 'Executions:' in status:
             if '[eventful]' in status:
                 break
-            if '[started]' in status:
+            if '[started]' in status or '[scheduled]' in status:
                 time.sleep(1)
                 continue
             if '[failed]' in status:
