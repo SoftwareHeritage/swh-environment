@@ -43,15 +43,25 @@ def docker_compose(request):
     subprocess.check_call(['docker-compose', 'down'])
 
 
+@pytest.fixture(scope='session')
+def wfi_timeout():
+    """
+    wait-for-it timeout in seconds
+    """
+    return 60
+
+
 @pytest.fixture
-def scheduler_host(request, docker_compose):
+def scheduler_host(request, docker_compose, wfi_timeout):
     # run a container in which test commands are executed
     docker_id = subprocess.check_output(
         ['docker-compose', 'run', '-d',
          'swh-scheduler', 'shell', 'sleep', '1h']).decode().strip()
     scheduler_host = testinfra.get_host("docker://" + docker_id)
-    scheduler_host.check_output('wait-for-it swh-scheduler:5008 -t 30')
-    scheduler_host.check_output('wait-for-it swh-storage:5002 -t 30')
+    scheduler_host.check_output(
+        f'wait-for-it swh-scheduler:5008 -t {wfi_timeout}')
+    scheduler_host.check_output(
+        f'wait-for-it swh-storage:5002 -t {wfi_timeout}')
 
     # return a testinfra connection to the container
     yield scheduler_host
@@ -62,7 +72,7 @@ def scheduler_host(request, docker_compose):
 
 # scope='session' so we use the same container for all the tests;
 @pytest.fixture
-def deposit_host(request, docker_compose):
+def deposit_host(request, docker_compose, wfi_timeout):
     # run a container in which test commands are executed
     docker_id = subprocess.check_output(
         ['docker-compose', 'run', '-d',
@@ -74,7 +84,8 @@ def deposit_host(request, docker_compose):
         'tar -C /tmp -czf /tmp/archive.tgz /tmp/hello.py')
     deposit_host.check_output(
         f'echo \'{SAMPLE_METADATA}\' > /tmp/metadata.xml')
-    deposit_host.check_output('wait-for-it swh-deposit:5006 -t 30')
+    deposit_host.check_output(
+        f'wait-for-it swh-deposit:5006 -t {wfi_timeout}')
     # return a testinfra connection to the container
     yield deposit_host
 
