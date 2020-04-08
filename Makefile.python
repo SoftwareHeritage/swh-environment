@@ -10,6 +10,8 @@ TEST = python3 -m pytest
 TESTFLAGS =
 CODESPELL = codespell
 CODESPELLFLAGS =
+BLACK = python3 -m black
+BLACKFLAGS =
 FLAKE = python3 -m flake8
 FLAKEFLAGS =
 LINT = pylint3
@@ -27,8 +29,10 @@ test:
 coverage:
 	$(TEST) $(TESTFLAGS) --cov=$(PYMODULE) --cov-branch $(TEST_DIRS)
 
-.PHONY: check check-flake check-codespell
-check: check-flake check-codespell check-mypy
+.PHONY: check check-black check-flake check-codespell check-mypy
+check: check-black check-flake check-codespell check-mypy
+check-black:
+	$(BLACK) $(BLACKFLAGS) --check swh $(PYTHON_BIN)
 check-flake:
 	$(FLAKE) $(FLAKEFLAGS) swh $(PYTHON_BIN)
 check-codespell:
