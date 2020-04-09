@@ -51,7 +51,7 @@ def wfi_timeout():
     return 60
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def scheduler_host(request, docker_compose, wfi_timeout):
     # run a container in which test commands are executed
     docker_id = subprocess.check_output(
@@ -71,7 +71,7 @@ def scheduler_host(request, docker_compose, wfi_timeout):
 
 
 # scope='session' so we use the same container for all the tests;
-@pytest.fixture
+@pytest.fixture(scope='session')
 def deposit_host(request, docker_compose, wfi_timeout):
     # run a container in which test commands are executed
     docker_id = subprocess.check_output(
@@ -93,16 +93,15 @@ def deposit_host(request, docker_compose, wfi_timeout):
     subprocess.check_call(['docker', 'rm', '-f', docker_id])
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def git_url():
     return 'https://forge.softwareheritage.org/source/swh-core'
 
 
-@pytest.fixture
+@pytest.fixture(scope='session')
 def git_origin(scheduler_host, git_url):
     task = scheduler_host.check_output(
-        'swh scheduler task add load-git '
-        f'url={git_url}'
+        f'swh scheduler task add load-git url={git_url}'
     )
     taskid = re.search(r'^Task (?P<id>\d+)$', task,
                        flags=re.MULTILINE).group('id')
