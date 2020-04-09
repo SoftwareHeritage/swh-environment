@@ -3,6 +3,6 @@ scheduler:
   args:
     db: postgresql:///?service=swh-scheduler
 celery:
-  task_broker: amqp://guest:guest@amqp//
+  task_broker: amqp://guest:guest@amqp/%2f
   broker_transport_options:
     max_retries: 1
