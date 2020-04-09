@@ -8,12 +8,6 @@ TEST_DIRS := .
 
 TEST = python3 -m pytest
 TESTFLAGS =
-CODESPELL = codespell
-CODESPELLFLAGS =
-BLACK = python3 -m black
-BLACKFLAGS =
-FLAKE = python3 -m flake8
-FLAKEFLAGS =
 LINT = pylint3
 LINTFLAGS = --rcfile=../pylintrc
 MYPY = mypy
@@ -32,12 +26,6 @@ coverage:
 .PHONY: check
 check:
 	pre-commit run --all-files
-
-.PHONY: check-staged
-check-staged:
-	git diff -z --staged --name-only -- '*.py' $(PYTHON_BIN) \
-		| xargs -0 -L1 -i'{}' /bin/sh -c \
-		"git show ':{}' | $(FLAKE) $(FLAKEFLAGS) --stdin-display-name '{}' -"
 
 .PHONY: lint
 lint:
