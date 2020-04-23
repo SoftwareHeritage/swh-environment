@@ -10,7 +10,7 @@ docker-compose $DOCO_OPTIONS exec -T swh-scheduler swh scheduler task add load-g
 
 status_message "Waiting for the git loading task to complete"
 
-wait_for_service_output 300 swh-loader "swh.loader.git.tasks.UpdateGitRepository.*succeeded"
+wait_for_service_output 300 swh-loader "swh.loader.git.tasks.UpdateGitRepository.*succeeded\|Traceback"
 
 status_message "The loading task has been successfully executed"
 
