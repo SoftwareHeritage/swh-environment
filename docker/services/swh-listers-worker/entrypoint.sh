@@ -27,6 +27,7 @@ case "$1" in
         swh lister -C ${SWH_CONFIG_FILENAME} db-init
 
         echo Register task types in scheduler database
+        wait-for-it swh-scheduler:5008 -s --timeout=0
         swh scheduler -C ${SWH_CONFIG_FILENAME} task-type register
 
         echo Waiting for RabbitMQ to start

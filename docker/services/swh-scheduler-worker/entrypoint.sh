@@ -15,6 +15,8 @@ case "$1" in
     *)
         wait_pgsql
 
+        wait-for-it swh-scheduler:5008 -s --timeout=0
+
         echo "Starting the swh-scheduler $1"
         exec wait-for-it amqp:5672 -s --timeout=0 -- swh --log-level ${LOGLEVEL} scheduler -C /scheduler.yml $@
         ;;

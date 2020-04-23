@@ -14,6 +14,7 @@ case "$1" in
         wait-for-it amqp:5672 -s --timeout=0
 
         echo Register task types in scheduler database
+        wait-for-it swh-scheduler:5008 -s --timeout=0
         swh scheduler -C ${SWH_CONFIG_FILENAME} task-type register
 
         echo Starting the swh Celery worker for ${SWH_WORKER_INSTANCE}
