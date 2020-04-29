@@ -21,6 +21,7 @@ done
 
 for tag in `git tag -l --sort=v:refname v\*`; do
   ver=${tag/v/}
+  firstver=${firstver:-${ver}}
   if [ -f ../packages/${package}_${ver}.orig.tar.gz ]; then
      continue
   fi
@@ -40,8 +41,8 @@ for tag in `git tag -l --sort=v:refname v\*`; do
   mv ../packages/${pname}-${pver}.tar.gz ../packages/${package}_${ver}.orig.tar.gz
 done
 
-upstream_tag=v0.0.1
-ver=0.0.1
+upstream_tag=$(git describe --abbrev=0)
+ver=${upstream_tag/v/}
 
 author_name=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggername)%(else)%(authorname)%(end)" "${upstream_tag}")
 author_email=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggeremail)%(else)%(authoremail)%(end)" "${upstream_tag}")
@@ -63,13 +64,13 @@ git clean -dfx
 git checkout -b debian/upstream
 
 git ls-tree --name-only HEAD | xargs rm -r
-tar -x --strip-components 1 -f ../packages/${package}_0.0.1.orig.tar.gz
+tar -x --strip-components 1 -f ../packages/${package}_${firstver}.orig.tar.gz
 git add .
-git commit --no-verify -m "Import upstream version 0.0.1"
-git tag debian/upstream/0.0.1
+git commit --no-verify -m "Import upstream version ${firstver}"
+git tag debian/upstream/${firstver}
 
 git checkout --orphan pristine-tar
-pristine-tar commit ../packages/${package}_0.0.1.orig.tar.gz
+pristine-tar commit ../packages/${package}_${firstver}.orig.tar.gz
 
 git checkout debian/upstream
 git checkout -b debian/unstable-swh
@@ -84,7 +85,7 @@ pristine-tar=True
 EOF
 
 rm debian/changelog
-faketime "${author_date}" dch --create --package ${package} -v 0.0.1-1~swh1 'Initial release'
+faketime "${author_date}" dch --create --package ${package} -v ${firstver}-1~swh1 'Initial release'
 
 git tag -l --format="%(contents:subject)%(if)%(contents:body)%(then)%0a%(contents:body)%(end)" "${upstream_tag}" | sed -E -e '/^$/d' -e 's/^ *(- *)?//' | while read line; do
   faketime "${author_date}" dch "${line}"
@@ -93,7 +94,7 @@ done
 faketime "${author_date}" dch -D unstable-swh --force-distribution ''
 
 git add debian
-git commit --no-verify -m "Updated debian directory for version 0.0.1"
+git commit --no-verify -m "Updated debian directory for version ${firstver}"
 
 git checkout -b debian/buster-swh
 faketime "${author_date}" dch --bpo -D buster-swh --force-distribution ''
