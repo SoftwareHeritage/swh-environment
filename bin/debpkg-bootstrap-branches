@@ -95,12 +95,12 @@ faketime "${author_date}" dch -D unstable-swh --force-distribution ''
 git add debian
 git commit --no-verify -m "Updated debian directory for version 0.0.1"
 
-git checkout -b debian/stretch-swh
-faketime "${author_date}" dch --bpo -D stretch-swh --force-distribution ''
+git checkout -b debian/buster-swh
+faketime "${author_date}" dch --bpo -D buster-swh --force-distribution ''
 git add debian/changelog
-sed -i s/unstable/stretch/ debian/gbp.conf
+sed -i s/unstable/buster/ debian/gbp.conf
 git add debian/gbp.conf
-git commit --no-verify -m "Updated debian stretch backport directory for version 0.0.1"
+git commit --no-verify -m "Updated debian buster backport directory for version ${firstver}"
 
 for tag in `git tag -l --sort=v:refname v\* | tail -n +2`; do
   version=${tag/v/}
