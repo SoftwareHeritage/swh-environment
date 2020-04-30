@@ -37,6 +37,8 @@ services:
     depends_on:
       - zookeeper
     command: -Dpidfile.path=/dev/null
+    volumes:
+      - "./conf/kafka-manager_logback.xml:/kafka-manager/conf/logback.xml:ro"
 
   prometheus:
     image: prom/prometheus
