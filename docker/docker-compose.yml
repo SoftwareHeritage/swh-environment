@@ -67,6 +67,7 @@ services:
       SKIP_QUEUES: "RPC_.*"
       MAX_QUEUES: 5000
       RABBIT_URL: http://amqp:15672
+      LOG_LEVEL: warning
 
   grafana:
     image: grafana/grafana
