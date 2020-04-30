@@ -34,6 +34,8 @@ services:
     environment:
       ZK_HOSTS: zookeeper:2181
       APPLICATION_SECRET: random-secret
+    depends_on:
+      - zookeeper
     command: -Dpidfile.path=/dev/null
 
   prometheus:
