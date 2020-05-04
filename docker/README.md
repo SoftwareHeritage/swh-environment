@@ -433,21 +433,6 @@ installed (using `pip install -e` so you can easily hack your
 code). If the application you play with has autoreload support, there
 is no need to restart the impacted container.)
 
-Note: if the docker fails to start when using local sources for one or more swh
-package, it's most probably due to permission problems on cache files. For
-example, if you have executed tests locally (using pytest or tox), you have
-cache files (__pycache__ etc.) that will prevent `pip install` from working
-within the docker.
-
-The solution is to clean these files and directories before trying to spawn the
-docker.
-
-```
-~/swh-environment$ find . -type d -name __pycache__ -exec rm -rf {} \;
-~/swh-environment$ find . -type d -name .tox -exec rm -rf {} \;
-~/swh-environment$ find . -type d -name .hypothesis -exec rm -rf {} \;
-```
-
 
 ### Using locally installed swh tools with docker
 
@@ -518,11 +503,6 @@ export CELERY_BROKER_URL=amqp://127.0.0.1:5072/
 export COMPOSE_FILE=~/swh-environment/docker/docker-compose.yml:~/swh-environment/docker/docker-compose.override.yml
 alias doco=docker-compose
 
-function swhclean {
-    find ~/swh-environment -type d -name __pycache__ -exec rm -rf {} \;
-    find ~/swh-environment -type d -name .tox -exec rm -rf {} \;
-    find ~/swh-environment -type d -name .hypothesis -exec rm -rf {} \;
-}
 EOF
 ```
 
@@ -542,11 +522,6 @@ This postactivate script does:
 
 - create an alias `doco` for `docker-compose` because this is way too
   long to type,
-
-- add a `swhclean` shell function to clean your source directories so that
-  there is no conflict with docker containers using local swh repositories (see
-  below). This will delete any `.tox`, `__pycache__` and `.hypothesis`
-  directory found in your swh-environment directory.
 
 So now you can easily:
 

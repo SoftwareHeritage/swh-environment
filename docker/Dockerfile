@@ -11,7 +11,8 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     memcached \
     postgresql-client \
     wait-for-it \
-    ngrep && \
+    ngrep \
+    rsync && \
   apt-get install -y --no-install-recommends \
     r-base-core \
     r-cran-jsonlite && \
