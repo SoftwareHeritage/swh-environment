@@ -3,6 +3,11 @@ scheduler:
   args:
     url: http://swh-scheduler:5008
 
+storage:
+  cls: remote
+  args:
+    url: http://swh-storage:5002/
+
 allowed_hosts:
   - '*'
 
