@@ -2,6 +2,7 @@ with import <nixpkgs> {};
 
 let sources = import ../nix/sources.nix;
     pkgs = (import sources.nixpkgs {});
+    # unstable-pkgs = (import sources.nixpkgs-unstable {});
     ppackages = pkgs.python3Packages;
 in stdenv.mkDerivation {
   name = "swhEnv";
@@ -26,14 +27,18 @@ in stdenv.mkDerivation {
     pkgs.libxml2
     python3Packages.lxml
     postgresql_11
-    cassandra
     apacheKafka
   ];
   src = null;
   # Necessary environment variable to ease build within the pip environment
   PKG_CONFIG_PATH = "${pkgs.systemd.lib}/lib";
   SVN_PREFIX = "${pkgs.subversion.dev}";
+  SWH_CASSANDRA_BIN = "${pkgs.cassandra}/bin/cassandra";
   LD_LIBRARY_PATH = "${pkgs.postgresql_11.lib}/lib";
+  CLASSPATH = "${jdk12}";
+  JAVA = "${jdk12}";
+  # dummy so it starts
+  CASSANDRA_CONF = "./cassandra-conf";
   # LC_ALL = "C.UTF-8";
   # LC_CTYPE = "C.UTF-8";
   # LANG = "C.UTF-8";
