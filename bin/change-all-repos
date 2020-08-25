@@ -1,0 +1,120 @@
+#!/usr/bin/env python3
+
+import os.path
+import subprocess
+import sys
+from typing import List
+
+
+BIN_DIR = os.path.dirname(__file__)
+SWH_ENV_DIR = os.path.join(BIN_DIR, "..")
+
+
+def list_repos() -> List[str]:
+    proc = subprocess.run([os.path.join(BIN_DIR, "ls-all-repos")], capture_output=True)
+    return proc.stdout.decode().split()
+
+
+def change_repo(repo: str, command: str, commit_message: str):
+    path = os.path.join(SWH_ENV_DIR, repo)
+
+    print()
+    print("="*50)
+    print(f"In {repo}")
+
+    # Check the repo doesn't have any uncommitted changes to tracked files
+    proc = subprocess.run(
+        ["git", "-C", path, "status", "--porcelain"],
+        capture_output=True,
+        encoding="utf8",
+        check=True,
+    )
+    if proc.stdout.strip():
+        print(f"Repository {repo} has local changes:\n{proc.stdout}")
+        print(f"Skipping {repo}.")
+        return
+
+    # Check the repo is on the master branch
+    proc = subprocess.run(
+        ["git", "-C", path, "rev-parse", "--abbrev-ref", "HEAD"],
+        capture_output=True,
+        encoding="utf8",
+        check=True,
+    )
+    current_branch = proc.stdout.strip()
+    if current_branch != "master":
+        print(f"Repository {repo} is not on branch master, but on: {current_branch}")
+        print(f"Skipping {repo}.")
+        return
+
+    # Pull from the default remote
+    proc = subprocess.run(
+        ["git", "-C", path, "pull", "--ff-only"], capture_output=True, encoding="utf8",
+    )
+
+    # Run the main command
+    proc = subprocess.run(command, shell=True, cwd=path)
+    if proc.returncode != 0:
+        print(f"Command for {repo} failed.")
+        response = input("Ignore and continue? [Y/n] ")
+        if response.lower() in ("", "y"):
+            print(f"Skipping {repo}")
+            return
+        else:
+            exit(1)
+
+
+    # Show the changes
+    proc = subprocess.run(
+        ["git", "-C", path, "diff", "--color=always"],
+        capture_output=True,
+        encoding="utf8",
+        check=True,
+    )
+
+    if proc.stdout.strip():
+        print(f"Changes for {repo}:")
+        print(proc.stdout)
+        print()
+
+        # Let the user check the change is ok
+        response = input("Commit and push? [Y/n] ")
+        if response.lower() not in ("", "y"):
+            print(f"Skipping {repo}")
+            return
+    else:
+        print(f"Command for {repo} did not change any file.")
+        response = input("Ignore and continue? [Y/n] ")
+        if response.lower() in ("", "y"):
+            print(f"Skipping {repo}")
+            return
+        else:
+            exit(1)
+
+    # Commit the changes
+    proc = subprocess.run(
+        ["git", "-C", path, "commit", "-a", "-m", commit_message],
+        encoding="utf8",
+        check=True,
+    )
+
+    # Push to the default remote
+    proc = subprocess.run(
+        ["git", "-C", path, "push"], capture_output=True, encoding="utf8",
+    )
+
+
+def main(command: str, commit_message: str):
+    repos = list_repos()
+    for repo in repos:
+        change_repo(repo, command, commit_message)
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        (_, command, commit_message) = sys.argv
+    else:
+        print(f"Syntax: {sys.argv[0]} <shell command to run> <commit message>")
+        exit(1)
+
+    main(command, commit_message)
