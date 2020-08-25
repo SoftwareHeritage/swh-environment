@@ -4,11 +4,6 @@ storage:
     url: http://swh-storage:5002/
     timeout: 1
 
-objstorage:
-  cls: remote
-  args:
-    url: http://swh-objstorage:5003/
-
 indexer_storage:
   cls: remote
   args:
