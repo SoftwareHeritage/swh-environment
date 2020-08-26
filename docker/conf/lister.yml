@@ -22,6 +22,9 @@ celery:
     - swh.lister.cgit.tasks.CGitListerTask
     - swh.lister.cran.tasks.CRANListerTask
     - swh.lister.debian.tasks.DebianListerTask
+    - swh.lister.gitea.tasks.FullGiteaRelister
+    - swh.lister.gitea.tasks.IncrementalGiteaLister
+    - swh.lister.gitea.tasks.RangeGiteaLister
     - swh.lister.github.tasks.FullGitHubRelister
     - swh.lister.github.tasks.IncrementalGitHubLister
     - swh.lister.github.tasks.RangeGitHubLister
@@ -31,6 +34,9 @@ celery:
     - swh.lister.gnu.tasks.GNUListerTask
     - swh.lister.npm.tasks.NpmIncrementalListerTask
     - swh.lister.npm.tasks.NpmListerTask
+    - swh.lister.launchpad.tasks.IncrementalLaunchpadLister
+    - swh.lister.launchpad.tasks.FullLaunchpadLister
+    - swh.lister.launchpad.tasks.NewLaunchpadLister
     - swh.lister.packagist.tasks.PackagistListerTask
     - swh.lister.phabricator.tasks.FullPhabricatorLister
     - swh.lister.phabricator.tasks.IncrementalPhabricatorLister
