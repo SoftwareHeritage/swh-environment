@@ -24,7 +24,7 @@ def test_git_loader(scheduler_host, git_origin):
     visit = apiget(f'origin/{quote_plus(url)}/visit/latest')
     assert visit['status'] == 'full'
 
-    print(f'Check every identified git ref has been loaded')
+    print('Check every identified git ref has been loaded')
     snapshot = apiget(f'snapshot/{visit["snapshot"]}')
 
     print(f'snapshot has {len(snapshot["branches"])} branches')
