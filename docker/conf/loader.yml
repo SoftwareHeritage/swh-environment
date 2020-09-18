@@ -1,13 +1,13 @@
 storage:
   cls: pipeline
   steps:
-    - cls: filter
     - cls: buffer
       min_batch_size:
         content: 10000
         content_bytes: 104857600
         directory: 1000
         revision: 1000
+    - cls: filter
     - cls: remote
       url: http://swh-storage:5002/
 
