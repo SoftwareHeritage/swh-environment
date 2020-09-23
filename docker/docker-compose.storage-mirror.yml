@@ -1,53 +1,53 @@
 version: '2'
 
 services:
-  # override web app to use the replica
+  # override web app to use the mirror
   swh-web:
     environment:
-      SWH_CONFIG_FILENAME: /web-replica.yml
+      SWH_CONFIG_FILENAME: /web-mirror.yml
     volumes:
-      - "./conf/web-replica.yml:/web-replica.yml:ro"
+      - "./conf/web-mirror.yml:/web-mirror.yml:ro"
 
-  # create a dedicated db for the replica
-  swh-storage-replica-db:
+  # create a dedicated db for the mirror
+  swh-storage-mirror-db:
     image: postgres:11
     env_file:
-      - ./env/storage-db-replica.env
+      - ./env/storage-db-mirror.env
     environment:
       # unset PGHOST as db service crashes otherwise
       PGHOST:
 
   # and an RPC server
-  swh-storage-replica:
+  swh-storage-mirror:
     image: swh/stack
     build: ./
     depends_on:
-      - swh-storage-replica-db
+      - swh-storage-mirror-db
       - swh-objstorage
     env_file:
-      - ./env/storage-db-replica.env
+      - ./env/storage-db-mirror.env
     environment:
-      SWH_CONFIG_FILENAME: /storage-replica.yml
+      SWH_CONFIG_FILENAME: /storage-mirror.yml
     entrypoint: /entrypoint.sh
     volumes:
-      - "./conf/storage-replica.yml:/storage-replica.yml:ro"
+      - "./conf/storage-mirror.yml:/storage-mirror.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
-  # and the background process that keeps the replica in sync with the
+  # and the background process that keeps the mirror in sync with the
   # main graph
-  swh-storage-replica-replayer:
+  swh-storage-mirror-replayer:
     image: swh/stack
     build: ./
     depends_on:
-      - swh-storage-replica-db
+      - swh-storage-mirror-db
       - swh-objstorage
     env_file:
-      - ./env/storage-db-replica.env
+      - ./env/storage-db-mirror.env
     environment:
-      SWH_CONFIG_FILENAME: /storage-replica.yml
+      SWH_CONFIG_FILENAME: /storage-mirror.yml
     entrypoint: /entrypoint.sh
     volumes:
-      - "./conf/storage-replica.yml:/storage-replica.yml:ro"
+      - "./conf/storage-mirror.yml:/storage-mirror.yml:ro"
       - "./services/swh-storage-replayer/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-journal-backfiller:

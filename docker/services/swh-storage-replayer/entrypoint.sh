@@ -23,6 +23,6 @@ case "$1" in
       exec swh journal replay \
 		   --broker kafka \
 		   --prefix swh.journal.objects \
-		   --consumer-id swh.storage.replica
+		   --consumer-id swh.storage.mirror
       ;;
 esac

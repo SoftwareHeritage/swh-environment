@@ -1,7 +1,7 @@
 storage:
   cls: remote
   args:
-    url: http://swh-storage-replica:5002/
+    url: http://swh-storage-mirror:5002/
     timeout: 1
 
 objstorage:

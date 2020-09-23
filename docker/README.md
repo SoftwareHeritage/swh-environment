@@ -585,16 +585,16 @@ So now you can easily:
 ```
 
 
-## Starting a kafka-powered replica of the storage
+## Starting a kafka-powered mirror of the storage
 
-This repo comes with an optional `docker-compose.storage-replica.yml`
-docker compose file that can be used to test the kafka-powered replication
+This repo comes with an optional `docker-compose.storage-mirror.yml`
+docker compose file that can be used to test the kafka-powered mirror
 mecanism for the main storage.
 
 This can be used like:
 
 ```
-~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.storage-replica.yml up -d
+~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.storage-mirror.yml up -d
 [...]
 ```
 
@@ -602,15 +602,15 @@ Compared to the original compose file, this will:
 
 - overrides the swh-storage service to activate the kafka direct writer
   on swh.journal.objects prefixed topics using thw swh.storage.master ID,
-- overrides the swh-web service to make it use the replica instead of the
+- overrides the swh-web service to make it use the mirror instead of the
   master storage,
-- starts a db for the replica,
+- starts a db for the mirror,
 - starts a storage service based on this db,
 - starts a replayer service that runs the process that listen to kafka to
-  keeps the replica in sync.
+  keeps the mirror in sync.
 
 When using it, you will have a setup in which the master storage is used by
-workers and most other services, whereas the storage replica will be used to
+workers and most other services, whereas the storage mirror will be used to
 by the web application and should be kept in sync with the master storage
 by kafka.
 
@@ -626,8 +626,8 @@ Reading from the storage the objects <object-type> from within range
 ```
 (swh)$ docker-compose \
              -f docker-compose.yml \
-             -f docker-compose.storage-replica.yml \
-             -f docker-compose.storage-replica.override.yml \
+             -f docker-compose.storage-mirror.yml \
+             -f docker-compose.storage-mirror.override.yml \
              run \
              swh-journal-backfiller \
              snapshot \

@@ -1,0 +1,4 @@
+PGHOST=swh-storage-mirror-db
+PGUSER=postgres
+POSTGRES_PASSWORD=testpassword
+POSTGRES_DB=swh-storage-mirror
