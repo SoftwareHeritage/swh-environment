@@ -14,11 +14,15 @@ case "$1" in
         ;;
     *)
 
-    wait_pgsql
+    wait_pgsql template1
 
-    echo Setup the database
-    PGPASSWORD=${POSTGRES_PASSWORD} swh db-init \
-          --db-name ${POSTGRES_DB} indexer
+    echo Database setup
+    if ! check_pgsql_db_created; then
+        echo Creating database and extensions...
+        swh db create --db-name ${POSTGRES_DB} indexer
+    fi
+    echo Initializing the database...
+    swh db init --db-name ${POSTGRES_DB} indexer
 
     echo Starting the swh-indexer-storage API server
     exec gunicorn --bind 0.0.0.0:5007 \

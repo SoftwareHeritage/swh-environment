@@ -27,11 +27,15 @@ case "$1" in
         # ensure the pathslicing root dir for the cache exists
         mkdir -p /srv/softwareheritage/vault
 
-        wait_pgsql
+        wait_pgsql template1
 
-        echo Setup the swh-vault API database
-        PGPASSWORD=${POSTGRES_PASSWORD} swh db-init vault \
-                  --db-name ${POSTGRES_DB}
+        echo swh-vault Database setup
+        if ! check_pgsql_db_created; then
+            echo Creating database and extensions...
+            swh db create --db-name ${POSTGRES_DB} vault
+        fi
+        echo Initializing the database...
+        swh db init --db-name ${POSTGRES_DB} vault
 
         echo Starting the swh-vault API server
         exec swh vault rpc-serve -C ${SWH_CONFIG_FILENAME}

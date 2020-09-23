@@ -16,6 +16,9 @@ services:
     environment:
       # unset PGHOST as db service crashes otherwise
       PGHOST:
+      # unset POSTGRES_DB: we're handling db creation ourselves in the backend
+      # service entrypoint
+      POSTGRES_DB:
 
   # and an RPC server
   swh-storage-mirror:
