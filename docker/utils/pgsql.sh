@@ -25,9 +25,15 @@ wait_pgsql () {
         db_to_check=$POSTGRES_DB
     fi
 
-    echo Waiting for postgresql to start and for database $db_to_check to be available.
-    wait-for-it ${PGHOST}:5432 -s --timeout=0
-    until psql "dbname=${db_to_check} port=5432 host=${PGHOST} user=${PGUSER}" -c "select 'postgresql is up!' as connected"; do sleep 1; done
+    if [ $# -ge 2 ]; then
+        host_to_check="$2"
+    else
+        host_to_check=$PGHOST
+    fi
+
+    echo Waiting for postgresql to start on $host_to_check and for database $db_to_check to be available.
+    wait-for-it ${host_to_check}:5432 -s --timeout=0
+    until psql "dbname=${db_to_check} port=5432 host=${host_to_check} user=${PGUSER}" -c "select 'postgresql is up!' as connected"; do sleep 1; done
 }
 
 check_pgsql_db_created () {
