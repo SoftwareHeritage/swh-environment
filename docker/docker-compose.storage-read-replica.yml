@@ -1,0 +1,66 @@
+version: '2'
+
+services:
+  swh-storage-read-replica-db:
+    image: postgres:11
+    env_file:
+      - ./env/storage-read-replica-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+      # unset POSTGRES_DB: we're handling it ourselves
+      POSTGRES_DB:
+
+  swh-storage-read-replica:
+    image: swh/stack
+    build: ./
+    ports:
+      - 5042:5002
+    depends_on:
+      - swh-storage
+      - swh-storage-db
+      - swh-storage-read-replica-db
+      - swh-objstorage
+    env_file:
+      - ./env/common_python.env
+      - ./env/storage-read-replica-db.env
+    environment:
+      SWH_CONFIG_FILENAME: /storage.yml
+      STORAGE_BACKEND: postgresql
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/storage-read-replica.yml:/storage.yml:ro"
+      - "./services/swh-storage-read-replica/entrypoint.sh:/entrypoint.sh:ro"
+
+  # override storage db to enable wal_level=logical
+  swh-storage-db:
+    command: postgres -c wal_level=logical
+
+  # override web app to use the replica
+  swh-web:
+    depends_on:
+      - swh-storage-read-replica
+      - swh-idx-storage
+    environment:
+      SWH_CONFIG_FILENAME: /web-read-replica.yml
+    volumes:
+      - "./conf/web-read-replica.yml:/web-read-replica.yml:ro"
+
+  # override vault to use the replica
+  swh-vault:
+    depends_on:
+      - swh-storage-read-replica
+    environment:
+      SWH_CONFIG_FILENAME: /vault-read-replica.yml
+    volumes:
+      - "./conf/vault-read-replica.yml:/vault-read-replica.yml:ro"
+
+  swh-vault-worker:
+    depends_on:
+      - swh-storage-read-replica
+    environment:
+      SWH_CONFIG_FILENAME: /cooker-read-replica.yml
+    volumes:
+      - "./conf/vault-worker-read-replica.yml:/cooker-read-replica.yml:ro"
+
+

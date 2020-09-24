@@ -1,0 +1,13 @@
+storage:
+  cls: local
+  args:
+    db: postgresql:///?service=swh-storage-read-replica
+    objstorage:
+      cls: filtered
+      args:
+        storage_conf:
+          cls: remote
+          args:
+            url: http://swh-objstorage:5003/
+        filters_conf:
+          - type: readonly

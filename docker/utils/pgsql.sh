@@ -14,6 +14,18 @@ host=${PGHOST}
 port=5432
 user=${PGUSER}
 EOF
+
+    if ! [ -z "$POSTGRES_DB_SRC" ]; then
+        echo "${PGHOST_SRC}:5432:${POSTGRES_DB_SRC}:${PGUSER_SRC}:${POSTGRES_PASSWORD_SRC}" >> ~/.pgpass
+        cat >> ~/.pg_service.conf <<EOF
+[${POSTGRES_DB_SRC}]
+dbname=${POSTGRES_DB_SRC}
+host=${PGHOST_SRC}
+port=5432
+user=${PGUSER_SRC}
+EOF
+    fi
+
     chmod 0600 ~/.pgpass
 }
 
