@@ -34,14 +34,13 @@ case "$1" in
         wait-for-it amqp:5672 -s --timeout=0
 
         echo Starting the swh-lister Celery worker for ${SWH_WORKER_INSTANCE}
-        exec python -m celery worker \
+        exec python -m celery \
                     --app=swh.scheduler.celery_backend.config.app \
+                    worker \
                     --pool=prefork --events \
                     --concurrency=${CONCURRENCY} \
-                    --maxtasksperchild=${MAX_TASKS_PER_CHILD} \
-                    -Ofair --loglevel=${LOGLEVEL} --without-gossip \
-                    --without-mingle \
-                    --heartbeat-interval 10 \
+                    --max-tasks-per-child=${MAX_TASKS_PER_CHILD} \
+                    -Ofair --loglevel=${LOGLEVEL} \
                     --hostname "${SWH_WORKER_INSTANCE}@%h"
         ;;
 esac

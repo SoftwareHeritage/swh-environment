@@ -13,14 +13,14 @@ case "$1" in
         exec bash -i
         ;;
     "worker")
-        echo Starting the swh-vault Celery worker for
-        exec python -m celery worker \
+        echo Starting the swh-vault Celery worker
+        exec python -m celery \
                     --app=swh.scheduler.celery_backend.config.app \
+                    worker \
                     --pool=prefork --events \
-                    --concurrency=${CONCURRENCY:-1} \
-                    --maxtasksperchild=${MAX_TASKS_PER_CHILD:-10} \
-                    -Ofair --loglevel=${LOGLEVEL:-INFO} --without-gossip \
-                    --without-mingle --without-heartbeat \
+                    --concurrency=${CONCURRENCY} \
+                    --max-tasks-per-child=${MAX_TASKS_PER_CHILD} \
+                    -Ofair --loglevel=${LOGLEVEL} \
                     --hostname "vault@%h"
         ;;
     "server")

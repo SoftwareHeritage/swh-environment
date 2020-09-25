@@ -324,6 +324,7 @@ services:
     command: worker
     env_file:
       - ./env/common_python.env
+      - ./env/workers.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
     depends_on:
