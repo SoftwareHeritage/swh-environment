@@ -10,7 +10,7 @@ services:
 
   # create a dedicated db for the mirror
   swh-storage-mirror-db:
-    image: postgres:11
+    image: postgres:12
     env_file:
       - ./env/storage-db-mirror.env
     environment:

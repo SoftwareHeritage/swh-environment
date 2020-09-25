@@ -2,7 +2,7 @@ version: '2'
 
 services:
   swh-storage-read-replica-db:
-    image: postgres:11
+    image: postgres:12
     env_file:
       - ./env/storage-read-replica-db.env
     environment:

@@ -90,7 +90,7 @@ services:
 # Scheduler
 
   swh-scheduler-db:
-    image: postgres:11
+    image: postgres:12
     env_file:
       - ./env/common_python.env
       - ./env/scheduler-db.env
@@ -161,7 +161,7 @@ services:
 # Graph storage
 
   swh-storage-db:
-    image: postgres:11
+    image: postgres:12
     env_file:
       - ./env/storage-db.env
     environment:
@@ -210,7 +210,7 @@ services:
 # Indexer storage
 
   swh-idx-storage-db:
-    image: postgres:11
+    image: postgres:12
     env_file:
       - ./env/indexers-db.env
     environment:
@@ -259,7 +259,7 @@ services:
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-deposit-db:
-    image: postgres:11
+    image: postgres:12
     env_file:
       - ./env/deposit-db.env
     environment:
@@ -287,7 +287,7 @@ services:
       - "./services/swh-deposit/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-vault-db:
-    image: postgres:11
+    image: postgres:12
     env_file:
       - ./env/vault-db.env
     environment:
@@ -338,7 +338,7 @@ services:
 # Lister Celery workers
 
   swh-listers-db:
-    image: postgres:11
+    image: postgres:12
     env_file:
       - ./env/listers-db.env
     environment:

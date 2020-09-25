@@ -1,5 +1,8 @@
 FROM python:3.7
 
+RUN . /etc/os-release && echo "deb http://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+  wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && apt-get upgrade -y && \
   apt-get install -y \
@@ -9,7 +12,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsvn-dev \
     libsystemd-dev \
     memcached \
-    postgresql-client \
+    postgresql-client-12 \
     wait-for-it \
     ngrep \
     rsync && \
