@@ -1,6 +1,8 @@
 FROM jboss/keycloak
 
 USER root
+# install git to get custom keycloak theme in service entrypoint
+RUN microdnf install -y git
 # install python3 and python-keycloak, this is needed to execute a
 # custom config script after keycloak server is up
 RUN microdnf install -y python3 && microdnf clean all

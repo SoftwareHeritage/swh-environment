@@ -67,6 +67,12 @@ assign_client_base_url(
     '/keycloak/auth/admin/master/console/index.html'
 )
 
+keycloak_admin.update_realm('master', payload={
+    'loginTheme': 'swh',
+    'accountTheme': 'swh',
+    'adminTheme': 'swh',
+})
+
 # create swh realm
 keycloak_admin.create_realm(payload={
     'realm': realm_name,
@@ -75,6 +81,9 @@ keycloak_admin.create_realm(payload={
         'frontendUrl': 'http://localhost:5080/keycloak/auth/'
     },
     'enabled': True,
+    'loginTheme': 'swh',
+    'accountTheme': 'swh',
+    'adminTheme': 'swh',
 }, skip_exists=True)
 
 # set swh realm name in order to create users in it

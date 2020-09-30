@@ -3,6 +3,13 @@
 # turn on bash's job control
 set -m
 
+cd
+if [ ! -d swh-keycloak-theme ]
+then
+  git clone https://forge.softwareheritage.org/source/swh-keycloak-theme.git
+  ln -s /opt/jboss/swh-keycloak-theme/swh/ /opt/jboss/keycloak/themes/swh
+fi
+
 echo "Starting Keycloak"
 /opt/jboss/tools/docker-entrypoint.sh -b 0.0.0.0&
 echo "Waiting for Keycloak server to be up"
