@@ -10,6 +10,7 @@ from keycloak import KeycloakAdmin
 
 server_url = 'http://localhost:8080/keycloak/auth/'
 realm_name = 'SoftwareHeritage'
+client_name = 'swh-web'
 
 admin = {
     'username': 'admin',
@@ -47,6 +48,13 @@ def create_user(keycloak_admin, user_data):
     except Exception:
         # user already created
         pass
+
+
+def create_client_roles(keycloak_admin, client_name, client_roles):
+    for client_role in client_roles:
+        keycloak_admin.create_client_role(client_name, payload={
+            'name': client_role
+        })
 
 
 # login as admin in master realm
@@ -152,8 +160,8 @@ keycloak_admin = KeycloakAdmin(server_url,
 
 # create swh-web public client
 keycloak_admin.create_client(payload={
-    'id': 'swh-web',
-    'clientId': 'swh-web',
+    'id': client_name,
+    'clientId': client_name,
     'surrogateAuthRequired': False,
     'enabled': True,
     'redirectUris': [
@@ -190,7 +198,7 @@ keycloak_admin.create_client(payload={
             'protocolMapper': 'oidc-audience-mapper',
             'consentRequired': False,
             'config': {
-                'included.client.audience': 'swh-web',
+                'included.client.audience': client_name,
                 'id.token.claim': True,
                 'access.token.claim': True
             }
@@ -211,6 +219,12 @@ for group in groups:
     if group['name'] == 'staff':
         keycloak_admin.group_user_add(admin_user_id, group['id'])
         break
+
+# create swh-web client roles
+create_client_roles(keycloak_admin, client_name, [
+    'swh.web.api.throttling_exempted',
+    'swh.web.api.graph'
+])
 
 # create some test users
 user_data = {
