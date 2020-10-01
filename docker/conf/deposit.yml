@@ -24,13 +24,3 @@ private:
   media_root: /tmp/swh-deposit/uploads
 
 extraction_dir: "/tmp/swh-deposit/archive/"
-
-provider:
-  provider_type: deposit_client
-  metadata: {}
-
-tool:
-  name: swh-deposit
-  version: 0.0.90
-  configuration:
-    sword_version: 2
