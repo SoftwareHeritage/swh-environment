@@ -3,15 +3,13 @@ scheduler:
   args:
     url: http://swh-scheduler:5008
 
-storage:
+storage_metadata:
   cls: remote
   args:
     url: http://swh-storage:5002/
 
 allowed_hosts:
   - '*'
-
-loader-version: 2
 
 private:
   secret_key: prod-in-docker
