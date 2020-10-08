@@ -19,6 +19,10 @@ fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-docs.git' 'swh-docs'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
+[swh-fuse]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-fuse.git' 'swh-fuse'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
 [swh-graph]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-graph.git' 'swh-graph'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
