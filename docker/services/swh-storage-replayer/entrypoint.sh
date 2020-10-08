@@ -20,7 +20,7 @@ case "$1" in
           --db-name ${POSTGRES_DB} storage
 
       echo Starting the swh-storage Kafka storage replayer
-      exec swh journal replay \
+      exec swh storage replay \
 		   --broker kafka \
 		   --prefix swh.journal.objects \
 		   --consumer-id swh.storage.mirror

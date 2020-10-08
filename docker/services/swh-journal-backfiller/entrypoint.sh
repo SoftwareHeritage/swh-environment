@@ -13,7 +13,7 @@ case "$1" in
       ;;
     *)
       wait_pgsql
-      echo "Starting swh-journal-backfiller"
-      exec wait-for-it kafka:9092 -s --timeout=0 -- swh-journal backfiller $@
+      echo "Starting swh-storage-backfiller"
+      exec wait-for-it kafka:9092 -s --timeout=0 -- swh storage backfill $@
       ;;
 esac
