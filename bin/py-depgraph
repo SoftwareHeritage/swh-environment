@@ -35,7 +35,7 @@ done
 
 getdeps() {
     grep -E -v '(^#|^[[:space:]]*$)' "$1" |
-        cut -f 1 -d ' ' |
+        sed 's/[<>=].*$//' | # remove dep version pin
         tr 'A-Z' 'a-z' |
         sed -E 's/\[\w+\]//'
 }
