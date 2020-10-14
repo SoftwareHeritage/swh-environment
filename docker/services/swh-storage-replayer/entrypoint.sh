@@ -13,16 +13,17 @@ case "$1" in
       exec bash -i
       ;;
     *)
-      wait_pgsql
+      wait_pgsql template1
 
-      echo Setup the database
-      PGPASSWORD=${POSTGRES_PASSWORD} swh db-init \
-          --db-name ${POSTGRES_DB} storage
+      echo Database setup
+      if ! check_pgsql_db_created; then
+          echo Creating database and extensions...
+          swh db create --db-name ${POSTGRES_DB} storage
+      fi
+      echo Initializing the database...
+      swh db init --db-name ${POSTGRES_DB} --flavor mirror storage
 
       echo Starting the swh-storage Kafka storage replayer
-      exec swh storage replay \
-		   --broker kafka \
-		   --prefix swh.journal.objects \
-		   --consumer-id swh.storage.mirror
+      exec swh storage replay
       ;;
 esac

@@ -1,9 +1,0 @@
-brokers:
-  - kafka
-
-final_prefix: swh.journal.objects
-client_id: swh.journal.backfiller
-object_types:
-  - content
-
-storage_dbconn: postgresql:///?service=swh-storage

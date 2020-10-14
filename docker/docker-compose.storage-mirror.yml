@@ -58,12 +58,12 @@ services:
     build: ./
     entrypoint: /entrypoint.sh
     environment:
-      SWH_CONFIG_FILENAME: /journal_backfiller.yml
+      SWH_CONFIG_FILENAME: /storage-mirror-backfiller.yml
     env_file:
       - ./env/storage-db.env
     depends_on:
       - swh-storage-db
       - kafka
     volumes:
-      - "./conf/journal_backfiller.yml:/journal_backfiller.yml:ro"
+      - "./conf/storage-mirror-backfiller.yml:/storage-mirror-backfiller.yml:ro"
       - "./services/swh-journal-backfiller/entrypoint.sh:/entrypoint.sh:ro"
