@@ -8,8 +8,7 @@ objstorage:
     url: http://swh-objstorage:5003/
 indexer_storage:
   cls: remote
-  args:
-    url: http://swh-idx-storage:5007/
+  url: http://swh-idx-storage:5007/
 scheduler:
   cls: remote
   args:
