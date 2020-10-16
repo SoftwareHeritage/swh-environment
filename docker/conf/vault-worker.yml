@@ -1,7 +1,6 @@
 storage:
   cls: remote
-  args:
-    url: http://swh-storage:5002/
+  url: http://swh-storage:5002/
 vault:
   cls: remote
   args:

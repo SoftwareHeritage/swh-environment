@@ -1,18 +1,15 @@
 storage:
   cls: remote
-  args:
-    url: http://swh-storage:5002/
+  url: http://swh-storage:5002/
 objstorage:
   cls: remote
-  args:
-    url: http://swh-objstorage:5003/
+  url: http://swh-objstorage:5003/
 indexer_storage:
   cls: remote
   url: http://swh-idx-storage:5007/
 scheduler:
   cls: remote
-  args:
-    url: http://swh-scheduler:5008/
+  url: http://swh-scheduler:5008/
 celery:
   task_broker: amqp://guest:guest@amqp//
   task_modules:

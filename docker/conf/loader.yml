@@ -14,8 +14,7 @@ storage:
 
 scheduler:
   cls: remote
-  args:
-    url: http://swh-scheduler:5008/
+  url: http://swh-scheduler:5008/
 
 deposit:
   url: http://swh-deposit:5006/1/private

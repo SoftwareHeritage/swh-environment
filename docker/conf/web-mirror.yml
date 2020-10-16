@@ -1,23 +1,19 @@
 storage:
   cls: remote
-  args:
-    url: http://swh-storage-mirror:5002/
-    timeout: 1
+  url: http://swh-storage-mirror:5002/
+  timeout: 1
 
 objstorage:
   cls: remote
-  args:
-    url: http://swh-objstorage:5003/
+  url: http://swh-objstorage:5003/
 
 indexer_storage:
   cls: remote
-  args:
-    url: http://swh-idx-storage:5007/
+  url: http://swh-idx-storage:5007/
 
 scheduler:
   cls: remote
-  args:
-    url: http://swh-scheduler:5008/
+  url: http://swh-scheduler:5008/
 
 vault:
   cls: remote

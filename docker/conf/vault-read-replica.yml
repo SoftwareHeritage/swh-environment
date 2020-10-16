@@ -1,17 +1,14 @@
 storage:
   cls: remote
-  args:
-    url: http://swh-storage-read-replica:5002/
+  url: http://swh-storage-read-replica:5002/
 scheduler:
   cls: remote
-  args:
-    url: http://swh-scheduler:5008/
+  url: http://swh-scheduler:5008/
 vault:
   cls: local
   args:
     db: postgresql:///?service=swh-vault
 cache:
   cls: pathslicing
-  args:
-    root: /srv/softwareheritage/vault
-    slicing: 0:5
+  root: /srv/softwareheritage/vault
+  slicing: 0:5

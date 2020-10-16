@@ -1,7 +1,6 @@
 scheduler:
   cls: local
-  args:
-    db: postgresql:///?service=swh-scheduler
+  db: postgresql:///?service=swh-scheduler
 celery:
   task_broker: amqp://guest:guest@amqp/%2f
   broker_transport_options:

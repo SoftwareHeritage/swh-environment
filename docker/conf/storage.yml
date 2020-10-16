@@ -1,15 +1,13 @@
 storage:
   cls: local
-  args:
-    db: postgresql:///?service=swh-storage
-    objstorage:
-      cls: remote
-      args:
-        url: http://swh-objstorage:5003/
-    journal_writer:
-      cls: kafka
-      args:
-        brokers:
-          - kafka
-        prefix: swh.journal.objects
-        client_id: swh.storage.master
+  db: postgresql:///?service=swh-storage
+  objstorage:
+    cls: remote
+    url: http://swh-objstorage:5003/
+  journal_writer:
+    cls: kafka
+    args:
+      brokers:
+        - kafka
+      prefix: swh.journal.objects
+      client_id: swh.storage.master
