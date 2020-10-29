@@ -94,12 +94,6 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/scheduler-db.env
-    environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
-      # unset POSTGRES_DB: we're handling db creation ourselves in the backend
-      # service entrypoint
-      POSTGRES_DB:
 
   swh-scheduler:
     image: swh/stack

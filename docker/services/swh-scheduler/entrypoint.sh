@@ -17,13 +17,13 @@ if [ "$1" = 'shell' ] ; then
 		"$@"
 	fi
 else
-    wait_pgsql template1
+    wait_pgsql ${POSTGRES_DB}
 
     echo swh-scheduler database setup
-    if ! check_pgsql_db_created; then
-        echo Creating database and extensions...
-        swh db create --db-name ${POSTGRES_DB} scheduler
-    fi
+
+    echo Creating extensions...
+    swh db init-admin --db-name ${POSTGRES_DB} scheduler
+
     echo Initializing the database...
     swh db init --db-name ${POSTGRES_DB} scheduler
 
