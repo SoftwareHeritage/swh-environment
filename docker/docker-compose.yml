@@ -201,12 +201,6 @@ services:
     image: postgres:12
     env_file:
       - ./env/indexers-db.env
-    environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
-      # unset POSTGRES_DB: we're handling db creation ourselves in the backend
-      # service entrypoint
-      POSTGRES_DB:
 
   swh-idx-storage:
     image: swh/stack
@@ -218,6 +212,7 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/indexers-db.env
+      - ./env/indexers.env
     environment:
       SWH_CONFIG_FILENAME: /indexer_storage.yml
     entrypoint: /entrypoint.sh
@@ -387,6 +382,7 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/indexers-db.env
+      - ./env/indexers.env
       - ./env/workers.env
     environment:
       SWH_WORKER_INSTANCE: indexer
