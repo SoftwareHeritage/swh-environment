@@ -158,12 +158,6 @@ services:
     image: postgres:12
     env_file:
       - ./env/storage-db.env
-    environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
-      # unset POSTGRES_DB: we're handling db creation ourselves in the backend
-      # service entrypoint
-      POSTGRES_DB:
 
   swh-storage:
     image: swh/stack
@@ -176,7 +170,7 @@ services:
       - kafka
     env_file:
       - ./env/common_python.env
-      - ./env/storage-db.env
+      - ./env/storage.env
     environment:
       SWH_CONFIG_FILENAME: /storage.yml
       STORAGE_BACKEND: postgresql

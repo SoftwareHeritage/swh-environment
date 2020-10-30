@@ -26,13 +26,13 @@ case "$1" in
       ;;
     *)
       if [ "$STORAGE_BACKEND" = "postgresql" ]; then
-          wait_pgsql template1
+          wait_pgsql ${POSTGRES_DB}
 
           echo Database setup
-          if ! check_pgsql_db_created; then
-              echo Creating database and extensions...
-              swh db create --db-name ${POSTGRES_DB} storage
-          fi
+
+          echo Creating extensions...
+          swh db init-admin --db-name ${POSTGRES_DB} storage
+
           echo Initializing the database...
           swh db init --db-name ${POSTGRES_DB} storage
       fi
