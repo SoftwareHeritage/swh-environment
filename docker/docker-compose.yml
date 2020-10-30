@@ -245,9 +245,6 @@ services:
     image: postgres:12
     env_file:
       - ./env/deposit-db.env
-    environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
 
   swh-deposit:
     image: swh/stack
@@ -260,6 +257,7 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/deposit-db.env
+      - ./env/deposit.env
     environment:
       VERBOSITY: 3
       SWH_CONFIG_FILENAME: /deposit.yml
