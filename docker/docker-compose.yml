@@ -271,12 +271,6 @@ services:
     image: postgres:12
     env_file:
       - ./env/vault-db.env
-    environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
-      # unset POSTGRES_DB: we're handling db creation ourselves in the backend
-      # service entrypoint
-      POSTGRES_DB:
 
   swh-vault:
     image: swh/stack
@@ -284,6 +278,7 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/vault-db.env
+      - ./env/vault.env
     environment:
       SWH_CONFIG_FILENAME: /vault.yml
     command: server

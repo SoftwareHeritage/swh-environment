@@ -27,13 +27,13 @@ case "$1" in
         # ensure the pathslicing root dir for the cache exists
         mkdir -p /srv/softwareheritage/vault
 
-        wait_pgsql template1
+        wait_pgsql ${POSTGRES_DB}
 
         echo swh-vault Database setup
-        if ! check_pgsql_db_created; then
-            echo Creating database and extensions...
-            swh db create --db-name ${POSTGRES_DB} vault
-        fi
+
+        echo Creating extensions...
+        swh db init-admin --db-name ${POSTGRES_DB} vault
+
         echo Initializing the database...
         swh db init --db-name ${POSTGRES_DB} vault
 
