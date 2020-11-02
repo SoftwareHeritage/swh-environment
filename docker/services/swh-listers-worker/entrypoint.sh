@@ -13,15 +13,9 @@ case "$1" in
         exec bash -i
         ;;
     *)
-        wait_pgsql
+        wait_pgsql ${POSTGRES_DB}
 
         echo Setup ${POSTGRES_DB} database for ${SWH_WORKER_INSTANCE}
-        if psql -lqt | cut -d \| -f 1 | grep -qw ${POSTGRES_DB}; then
-            echo Database already exists, nothing to do
-        else
-            echo Creating database
-            createdb ${POSTGRES_DB}
-        fi
 
         echo Initialize database
         swh lister -C ${SWH_CONFIG_FILENAME} db-init

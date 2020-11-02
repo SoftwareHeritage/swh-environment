@@ -318,9 +318,6 @@ services:
     image: postgres:12
     env_file:
       - ./env/listers-db.env
-    environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
 
   swh-lister:
     image: swh/stack
@@ -328,6 +325,7 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/listers-db.env
+      - ./env/listers.env
       - ./env/workers.env
     user: swh
     environment:
