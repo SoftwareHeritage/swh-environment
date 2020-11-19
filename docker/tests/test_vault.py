@@ -24,8 +24,8 @@ def test_vault_directory(scheduler_host, git_origin):
 
     # now cook it
     cook = apiget(f'vault/directory/{dir_id}/', 'POST')
-    assert cook['obj_type'] == 'directory'
-    assert cook['obj_id'] == dir_id
+    assert cook['type'] == 'directory'
+    assert cook['object_id'] == dir_id
     assert cook['fetch_url'].endswith(f'vault/directory/{dir_id}/raw/')
 
     # while it's cooking, get the directory tree from the archive
@@ -57,7 +57,7 @@ def test_vault_directory(scheduler_host, git_origin):
     # check that if we ask a second time this directory, it returns the same
     # and does not cook it again
     recook = apiget(f'vault/directory/{dir_id}/', 'POST')
-    assert recook['obj_type'] == 'directory'
-    assert recook['obj_id'] == dir_id
-    assert recook['id'] == cook['id']
-    assert recook['status'] == 'done'  # no need to wait for this to be true
+    assert recook['type'] == 'directory'
+    assert recook['object_id'] == dir_id
+    assert recook['task_id'] == cook['task_id']
+    assert recook['task_status'] == 'done'  # no need to wait for this to be true
