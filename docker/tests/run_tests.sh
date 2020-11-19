@@ -165,6 +165,9 @@ listen_docker_events $$ &
 status_message "Starting swh docker-compose environment"
 docker-compose $DOCO_OPTIONS up -d
 
+# Print logs to stdout
+docker-compose $DOCO_OPTIONS logs -f &
+
 # Ensure all swh services are up before running tests
 status_message "Waiting for swh services to be up"
 docker-compose $DOCO_OPTIONS exec -T swh-storage wait-for-it localhost:5002 -s --timeout=0
