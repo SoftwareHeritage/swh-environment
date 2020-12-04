@@ -584,6 +584,35 @@ So now you can easily:
   (swh) ~/swh-environment$ swh scheduler task respawn 1
 ```
 
+## Data persistence for a development setting
+
+The default `docker-compose.yml` configuration is not geared towards data persistence,
+but application testing.
+
+Volumes defined in associated images are anonymous and may get either unused or removed
+on the next `docker-compose up`.
+
+One way to make sure these volumes persist is to use named volumes.
+The volumes may be defined as follows in a `docker-compose.override.yml`.
+Note that volume definitions are merged with other compose files based on
+destination path.
+
+```
+services:
+  swh-storage-db:
+    volumes:
+      - "swh_storage_data:/var/lib/postgresql/data"
+  swh-objstorage:
+    volumes:
+      - "swh_objstorage_data:/srv/softwareheritage/objects"
+
+volumes:
+  swh_storage_data:
+  swh_objstorage_data:
+```
+
+This way, `docker-compose down` without the `-v` flag will not remove those volumes
+and data will persist.
 
 ## Starting a kafka-powered mirror of the storage
 
