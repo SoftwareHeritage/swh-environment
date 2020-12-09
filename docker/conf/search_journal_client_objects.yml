@@ -4,6 +4,10 @@ search:
 journal:
   brokers:
     - kafka
-  group_id: swh.search.journal_client.objects
+  group_id: swh.search.journal_client
   prefix: swh.journal.objects
+  object_types:
+    - origin
+    - origin_visit
+    - origin_visit_status
 
