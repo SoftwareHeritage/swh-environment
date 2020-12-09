@@ -32,8 +32,19 @@ services:
       - swh-search
       - kafka
     volumes:
-      - "./conf/search_journal_client_objects.yml:/etc/softwareheritage/search/journal_client_objects.yml:ro"
-      - "./services/swh-search-journal-client-objects/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/search_journal_client_objects.yml:/etc/softwareheritage/search/journal_client.yml:ro"
+      - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-search-journal-client-indexed:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - swh-search
+      - kafka
+    volumes:
+      - "./conf/search_journal_client_indexed.yml:/etc/softwareheritage/search/journal_client.yml:ro"
+      - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
 
 volumes:
   elasticsearch-data:
