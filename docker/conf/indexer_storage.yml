@@ -1,3 +1,12 @@
 indexer_storage:
   cls: local
   db: postgresql:///?service=swh-indexers
+  journal_writer:
+    cls: kafka
+    brokers:
+      - kafka
+    prefix: swh.journal.indexed
+    client_id: swh.idx_storage.journal_writer
+    producer_config:
+      message.max.bytes: 1000000000
+
