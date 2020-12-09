@@ -25,3 +25,8 @@ celery:
     - swh.indexer.tasks.OriginMetadata
     - swh.indexer.tasks.RecomputeChecksums
     - swh.indexer.tasks.RevisionMetadata
+
+tools:
+  name: swh-metadata-detector
+  version: 0.0.2
+  configuration: {}
