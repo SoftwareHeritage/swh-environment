@@ -391,7 +391,6 @@ services:
       - "./services/swh-indexer-worker/entrypoint.sh:/entrypoint.sh:ro"
 
 # Journal related
-
   swh-indexer-journal-client:
     image: swh/stack
     build: ./
@@ -405,3 +404,16 @@ services:
     volumes:
       - "./conf/indexer_journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
       - "./services/swh-indexer-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-journal-client:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    env_file:
+      - ./env/common_python.env
+    depends_on:
+      - kafka
+      - swh-scheduler
+    volumes:
+      - "./conf/scheduler_journal_client.yml:/etc/softwareheritage/scheduler/journal_client.yml:ro"
+      - "./services/swh-scheduler-journal-client/entrypoint.sh:/entrypoint.sh:ro"

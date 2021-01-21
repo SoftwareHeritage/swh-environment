@@ -1,0 +1,7 @@
+journal:
+  brokers:
+    - kafka
+  group_id: swh.scheduler.journal_client
+scheduler:
+  cls: remote
+  url: http://swh-scheduler:5008/
