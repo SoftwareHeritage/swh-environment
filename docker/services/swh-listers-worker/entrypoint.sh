@@ -5,20 +5,11 @@ set -e
 source /srv/softwareheritage/utils/pyutils.sh
 setup_pip
 
-source /srv/softwareheritage/utils/pgsql.sh
-setup_pgsql
-
 case "$1" in
     "shell")
         exec bash -i
         ;;
     *)
-        wait_pgsql ${POSTGRES_DB}
-
-        echo Setup ${POSTGRES_DB} database for ${SWH_WORKER_INSTANCE}
-
-        echo Initialize database
-        swh lister -C ${SWH_CONFIG_FILENAME} db-init
 
         echo Register task types in scheduler database
         wait-for-it swh-scheduler:5008 -s --timeout=0

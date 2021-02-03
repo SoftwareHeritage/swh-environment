@@ -314,17 +314,11 @@ services:
 
 # Lister Celery workers
 
-  swh-listers-db:
-    image: postgres:12
-    env_file:
-      - ./env/listers-db.env
-
   swh-lister:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/listers-db.env
       - ./env/listers.env
       - ./env/workers.env
     user: swh
@@ -332,10 +326,8 @@ services:
       SWH_WORKER_INSTANCE: listers
       SWH_CONFIG_FILENAME: /lister.yml
     depends_on:
-      - swh-listers-db
       - swh-scheduler
       - swh-scheduler-runner
-      - swh-storage
       - amqp
     entrypoint: /entrypoint.sh
     volumes:
