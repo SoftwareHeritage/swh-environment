@@ -50,5 +50,13 @@ services:
       - "./conf/search_journal_client_indexed.yml:/etc/softwareheritage/search/journal_client.yml:ro"
       - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
 
+  swh-web:
+    depends_on:
+      - swh-search
+    environment:
+      SWH_CONFIG_FILENAME: /web-search.yml
+    volumes:
+      - "./conf/web-search.yml:/web-search.yml:ro"
+
 volumes:
   elasticsearch-data:
