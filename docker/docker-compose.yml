@@ -6,14 +6,6 @@ services:
     ports:
       - 5072:5672
 
-  #  flower:
-  #    image: mher/flower
-  #    command: --broker=amqp://guest:guest@amqp:5672// --url_prefix=flower
-  #    ports:
-  #      - 5055:5555
-  #    depends_on:
-  #      - amqp
-
   zookeeper:
     image: wurstmeister/zookeeper
     restart: always
@@ -25,19 +17,6 @@ services:
     env_file: ./env/kafka.env
     depends_on:
       - zookeeper
-
-  kafka-manager:
-    image: hlebalbau/kafka-manager:stable
-    ports:
-      - "5093:9000"
-    environment:
-      ZK_HOSTS: zookeeper:2181
-      APPLICATION_SECRET: random-secret
-    depends_on:
-      - zookeeper
-    command: -Dpidfile.path=/dev/null
-    volumes:
-      - "./conf/kafka-manager_logback.xml:/kafka-manager/conf/logback.xml:ro"
 
   prometheus:
     image: prom/prometheus
