@@ -1,19 +1,18 @@
-version: '2'
+version: "2"
 
 services:
-
   amqp:
     image: rabbitmq:3.6-management
     ports:
       - 5072:5672
 
-#  flower:
-#    image: mher/flower
-#    command: --broker=amqp://guest:guest@amqp:5672// --url_prefix=flower
-#    ports:
-#      - 5055:5555
-#    depends_on:
-#      - amqp
+  #  flower:
+  #    image: mher/flower
+  #    command: --broker=amqp://guest:guest@amqp:5672// --url_prefix=flower
+  #    ports:
+  #      - 5055:5555
+  #    depends_on:
+  #      - amqp
 
   zookeeper:
     image: wurstmeister/zookeeper
@@ -43,7 +42,7 @@ services:
   prometheus:
     image: prom/prometheus
     depends_on:
-    - prometheus-statsd-exporter
+      - prometheus-statsd-exporter
     command:
       # Needed for the reverse-proxy
       - "--web.external-url=/prometheus"
@@ -73,7 +72,7 @@ services:
     image: grafana/grafana
     restart: unless-stopped
     depends_on:
-    - prometheus
+      - prometheus
     environment:
       GF_SERVER_ROOT_URL: http://localhost:5080/grafana
     volumes:
@@ -87,7 +86,7 @@ services:
     ports:
       - 5080:5080
 
-# Scheduler
+  # Scheduler
 
   swh-scheduler-db:
     image: postgres:12
@@ -152,7 +151,7 @@ services:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
 
-# Graph storage
+  # Graph storage
 
   swh-storage-db:
     image: postgres:12
@@ -179,7 +178,7 @@ services:
       - "./conf/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
-# Object storage
+  # Object storage
 
   swh-objstorage:
     build: ./
@@ -195,7 +194,7 @@ services:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
       - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
 
-# Indexer storage
+  # Indexer storage
 
   swh-idx-storage-db:
     image: postgres:12
@@ -220,7 +219,7 @@ services:
       - "./conf/indexer_storage.yml:/indexer_storage.yml:ro"
       - "./services/swh-indexer-storage/entrypoint.sh:/entrypoint.sh:ro"
 
-# Web interface
+  # Web interface
 
   swh-web:
     build: ./
@@ -311,8 +310,7 @@ services:
       - "./conf/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
-
-# Lister Celery workers
+  # Lister Celery workers
 
   swh-lister:
     image: swh/stack
@@ -334,7 +332,7 @@ services:
       - "./conf/lister.yml:/lister.yml:ro"
       - "./services/swh-listers-worker/entrypoint.sh:/entrypoint.sh:ro"
 
-# Loader + deposit checker Celery workers
+  # Loader + deposit checker Celery workers
 
   swh-loader:
     image: swh/stack
@@ -356,7 +354,7 @@ services:
       - "./conf/loader.yml:/loader.yml:ro"
       - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
 
-# Indexer Celery workers
+  # Indexer Celery workers
 
   swh-indexer:
     image: swh/stack
@@ -382,7 +380,8 @@ services:
       - "./conf/indexer.yml:/indexer.yml:ro"
       - "./services/swh-indexer-worker/entrypoint.sh:/entrypoint.sh:ro"
 
-# Journal related
+  # Journal related
+
   swh-indexer-journal-client:
     image: swh/stack
     build: ./
