@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 
 services:
   elasticsearch:
@@ -29,8 +29,10 @@ services:
     build: ./
     entrypoint: /entrypoint.sh
     depends_on:
-      - swh-search
-      - kafka
+      kafka:
+        condition: service_healthy
+      swh-search:
+        condition: service_started
     volumes:
       - "./conf/search_journal_client_objects.yml:/etc/softwareheritage/search/journal_client.yml:ro"
       - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
@@ -40,8 +42,10 @@ services:
     build: ./
     entrypoint: /entrypoint.sh
     depends_on:
-      - swh-search
-      - kafka
+      kafka:
+        condition: service_healthy
+      swh-search:
+        condition: service_started
     volumes:
       - "./conf/search_journal_client_indexed.yml:/etc/softwareheritage/search/journal_client.yml:ro"
       - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
