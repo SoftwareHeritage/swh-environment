@@ -2,6 +2,7 @@ journal:
   brokers:
     - kafka
   group_id: swh.indexer.journal_client
+  prefix: swh.journal.objects
 
 max_messages: 50
 
