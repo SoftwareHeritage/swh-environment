@@ -337,10 +337,29 @@ services:
     depends_on:
       - swh-storage
       - swh-scheduler
-      - swh-deposit
       - amqp
     volumes:
       - "./conf/loader.yml:/loader.yml:ro"
+      - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-loader-deposit:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+      - ./env/workers.env
+    user: swh
+    environment:
+      SWH_WORKER_INSTANCE: loader-deposit
+      SWH_CONFIG_FILENAME: /loader-deposit.yml
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - swh-storage
+      - swh-scheduler
+      - swh-deposit
+      - amqp
+    volumes:
+      - "./conf/loader-deposit.yml:/loader-deposit.yml:ro"
       - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
 
   # Indexer Celery workers

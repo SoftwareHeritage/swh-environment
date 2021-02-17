@@ -1,0 +1,26 @@
+storage:
+  cls: pipeline
+  steps:
+    - cls: buffer
+      min_batch_size:
+        content: 10000
+        content_bytes: 104857600
+        directory: 1000
+        revision: 1000
+    - cls: filter
+    - cls: remote
+      url: http://swh-storage:5002/
+
+celery:
+  task_broker: amqp://guest:guest@amqp//
+  task_queues:
+    - swh.loader.package.deposit.tasks.LoadDeposit
+    - swh.deposit.loader.tasks.ChecksDepositTsk
+
+deposit:
+  url: http://swh-deposit:5006/1/private
+  auth:
+    username: test
+    password: test
+
+url: 'http://swh-deposit:5006'

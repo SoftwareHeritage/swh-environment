@@ -15,7 +15,7 @@ case "$1" in
 
         echo Register task types in scheduler database
         wait-for-it swh-scheduler:5008 -s --timeout=0
-        swh scheduler -C ${SWH_CONFIG_FILENAME} task-type register
+        swh scheduler --url ${SWH_SCHEDULER_INSTANCE} task-type register
 
         echo Starting the swh Celery worker for ${SWH_WORKER_INSTANCE}
         exec python -m celery \
