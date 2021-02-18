@@ -20,6 +20,8 @@ services:
       - elasticsearch
     environment:
       SWH_CONFIG_FILENAME: /search.yml
+    env_file:
+      - ./env/common_python.env
     volumes:
       - "./conf/search.yml:/search.yml:ro"
       - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
