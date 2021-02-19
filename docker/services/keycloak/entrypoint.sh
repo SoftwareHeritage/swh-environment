@@ -7,7 +7,7 @@ cd
 if [ ! -d swh-keycloak-theme ]
 then
   git clone https://forge.softwareheritage.org/source/swh-keycloak-theme.git
-  ln -s /opt/jboss/swh-keycloak-theme/swh/ /opt/jboss/keycloak/themes/swh
+  cp -r /opt/jboss/swh-keycloak-theme/swh /opt/jboss/keycloak/themes/swh
 fi
 
 echo "Starting Keycloak"
