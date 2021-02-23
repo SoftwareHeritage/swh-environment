@@ -33,3 +33,12 @@ services:
       SWH_CONFIG_FILENAME: /web-keycloak.yml
     volumes:
       - "./conf/web-keycloak.yml:/web-keycloak.yml:ro"
+
+  swh-deposit:
+    depends_on:
+      - keycloak
+    environment:
+      SWH_CONFIG_FILENAME: /deposit-keycloak.yml
+    volumes:
+      - "./conf/deposit-keycloak.yml:/deposit-keycloak.yml:ro"
+

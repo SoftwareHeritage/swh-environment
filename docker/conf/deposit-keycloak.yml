@@ -1,0 +1,30 @@
+scheduler:
+  cls: remote
+  url: http://swh-scheduler:5008
+
+storage:
+  cls: remote
+  url: http://swh-storage:5002/
+
+storage_metadata:
+  cls: remote
+  url: http://swh-storage:5002/
+
+allowed_hosts:
+  - '*'
+
+private:
+  secret_key: prod-in-docker
+  db:
+    host: swh-deposit-db
+    port: 5432
+    name: swh-deposit
+    user: postgres
+    password: testpassword
+  media_root: /tmp/swh-deposit/uploads
+
+extraction_dir: "/tmp/swh-deposit/archive/"
+
+keycloak:
+  server_url: http://keycloak:8080/keycloak/auth/
+  realm_name: SoftwareHeritage
