@@ -29,9 +29,9 @@ def assign_client_base_url(keycloak_admin, client_name, base_url):
 
 def assign_client_role_to_user(keycloak_admin, client_name, client_role, username):
     client_id = keycloak_admin.get_client_id(client_name)
-    staff_user_role = keycloak_admin.get_client_role(client_id, client_role)
+    user_role = keycloak_admin.get_client_role(client_id, client_role)
     user_id = keycloak_admin.get_user_id(username)
-    keycloak_admin.assign_client_role(user_id, client_id, staff_user_role)
+    keycloak_admin.assign_client_role(user_id, client_id, user_role)
 
 
 def assign_client_roles_to_user(keycloak_admin, client_name, client_roles, username):
@@ -219,11 +219,13 @@ create_client_roles(
     ["swh.web.api.throttling_exempted", "swh.web.api.graph"],
 )
 
+DEPOSIT_API_ROLE_NAME = "swh.deposit.api"
+
 # create deposit client roles
 create_client_roles(
     KEYCLOAK_ADMIN,
     CLIENT_DEPOSIT_NAME,
-    ["swh.deposit.api"],
+    [DEPOSIT_API_ROLE_NAME],
 )
 
 # create some test users
@@ -257,3 +259,8 @@ for user_data in [
     }
 ]:
     create_user(KEYCLOAK_ADMIN, user_data)
+
+
+assign_client_roles_to_user(
+    KEYCLOAK_ADMIN, CLIENT_DEPOSIT_NAME, [DEPOSIT_API_ROLE_NAME], "hal"
+)
