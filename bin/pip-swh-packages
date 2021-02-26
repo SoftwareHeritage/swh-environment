@@ -9,11 +9,11 @@ fi
 
 ./bin/py-depgraph |
     grep -- '->' |
-    sed -e 's/[";]//g' -e 's/->//g' |
+    sed -e 's/[";]//g' -e 's/->//g' -e 's/\[.*$//g' |
     tsort |
     tac |
     grep '^swh\.' |
     sed 's:\.:-:g' |
     sed 's:^:-e :' |
     sed "s/$/$suffix/" |
-    sed -e 's/\]\[/,/g'
+    sed 's/\]\[/,/g'
