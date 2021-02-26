@@ -1,3 +1,14 @@
 #!/usr/bin/env bash
 
-pip install $(./bin/pip-swh-packages --with-testing) "$@"
+# Usage: bin/install [PIP_INSTALL_OPTION..]
+
+PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy"
+
+pip install --upgrade pip "$@"
+
+pip install $PREREQUISITES "$@"
+
+bin/pip-swh-packages --with-testing | \
+    while read pkg_spec ; do
+        pip install $pkg_spec
+    done
