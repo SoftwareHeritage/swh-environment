@@ -3,6 +3,10 @@
 [snippets]
 checkout = git clone 'https://forge.softwareheritage.org/source/snippets.git' 'snippets'
 
+[swh-auth]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-auth.git' 'swh-auth'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
 [swh-core]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-core.git' 'swh-core'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
