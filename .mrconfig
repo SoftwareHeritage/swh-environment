@@ -11,6 +11,10 @@ fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-core.git' 'swh-core'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
+[swh-counters]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-counters.git' 'swh-counters'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
 [swh-dataset]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-dataset.git' 'swh-dataset'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
