@@ -249,7 +249,7 @@ for user_data in [
         "emailVerified": False,
     },
     {
-        "email": "",
+        "email": "hal@archive-ouvertes.org",
         "username": "hal",
         "firstName": "HAL",
         "lastName": "AI",
