@@ -16,14 +16,16 @@ services:
       - "5092:9092"
     env_file: ./env/kafka.env
     environment:
-      KAFKA_CREATE_TOPICS: swh.journal.objects.origin:1:1,
+      KAFKA_CREATE_TOPICS: swh.journal.objects.content:1:1,
+        swh.journal.objects.origin:1:1,
         swh.journal.objects.origin_visit:1:1,
         swh.journal.objects.origin_visit_status:1:1,
+        swh.journal.objects.revision:1:1,
         swh.journal.indexed.origin_intrinsic_metadata:1:1
     depends_on:
       - zookeeper
     healthcheck:
-      test: "[ `JMX_PORT= kafka-topics.sh --list --zookeeper zookeeper:2181 | wc -l` -ge 4 ]"
+      test: "[ `JMX_PORT= kafka-topics.sh --list --zookeeper zookeeper:2181 | wc -l` -ge 6 ]"
       interval: 10s
       timeout: 5s
       retries: 10

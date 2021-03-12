@@ -32,6 +32,7 @@ RUN pip install gunicorn httpie
 
 RUN pip install \
         swh-core[db,http] \
+        swh-counters \
         swh-deposit[server] \
         swh-indexer \
         swh-journal \

@@ -1,0 +1,12 @@
+counters:
+  cls: remote
+  url: http://swh-counters:5011/
+journal:
+  brokers:
+    - kafka
+  prefix: swh.journal.objects
+  group_id: swh.counters.journal_client
+  object_types:
+    - content
+    - origin
+    - revision

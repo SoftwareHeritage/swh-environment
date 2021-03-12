@@ -1,0 +1,60 @@
+version: "2.1"
+
+services:
+  swh-counters:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    environment:
+      SWH_CONFIG_FILENAME: /etc/softwareheritage/counters/server.yml
+    env_file:
+      - ./env/common_python.env
+    ports:
+      - 5011:5011
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - "./conf/counters.yml:/etc/softwareheritage/counters/server.yml:ro"
+      - "./services/swh-counters/entrypoint.sh:/entrypoint.sh:ro"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5011/" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  swh-counters-journal-client:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    env_file:
+      - ./env/common_python.env
+    depends_on:
+      kafka:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      swh-counters:
+        condition: service_healthy
+    volumes:
+      - "./conf/counters_journal_client.yml:/etc/softwareheritage/counters/journal_client.yml:ro"
+      - "./services/swh-counters-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+
+  redis:
+    image: redis
+    volumes:
+      - redis-data:/data
+    ports:
+      - 6379
+    command:
+      - "--save"
+      - "60"
+      - "1" # flush every minutes
+    healthcheck:
+      test: [ "CMD", "redis-cli", "PING" ]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  redis-data:
