@@ -49,7 +49,9 @@ def create_user(keycloak_admin, user_data):
 def create_client_roles(keycloak_admin, client_name, client_roles):
     for client_role in client_roles:
         try:
-            keycloak_admin.create_client_role(client_name, payload={"name": client_role})
+            keycloak_admin.create_client_role(
+                client_name, payload={"name": client_role}
+            )
         except Exception as e:
             logger.warning(f"User already created: {e}, skipping.")
 
@@ -75,7 +77,9 @@ KEYCLOAK_ADMIN.update_realm(
 # create swh realm
 KEYCLOAK_ADMIN.create_realm(
     payload={
+        "id": REALM_NAME,
         "realm": REALM_NAME,
+        "displayName": "Software Heritage",
         "rememberMe": True,
         "attributes": {"frontendUrl": "http://localhost:5080/keycloak/auth/"},
         "enabled": True,
@@ -148,8 +152,8 @@ KEYCLOAK_ADMIN = KeycloakAdmin(
 )
 
 for (client_name, client_uri) in [
-        (CLIENT_WEBAPP_NAME, "http://localhost:5004/*"),
-        (CLIENT_DEPOSIT_NAME, "http://localhost:5006/*")
+    (CLIENT_WEBAPP_NAME, "http://localhost:5004/*"),
+    (CLIENT_DEPOSIT_NAME, "http://localhost:5006/*"),
 ]:
     # create swh-web public client
     KEYCLOAK_ADMIN.create_client(
@@ -223,9 +227,7 @@ DEPOSIT_API_ROLE_NAME = "swh.deposit.api"
 
 # create deposit client roles
 create_client_roles(
-    KEYCLOAK_ADMIN,
-    CLIENT_DEPOSIT_NAME,
-    [DEPOSIT_API_ROLE_NAME],
+    KEYCLOAK_ADMIN, CLIENT_DEPOSIT_NAME, [DEPOSIT_API_ROLE_NAME],
 )
 
 # create some test users
@@ -235,7 +237,9 @@ for user_data in [
         "username": "johndoe",
         "firstName": "John",
         "lastName": "Doe",
-        "credentials": [{"value": "johndoe-swh", "type": "password", "temporary": False}],
+        "credentials": [
+            {"value": "johndoe-swh", "type": "password", "temporary": False}
+        ],
         "enabled": True,
         "emailVerified": False,
     },
@@ -244,7 +248,9 @@ for user_data in [
         "username": "janedoe",
         "firstName": "Jane",
         "lastName": "Doe",
-        "credentials": [{"value": "janedoe-swh", "type": "password", "temporary": False}],
+        "credentials": [
+            {"value": "janedoe-swh", "type": "password", "temporary": False}
+        ],
         "enabled": True,
         "emailVerified": False,
     },
@@ -256,7 +262,7 @@ for user_data in [
         "credentials": [{"value": "test", "type": "password", "temporary": False}],
         "enabled": True,
         "emailVerified": False,
-    }
+    },
 ]:
     create_user(KEYCLOAK_ADMIN, user_data)
 
