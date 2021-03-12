@@ -249,10 +249,10 @@ for user_data in [
         "emailVerified": False,
     },
     {
-        "email": "hal@archive-ouvertes.org",
-        "username": "hal",
-        "firstName": "HAL",
-        "lastName": "AI",
+        "email": "test@swh.org",
+        "username": "test",
+        "firstName": "Test",
+        "lastName": "aibot",
         "credentials": [{"value": "test", "type": "password", "temporary": False}],
         "enabled": True,
         "emailVerified": False,
@@ -262,5 +262,5 @@ for user_data in [
 
 
 assign_client_roles_to_user(
-    KEYCLOAK_ADMIN, CLIENT_DEPOSIT_NAME, [DEPOSIT_API_ROLE_NAME], "hal"
+    KEYCLOAK_ADMIN, CLIENT_DEPOSIT_NAME, [DEPOSIT_API_ROLE_NAME], "test"
 )
