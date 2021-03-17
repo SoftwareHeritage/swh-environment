@@ -24,3 +24,5 @@ private:
   media_root: /tmp/swh-deposit/uploads
 
 extraction_dir: "/tmp/swh-deposit/archive/"
+
+swh_authority_url: http://deposit.swh.example/

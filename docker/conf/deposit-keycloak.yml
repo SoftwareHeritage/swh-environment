@@ -28,3 +28,5 @@ extraction_dir: "/tmp/swh-deposit/archive/"
 keycloak:
   server_url: http://keycloak:8080/keycloak/auth/
   realm_name: SoftwareHeritage
+
+swh_authority_url: https://deposit.swh.example/
