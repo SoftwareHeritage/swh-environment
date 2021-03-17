@@ -151,9 +151,9 @@ KEYCLOAK_ADMIN = KeycloakAdmin(
     SERVER_URL, ADMIN["username"], ADMIN["password"], REALM_NAME
 )
 
-for (client_name, client_uri) in [
-    (CLIENT_WEBAPP_NAME, "http://localhost:5004/*"),
-    (CLIENT_DEPOSIT_NAME, "http://localhost:5006/*"),
+for (client_name, redirect_uris) in [
+    (CLIENT_WEBAPP_NAME, ["http://localhost:5004/*", "http://localhost:5080/*"]),
+    (CLIENT_DEPOSIT_NAME, ["http://localhost:5006/*"]),
 ]:
     # create swh-web public client
     KEYCLOAK_ADMIN.create_client(
@@ -162,7 +162,7 @@ for (client_name, client_uri) in [
             "clientId": client_name,
             "surrogateAuthRequired": False,
             "enabled": True,
-            "redirectUris": [client_uri,],
+            "redirectUris": redirect_uris,
             "bearerOnly": False,
             "consentRequired": False,
             "standardFlowEnabled": True,
