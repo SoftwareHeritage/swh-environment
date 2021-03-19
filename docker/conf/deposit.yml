@@ -23,6 +23,8 @@ private:
     password: testpassword
   media_root: /tmp/swh-deposit/uploads
 
+authentication_provider: basic
+
 extraction_dir: "/tmp/swh-deposit/archive/"
 
 swh_authority_url: http://deposit.swh.example/
