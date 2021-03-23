@@ -111,10 +111,10 @@ user_data = {
     "firstName": ADMIN["username"],
     "lastName": ADMIN["username"],
     "credentials": [
-        {"value": ADMIN["username"], "type": ADMIN["password"], "temporary": False}
+        {"value": ADMIN["password"], "type": "password", "temporary": False}
     ],
     "enabled": True,
-    "emailVerified": False,
+    "emailVerified": True,
 }
 
 create_user(KEYCLOAK_ADMIN, user_data)
@@ -241,7 +241,7 @@ for user_data in [
             {"value": "johndoe-swh", "type": "password", "temporary": False}
         ],
         "enabled": True,
-        "emailVerified": False,
+        "emailVerified": True,
     },
     {
         "email": "jane.doe@example.org",
@@ -252,7 +252,7 @@ for user_data in [
             {"value": "janedoe-swh", "type": "password", "temporary": False}
         ],
         "enabled": True,
-        "emailVerified": False,
+        "emailVerified": True,
     },
     {
         "email": "test@swh.org",
@@ -261,7 +261,7 @@ for user_data in [
         "lastName": "aibot",
         "credentials": [{"value": "test", "type": "password", "temporary": False}],
         "enabled": True,
-        "emailVerified": False,
+        "emailVerified": True,
     },
 ]:
     create_user(KEYCLOAK_ADMIN, user_data)
