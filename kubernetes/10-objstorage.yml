@@ -1,0 +1,151 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: objstorage
+data:
+  config.yml: |
+    objstorage:
+      cls: pathslicing
+      args:
+        root: "/srv/softwareheritage/objects"
+        slicing: 0:5
+    client_max_size: 1073741824
+  entrypoint.sh: |
+    #!/bin/bash
+
+    set -e
+
+    # source /srv/softwareheritage/utils/pyutils.sh
+    # setup_pip
+
+    # echo Installed Python packages:
+    # pip list
+
+    echo Starting the swh-objstorage API server
+    exec gunicorn --bind 0.0.0.0:5003 \
+      --worker-class aiohttp.worker.GunicornWebWorker \
+      --log-level DEBUG \
+      --threads 4 \
+      --workers 2 \
+      --reload \
+      --timeout 3600 \
+      --config 'python:swh.core.api.gunicorn_config' \
+      'swh.objstorage.api.server:make_app_from_configfile()'
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: objstorage-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: objstorage-pv
+  local:
+    path: /srv/softwareheritage-kube/objects
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        # TODO adapt for your needs
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: objstorage-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: objstorage-pv
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: objstorage
+  labels:
+    app: objstorage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: objstorage
+  template:
+    metadata:
+      labels:
+        app: objstorage
+    spec:
+      containers:
+      - name: objstorage
+        image: swh/stack:latest
+        command: 
+          - /entrypoint.sh
+        ports:
+        - containerPort: 5003
+        env:
+        - name: PORT
+          value: "5003"
+        - name: STATSD_HOST
+          value: "prometheus-statsd-exporter"
+        - name: STATSD_PORT
+          value: "9125"
+        - name: SWH_CONFIG_FILENAME
+          value: /etc/softwareheritage/config.yml
+        volumeMounts:
+        - mountPath: "/srv/softwareheritage/objects"
+          name: objstorage-pvc
+        - name: config
+          mountPath: /etc/softwareheritage/config.yml
+          subPath: config.yml
+          readOnly: true
+        - name: config
+          mountPath: /entrypoint.sh
+          subPath: entrypoint.sh
+          readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: objstorage
+            defaultMode: 0777
+        - name: objstorage-pvc
+          persistentVolumeClaim:
+            claimName: objstorage-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: objstorage
+spec:
+  type: ClusterIP
+  selector:
+    app: objstorage
+  ports:
+    - port: 5003
+      targetPort: 5003
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: objstorage
+spec:
+  rules:
+  - host: objstorage.default
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: objstorage
+            port: 
+              number: 5003

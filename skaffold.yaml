@@ -1,0 +1,15 @@
+apiVersion: skaffold/v2beta13
+kind: Config
+metadata:
+  name: swh-environment
+build:
+  artifacts:
+  - image: swh/stack
+    docker:
+      dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - kubernetes/05-storage-db.yml
+    - kubernetes/10-objstorage.yml
+    - kubernetes/11-storage.yml
