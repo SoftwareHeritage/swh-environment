@@ -39,6 +39,7 @@ services:
       - keycloak
     environment:
       SWH_CONFIG_FILENAME: /deposit-keycloak.yml
+      MEMCACHED: "yes"
     volumes:
       - "./conf/deposit-keycloak.yml:/deposit-keycloak.yml:ro"
 

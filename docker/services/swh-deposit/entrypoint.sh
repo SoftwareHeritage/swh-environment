@@ -17,6 +17,11 @@ if [ "$1" = 'shell' ] ; then
 	fi
 else
 
+    if [ ! -z "$MEMCACHED" ]; then
+       echo "Starting memcached"
+       memcached&
+    fi
+
     wait_pgsql
 
     echo "Migrating db"
