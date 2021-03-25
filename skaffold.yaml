@@ -4,9 +4,21 @@ metadata:
   name: swh-environment
 build:
   artifacts:
-  - image: swh/stack
+  - image: swh/stack-base
     docker:
       dockerfile: Dockerfile
+  - image: swh/objstorage
+    docker:
+      dockerfile: Dockerfile.objstorage
+    requires:
+      - image: swh/stack-base
+        alias: BASE
+  - image: swh/storage
+    docker:
+      dockerfile: Dockerfile.storage
+    requires:
+      - image: swh/stack-base
+        alias: BASE
 deploy:
   kubectl:
     manifests:

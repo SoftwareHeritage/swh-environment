@@ -80,6 +80,10 @@ spec:
   selector:
     matchLabels:
       app: objstorage
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
   template:
     metadata:
       labels:
@@ -87,7 +91,7 @@ spec:
     spec:
       containers:
       - name: objstorage
-        image: swh/stack:latest
+        image: swh/objstorage:latest
         command: 
           - /entrypoint.sh
         ports:

@@ -1,8 +1,3 @@
-# If true, install from locally cloned modules
-# If false, use pip
-ARG LOCAL_MODULES=true
-ARG SWH_MODULES="swh-core swh-model swh-objstorage"
-
 ###
 # Base image mother of all
 FROM python:3.7 as swh-base
@@ -50,8 +45,6 @@ FROM swh-base as swh-packages
 COPY swh-model/requirements.txt /app/requirements-model.txt
 COPY swh-core/requirements.txt /app/requirements-core.txt
 COPY swh-journal/requirements.txt /app/requirements-journal.txt
-COPY swh-objstorage/requirements.txt /app/requirements-objstorage.txt
-COPY swh-storage/requirements.txt /app/requirements-storage.txt
 RUN . /srv/softwareheritage/venv/bin/activate && cat /app/requirements-*.txt > /tmp/requirements.txt && pip install -r /tmp/requirements.txt \ 
     && pip install decorator aiohttp_utils blinker
     # && rm /srv/requirements*
@@ -59,6 +52,4 @@ RUN . /srv/softwareheritage/venv/bin/activate && cat /app/requirements-*.txt > /
 # Copy source code
 COPY swh-model/swh /app/swh
 COPY swh-core/swh /app/swh
-COPY swh-model/swh /app/swh
-COPY swh-objstorage/swh /app/swh
-COPY swh-storage/swh /app/swh
+COPY swh-journal/swh /app/swh

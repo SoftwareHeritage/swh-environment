@@ -7,33 +7,31 @@ data:
   config.yml: |
     storage:
       cls: local
-      args:
-        db: postgresql:///?service=swh
-        objstorage:
-          cls: remote
-          args:
-            url: http://objstorage:5000/
+      db: postgresql:///?service=swh-storage
+      objstorage:
+        cls: remote
+        url: http://objstorage:5003/
+      journal_writer:
+        cls: kafka
+        args:
+          brokers:
+            - kafka
+          prefix: swh.journal.objects
+          client_id: swh.storage.master
   entrypoint.sh: |
     #!/bin/bash
 
     set -e
 
-    # source /srv/softwareheritage/utils/pyutils.sh
-    # setup_pip
-
-    # echo Installed Python packages:
-    # pip list
-
-    echo Starting the swh-objstorage API server
-    exec gunicorn --bind 0.0.0.0:5003 \
-      --worker-class aiohttp.worker.GunicornWebWorker \
-      --log-level DEBUG \
-      --threads 4 \
-      --workers 2 \
-      --reload \
-      --timeout 3600 \
-      --config 'python:swh.core.api.gunicorn_config' \
-      'swh.objstorage.api.server:make_app_from_configfile()'
+    echo Starting the swh-storage API server
+    exec gunicorn --bind 0.0.0.0:5002 \
+          --reload \
+          --threads 4 \
+          --workers 2 \
+          --log-level DEBUG \
+          --timeout 3600 \
+          --config 'python:swh.core.api.gunicorn_config' \
+          'swh.storage.api.server:make_app_from_configfile()'
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -46,6 +44,10 @@ spec:
   selector:
     matchLabels:
       app: storage
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
   template:
     metadata:
       labels:
@@ -53,10 +55,10 @@ spec:
     spec:
       containers:
       - name: storage
-        image: swh/stack:latest
+        image: swh/storage:latest
         imagePullPolicy: Always
-        args: 
-          - storage
+        command: 
+          - /entrypoint.sh
         ports:
         - containerPort: 5002
         env:
@@ -85,19 +87,26 @@ spec:
             configMapKeyRef:
               name: storage-db
               key: POSTGRES_DB
+        - name: SWH_CONFIG_FILENAME
+          value: /etc/softwareheritage/config.yml
         volumeMounts:
+          - name: db-password
+            mountPath: /run/secrets/postgres-password
+            subPath: POSTGRES_PASSWORD
+            readOnly: true
           - name: config
             mountPath: /etc/softwareheritage/config.yml
             subPath: config.yml
             readOnly: true
-          - name: db-password
-            mountPath: /run/secrets/postgres-password
-            subPath: POSTGRES_PASSWORD
+          - name: config
+            mountPath: /entrypoint.sh
+            subPath: entrypoint.sh
             readOnly: true
       volumes:
         - name: config
           configMap:
             name: storage
+            defaultMode: 0777
         - name: db-password
           secret:
             secretName: storage-db
@@ -129,4 +138,4 @@ spec:
           service:
             name: storage
             port: 
-              number: 5003
+              number: 5002
