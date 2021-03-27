@@ -6,7 +6,7 @@
 # sudo mkdir -p /srv/softwareheritage-kube/dev/storage-db
 # sudo mkdir -p /srv/softwareheritage-kube/dev/objects
 ```
-Must match the content of `02-storage-db.yaml`
+Must match the content of `05-storage-db.yaml`
 
 ### Registry
 
@@ -34,12 +34,11 @@ Must match the content of `02-storage-db.yaml`
 
 ## start the objstorage
 
-
 - start the service
 ```
 # cd kubernetes
 
-# kubectl apply -f 01-objstorage.yml
+# kubectl apply -f 10-objstorage.yml
 configmap/objstorage created
 persistentvolume/objstorage-pv created
 persistentvolumeclaim/objstorage-pvc created
@@ -61,14 +60,13 @@ objstorage   ClusterIP   10.43.185.191   <none>        5003/TCP   17m
 SWH Objstorage API server%
 ```
 
-
 ## Start the storage
 
 - Start the db
 ```
 # cd kubernetes
 
-# kubectl apply -f 02-storage-db.yml
+# kubectl apply -f 05-storage-db.yml
 persistentvolume/storage-db-pv created
 persistentvolumeclaim/storage-db-pvc created
 secret/storage-db created
@@ -90,7 +88,7 @@ storage-db   ClusterIP   10.43.213.178   <none>        5432/TCP   8m19s
 ```
 # cd kubernetes
 
-# kubectl apply -f 03-storage.yml
+# kubectl apply -f 11-storage.yml
 configmap/storage created
 deployment.apps/storage created
 service/storage created
