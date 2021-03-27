@@ -1,7 +1,7 @@
-
-## Prerquisite
+## Prerequisite
 
 ### Directories
+
 ```
 # sudo mkdir -p /srv/softwareheritage-kube/dev/storage-db
 # sudo mkdir -p /srv/softwareheritage-kube/dev/objects
@@ -58,7 +58,7 @@ NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
 objstorage   ClusterIP   10.43.185.191   <none>        5003/TCP   17m
 
 # curl http://$(kubectl get services objstorage -o jsonpath='{.spec.clusterIP}'):5003
-SWH Objstorage API server%  
+SWH Objstorage API server%
 ```
 
 

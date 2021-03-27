@@ -81,7 +81,7 @@ spec:
         args:
           - "-c"
           - "shared_buffers=512MB"
-          - "-c" 
+          - "-c"
           - "effective_cache_size=512MB"
           - "-c"
           - "random_page_cost=1.5"

@@ -25,7 +25,7 @@ spec:
         backend:
           service:
             name: registry
-            port: 
+            port:
               number: 80
 ---
 apiVersion: apps/v1

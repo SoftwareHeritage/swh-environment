@@ -45,12 +45,12 @@ FROM swh-base as swh-packages
 # RUN pip install swh-core
 
 # Install requirements.txt only if there is any changes
+
 # COPY swh-model/requirements.txt /app/requirements-model.txt
 # COPY swh-core/requirements.txt /app/requirements-core.txt
 # COPY swh-journal/requirements.txt /app/requirements-journal.txt
 
-
-# RUN cat /app/requirements-*.txt > /tmp/requirements.txt && pip install -r /tmp/requirements.txt \ 
+# RUN cat /app/requirements-*.txt > /tmp/requirements.txt && pip install -r /tmp/requirements.txt
     # && rm /srv/requirements*
 
 # Copy source code

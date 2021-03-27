@@ -92,7 +92,7 @@ spec:
       containers:
       - name: objstorage
         image: swh/objstorage:latest
-        command: 
+        command:
           - /entrypoint.sh
         ports:
         - containerPort: 5003
@@ -158,5 +158,5 @@ spec:
         backend:
           service:
             name: objstorage
-            port: 
+            port:
               number: 5003
