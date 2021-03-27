@@ -1,0 +1,129 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: scheduler-db-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: scheduler-db
+  local:
+    path: /srv/softwareheritage/dev/scheduler-db
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        # TODO adapt for your needs
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: scheduler-db-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: scheduler-db
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+## TODO Change this to your real postgresql password
+apiVersion: v1
+kind: Secret
+metadata:
+  name: scheduler-db
+type: Opaque
+stringData:
+  POSTGRES_PASSWORD: swh
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scheduler-db
+data:
+  # property-like keys; each key maps to a simple value
+  POSTGRES_USER: swh
+  POSTGRES_DB: swh-scheduler
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scheduler-db
+  labels:
+    app: scheduler-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduler-db
+  template:
+    metadata:
+      labels:
+        app: scheduler-db
+    spec:
+      containers:
+      - name: scheduler-db
+        image: postgres:13.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5432
+        args:
+          - "-c"
+          - "shared_buffers=512MB"
+          - "-c"
+          - "effective_cache_size=512MB"
+          - "-c"
+          - "random_page_cost=1.5"
+          - "-c"
+          - "max_wal_size=512MB"
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: scheduler-db
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: scheduler-db
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: scheduler-db
+                key: POSTGRES_DB
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql"
+          name: scheduler-db-pvc
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+      volumes:
+        - name: scheduler-db-pvc
+          persistentVolumeClaim:
+            claimName: scheduler-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scheduler-db
+spec:
+  type: ClusterIP
+  selector:
+    app: scheduler-db
+  ports:
+    - port: 5432
+      targetPort: 5432

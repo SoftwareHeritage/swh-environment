@@ -2,22 +2,17 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: storage
+  name: scheduler
 data:
   config.yml: |
-    storage:
+    scheduler:
       cls: local
-      db: postgresql:///?service=swh
-      objstorage:
-        cls: remote
-        url: http://objstorage:5003/
-      journal_writer:
-        cls: kafka
-        args:
-          brokers:
-            - kafka
-          prefix: swh.journal.objects
-          client_id: swh.storage.master
+      db: postgresql:///?service=swh-scheduler
+
+    celery:
+      task_broker: amqp://guest:guest@amqp/%2f
+      broker_transport_options:
+        max_retries: 1
   entrypoint-init-db.sh: |
     #!/bin/bash
 
@@ -30,14 +25,13 @@ data:
     echo
     set -e
 
-    echo Init swh-storage database
+    echo Init swh-scheduler database
 
     echo Creating extensions...
-    swh db init-admin --db-name ${PGDATABASE} storage
+    swh db init-admin --db-name ${PGDATABASE} scheduler
 
     echo Initializing the database...
-    swh db init --db-name ${PGDATABASE} storage
-
+    swh db init --db-name ${PGDATABASE} scheduler
   entrypoint.sh: |
     #!/bin/bash
 
@@ -52,27 +46,27 @@ data:
     user=${PGUSER}
     EOF
 
-    echo Starting the swh-storage API server
-    exec gunicorn --bind 0.0.0.0:5002 \
-          --reload \
-          --threads 4 \
-          --workers 2 \
-          --log-level DEBUG \
-          --timeout 3600 \
-          --config 'python:swh.core.api.gunicorn_config' \
-          'swh.storage.api.server:make_app_from_configfile()'
+    echo Starting the swh-scheduler API server
+    exec gunicorn --bind 0.0.0.0:5008 \
+         --log-level DEBUG \
+         --threads 4 \
+         --workers 2 \
+         --reload \
+         --timeout 3600 \
+         --config 'python:swh.core.api.gunicorn_config' \
+         'swh.scheduler.api.server:make_app_from_configfile()'
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: storage
+  name: scheduler
   labels:
-    app: storage
+    app: scheduler
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: storage
+      app: scheduler
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -80,31 +74,31 @@ spec:
   template:
     metadata:
       labels:
-        app: storage
+        app: scheduler
     spec:
       initContainers:
-        - name: storage-init
-          image: swh/storage:latest
+        - name: scheduler-init
+          image: swh/scheduler:latest
           imagePullPolicy: Always
           command:
             - /entrypoint.sh
           env:
           - name: PGHOST
-            value: "storage-db"
+            value: "scheduler-db"
           - name: PGUSER
             valueFrom:
               configMapKeyRef:
-                name: storage-db
+                name: scheduler-db
                 key: POSTGRES_USER
           - name: PGPASSWORD
             valueFrom:
               secretKeyRef:
-                name: storage-db
+                name: scheduler-db
                 key: POSTGRES_PASSWORD
           - name: PGDATABASE
             valueFrom:
               configMapKeyRef:
-                name: storage-db
+                name: scheduler-db
                 key: POSTGRES_DB
           - name: SWH_CONFIG_FILENAME
             value: /etc/softwareheritage/config.yml
@@ -122,38 +116,36 @@ spec:
               subPath: entrypoint-init-db.sh
               readOnly: true
       containers:
-      - name: storage
-        image: swh/storage:latest
+      - name: scheduler
+        image: swh/scheduler:latest
         imagePullPolicy: Always
         command:
           - /entrypoint.sh
         ports:
-        - containerPort: 5002
+        - containerPort: 5008
         env:
         - name: PORT
-          value: "5002"
+          value: "5008"
         - name: STATSD_HOST
           value: "prometheus-statsd-exporter"
         - name: STATSD_PORT
           value: "9125"
-        - name: POSTGRES_PASSWORD_FILE
-          value: "/run/secrets/postgres-password"
         - name: PGHOST
-          value: "storage-db"
+          value: "scheduler-db"
         - name: PGUSER
           valueFrom:
             configMapKeyRef:
-              name: storage-db
+              name: scheduler-db
               key: POSTGRES_USER
         - name: PGPASSWORD
           valueFrom:
             secretKeyRef:
-              name: storage-db
+              name: scheduler-db
               key: POSTGRES_PASSWORD
         - name: PGDATABASE
           valueFrom:
             configMapKeyRef:
-              name: storage-db
+              name: scheduler-db
               key: POSTGRES_DB
         - name: SWH_CONFIG_FILENAME
           value: /etc/softwareheritage/config.yml
@@ -170,47 +162,40 @@ spec:
             mountPath: /entrypoint.sh
             subPath: entrypoint.sh
             readOnly: true
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "250m"
-          limits:
-            memory: "1024Mi"
-            cpu: "500m"
       volumes:
         - name: config
           configMap:
-            name: storage
+            name: scheduler
             defaultMode: 0777
         - name: db-password
           secret:
-            secretName: storage-db
+            secretName: scheduler-db
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: storage
+  name: scheduler
 spec:
   type: ClusterIP
   selector:
-    app: storage
+    app: scheduler
   ports:
-    - port: 5002
-      targetPort: 5002
+    - port: 5008
+      targetPort: 5008
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: storage
+  name: scheduler
 spec:
   rules:
-  - host: storage.default
+  - host: scheduler.default
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: storage
+            name: scheduler
             port:
-              number: 5002
+              number: 5008

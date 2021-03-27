@@ -1,0 +1,7 @@
+ARG BASE
+
+FROM $BASE
+
+COPY swh-scheduler /app/swh-scheduler
+
+RUN pip install /app/swh-scheduler

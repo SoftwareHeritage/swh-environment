@@ -19,6 +19,12 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
+  - image: swh/scheduler
+    docker:
+      dockerfile: Dockerfile.scheduler
+    requires:
+      - image: swh/stack-base
+        alias: BASE
 deploy:
   kubectl:
     manifests:
@@ -26,3 +32,5 @@ deploy:
     - kubernetes/05-storage-db.yml
     - kubernetes/10-objstorage.yml
     - kubernetes/11-storage.yml
+    - kubernetes/15-scheduler-db.yml
+    - kubernetes/20-scheduler.yml

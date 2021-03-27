@@ -3,8 +3,9 @@
 ### Directories
 
 ```
-# sudo mkdir -p /srv/softwareheritage-kube/dev/storage-db
-# sudo mkdir -p /srv/softwareheritage-kube/dev/objects
+# sudo mkdir -p /srv/softwareheritage-kube/objects
+# sudo mkdir -p /srv/softwareheritage-kube/storage-db
+# sudo mkdir -p /srv/softwareheritage-kube/scheduler-db
 ```
 Must match the content of `05-storage-db.yaml`
 
@@ -118,6 +119,61 @@ See its
 and API</a> for more information</p>
 </body>
 </html>
+```
+
+## Start the scheduler
+
+- Start the db
+
+```
+# cd kubernetes
+
+# kubectl apply -f 15-scheduler-db.yml
+persistentvolume/scheduler-db-pv unchanged
+persistentvolumeclaim/scheduler-db-pvc created
+secret/scheduler-db configured
+configmap/scheduler-db unchanged
+deployment.apps/scheduler-db unchanged
+service/scheduler-db unchanged
+
+# kubectl get services scheduler-db
+NAME           TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+scheduler-db   ClusterIP   10.43.115.249   <none>        5433/TCP   110s
+```
+
+- Test the service
+
+```
+# kubectl apply -f 20-scheduler.yml
+configmap/scheduler created
+deployment.apps/scheduler created
+service/scheduler created
+ingress.networking.k8s.io/scheduler created
+
+# kubectl get services scheduler
+NAME        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+scheduler   ClusterIP   10.43.218.74   <none>        5008/TCP   23s
+
+# kubectl get pods              NAME                                  READY   STATUS    RESTARTS   AGE
+registry-deployment-5f6894c5b-9wkmr   1/1     Running   0          28m
+objstorage-5b87c549b6-f6jvc           1/1     Running   0          12m
+storage-db-79bfbff68-mg7fr            1/1     Running   0          107s
+storage-6bfcb87b6-7s7t8               1/1     Running   0          87s
+scheduler-db-666c8dc8b4-qxm9d         1/1     Running   0          73s
+scheduler-595f944854-hbsj4            1/1     Running   0          62s
+
+# curl http://$(kubectl get services scheduler -o jsonpath='{.spec.clusterIP}'):5008
+<html>
+<head><title>Software Heritage scheduler RPC server</title></head>
+<body>
+<p>You have reached the
+<a href="https://www.softwareheritage.org/">Software Heritage</a>
+scheduler RPC server.<br />
+See its
+<a href="https://docs.softwareheritage.org/devel/swh-scheduler/">documentation
+and API</a> for more information</p>
+</body>
+</html>%
 ```
 
 ## Development
