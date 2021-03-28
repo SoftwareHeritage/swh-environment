@@ -121,3 +121,16 @@ and API</a> for more information</p>
 </body>
 </html>
 ```
+
+## Development
+
+### Skaffold
+
+To start the development environment using skaffold, use the following command:
+
+```
+skaffold  --default-repo registry.default dev
+```
+
+It will build the images, deploy them on the local registry and start the services.
+It will monitor the projects to detect the changes and restart the containers when needed
