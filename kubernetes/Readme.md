@@ -35,6 +35,13 @@ Must match the content of `05-storage-db.yaml`
 
 ## start the objstorage
 
+- build image
+```
+# docker build -f Dockerfile.objstorage -t swh/objstorage --build-arg BASE=swh/stack .
+# docker tag swh/objstorage:latest registry.default/swh/objstorage:latest
+# docker push registry.default/swh/objstorage:latest
+```
+
 - start the service
 ```
 # cd kubernetes
