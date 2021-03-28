@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: scheduler-db
   local:
-    path: /srv/softwareheritage/dev/scheduler-db
+    path: /srv/softwareheritage-kube/dev/scheduler-db
   nodeAffinity:
     required:
       nodeSelectorTerms:

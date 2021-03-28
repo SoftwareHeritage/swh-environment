@@ -46,7 +46,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: objstorage-pv
   local:
-    path: /srv/softwareheritage-kube/objects
+    path: /srv/softwareheritage-kube/dev/objects
   nodeAffinity:
     required:
       nodeSelectorTerms:
