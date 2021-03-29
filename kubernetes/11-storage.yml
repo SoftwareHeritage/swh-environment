@@ -7,7 +7,7 @@ data:
   config.yml: |
     storage:
       cls: local
-      db: postgresql:///?service=swh-storage
+      db: postgresql:///?service=swh
       objstorage:
         cls: remote
         url: http://objstorage:5003/
@@ -18,10 +18,39 @@ data:
             - kafka
           prefix: swh.journal.objects
           client_id: swh.storage.master
+  entrypoint-init-db.sh: |
+    #!/bin/bash
+
+    set -e
+
+    echo -n "waiting for database availability"
+    set +e
+    ko=1
+    while [[ $ko -gt 0 ]]; do PGCONNECT_TIMEOUT=2 psql --list &>/dev/null;ko=$?; echo -n .; sleep 0.5; done
+    echo
+    set -e
+
+    echo Init swh-storage database
+
+    echo Creating extensions...
+    swh db init-admin --db-name ${PGDATABASE} storage
+
+    echo Initializing the database...
+    swh db init --db-name ${PGDATABASE} storage
+
   entrypoint.sh: |
     #!/bin/bash
 
     set -e
+
+    echo "${PGHOST}:5432:${PGDATABASE}:${PGUSER}:${PGPASSWORD}" >> ~/.pgpass
+    cat >> ~/.pg_service.conf <<EOF
+    [${PGDATABASE}]
+    dbname=${PGDATABASE}
+    host=${PGHOST}
+    port=5432
+    user=${PGUSER}
+    EOF
 
     echo Starting the swh-storage API server
     exec gunicorn --bind 0.0.0.0:5002 \
@@ -53,6 +82,47 @@ spec:
       labels:
         app: storage
     spec:
+      initContainers:
+        - name: storage-init
+          image: swh/storage:latest
+          imagePullPolicy: Always
+          command: 
+            - /entrypoint.sh
+          env:
+          - name: POSTGRES_PASSWORD_FILE
+            value: "/run/secrets/postgres-password"
+          - name: PGHOST
+            value: "storage-db"
+          - name: PGUSER
+            valueFrom:
+              configMapKeyRef:
+                name: storage-db
+                key: POSTGRES_USER
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: storage-db
+                key: POSTGRES_PASSWORD
+          - name: PGDATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: storage-db
+                key: POSTGRES_DB
+          - name: SWH_CONFIG_FILENAME
+            value: /etc/softwareheritage/config.yml
+          volumeMounts:
+            - name: db-password
+              mountPath: /run/secrets/postgres-password
+              subPath: POSTGRES_PASSWORD
+              readOnly: true
+            - name: config
+              mountPath: /etc/softwareheritage/config.yml
+              subPath: config.yml
+              readOnly: true
+            - name: config
+              mountPath: /entrypoint.sh
+              subPath: entrypoint-init-db.sh
+              readOnly: true
       containers:
       - name: storage
         image: swh/storage:latest
@@ -69,7 +139,7 @@ spec:
         - name: STATSD_PORT
           value: "9125"
         - name: POSTGRES_PASSWORD_FILE
-          value: "/etc/softwareheritage/db-password"
+          value: "/run/secrets/postgres-password"
         - name: PGHOST
           value: "storage-db"
         - name: PGUSER
@@ -77,12 +147,12 @@ spec:
             configMapKeyRef:
               name: storage-db
               key: POSTGRES_USER
-        - name: POSTGRES_PASSWORD
+        - name: PGPASSWORD
           valueFrom:
             secretKeyRef:
               name: storage-db
               key: POSTGRES_PASSWORD
-        - name: POSTGRES_DB
+        - name: PGDATABASE
           valueFrom:
             configMapKeyRef:
               name: storage-db
@@ -102,6 +172,13 @@ spec:
             mountPath: /entrypoint.sh
             subPath: entrypoint.sh
             readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
       volumes:
         - name: config
           configMap:
