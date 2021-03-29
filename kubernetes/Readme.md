@@ -3,8 +3,8 @@
 
 ### Directories
 ```
-# sudo mkdir -p /srv/softwareheritage-kube/storage-db
-# sudo mkdir -p /srv/softwareheritage-kube/objects
+# sudo mkdir -p /srv/softwareheritage-kube/dev/storage-db
+# sudo mkdir -p /srv/softwareheritage-kube/dev/objects
 ```
 Must match the content of `02-storage-db.yaml`
 
