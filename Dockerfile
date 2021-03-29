@@ -41,15 +41,20 @@ RUN pip install flask gunicorn httpie
 # swh-packages
 FROM swh-base as swh-packages
 
+# Install command line
+# RUN pip install swh-core
+
 # Install requirements.txt only if there is any changes
-COPY swh-model/requirements.txt /app/requirements-model.txt
-COPY swh-core/requirements.txt /app/requirements-core.txt
-COPY swh-journal/requirements.txt /app/requirements-journal.txt
-RUN . /srv/softwareheritage/venv/bin/activate && cat /app/requirements-*.txt > /tmp/requirements.txt && pip install -r /tmp/requirements.txt \ 
-    && pip install decorator aiohttp_utils blinker
+# COPY swh-model/requirements.txt /app/requirements-model.txt
+# COPY swh-core/requirements.txt /app/requirements-core.txt
+# COPY swh-journal/requirements.txt /app/requirements-journal.txt
+
+# RUN cat /app/requirements-*.txt > /tmp/requirements.txt && pip install -r /tmp/requirements.txt \ 
+#     && pip install decorator aiohttp_utils blinker
     # && rm /srv/requirements*
 
 # Copy source code
-COPY swh-model/swh /app/swh
-COPY swh-core/swh /app/swh
-COPY swh-journal/swh /app/swh
+COPY swh-model /app/swh-model
+COPY swh-core /app/swh-core
+COPY swh-journal /app/swh-journal
+RUN pip install swh-model && pip install swh-core && pip install swh-journal
