@@ -35,7 +35,7 @@ RUN python3 -m venv /srv/softwareheritage/venv
 ENV PATH="/srv/softwareheritage/venv/bin:${PATH}"
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install flask gunicorn httpie
+RUN pip install flask gunicorn httpie decorator aiohttp_utils blinker
 
 ###
 # swh-packages
@@ -49,8 +49,8 @@ FROM swh-base as swh-packages
 # COPY swh-core/requirements.txt /app/requirements-core.txt
 # COPY swh-journal/requirements.txt /app/requirements-journal.txt
 
+
 # RUN cat /app/requirements-*.txt > /tmp/requirements.txt && pip install -r /tmp/requirements.txt \ 
-#     && pip install decorator aiohttp_utils blinker
     # && rm /srv/requirements*
 
 # Copy source code
