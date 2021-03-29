@@ -34,3 +34,4 @@ deploy:
     - kubernetes/11-storage.yml
     - kubernetes/15-scheduler-db.yml
     - kubernetes/20-scheduler.yml
+    - kubernetes/25-rabbitmq.yml

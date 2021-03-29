@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: amqp
+  labels:
+    app: amqp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: amqp
+  template:
+    metadata:
+      labels:
+        app: amqp
+    spec:
+      containers:
+      - name: amqp
+        image: rabbitmq:3.6-management
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5672
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: amqp
+spec:
+  type: ClusterIP
+  selector:
+    app: amqp
+  ports:
+    - port: 5672
+      targetPort: 5672
