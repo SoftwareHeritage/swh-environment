@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: storage-db
   local:
-    path: /srv/softwareheritage/dev/storage-db
+    path: /srv/softwareheritage-kube/dev/storage-db
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -34,7 +34,6 @@ spec:
   resources:
     requests:
       storage: 10Gi
-
 ---
 ## TODO Change this to your real postgresql password
 apiVersion: v1
@@ -107,6 +106,13 @@ spec:
         volumeMounts:
         - mountPath: "/var/lib/postgresql"
           name: storage-db-pvc
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
       volumes:
         - name: storage-db-pvc
           persistentVolumeClaim:
