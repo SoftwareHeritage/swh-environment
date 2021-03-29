@@ -79,9 +79,16 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 5432
+        args:
+          - "-c"
+          - "shared_buffers=512MB"
+          - "-c" 
+          - "effective_cache_size=512MB"
+          - "-c"
+          - "random_page_cost=1.5"
+          - "-c"
+          - "max_wal_size=512MB"
         env:
-          - name: PGOPTIONS
-            value: -c shared_buffers=4GB  -c effective_cache_size=4GB -c random_page_cost=1.5 -c max_wal_size=4GB
           - name: POSTGRES_USER
             valueFrom:
               configMapKeyRef:
@@ -98,7 +105,7 @@ spec:
                 name: storage-db
                 key: POSTGRES_DB
         volumeMounts:
-        - mountPath: "/var/lib/postgresql/data"
+        - mountPath: "/var/lib/postgresql"
           name: storage-db-pvc
       volumes:
         - name: storage-db-pvc
