@@ -184,6 +184,11 @@ and API</a> for more information</p>
 
 ## Development
 
+To access the services, they must be declared on the `/etc/hosts` file:
+```
+127.0.0.1 objstorage.default storage.default webapp.default scheduler.default
+```
+
 ### Skaffold
 
 To start the development environment using skaffold, use the following command:
