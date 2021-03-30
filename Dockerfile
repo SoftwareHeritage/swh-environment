@@ -54,6 +54,13 @@ FROM swh-base as swh-packages
     # && rm /srv/requirements*
 
 # Copy source code
+COPY --chown=swh:swh swh-model /app/swh-model
+COPY --chown=swh:swh swh-core /app/swh-core
+COPY --chown=swh:swh swh-journal /app/swh-journal
+
 RUN pip install swh-model && pip install swh-core && pip install swh-journal 
 COPY --chown=swh:swh docker/utils /srv/softwareheritage/utils/
 
+USER root
+RUN rm -rf /app/swh-*
+USER swh 
