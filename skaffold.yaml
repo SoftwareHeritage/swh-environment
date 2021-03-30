@@ -25,6 +25,12 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
+  - image: swh/webapp
+    docker:
+      dockerfile: Dockerfile.webapp
+    requires:
+      - image: swh/stack-base
+        alias: BASE
 deploy:
   kubectl:
     manifests:
@@ -35,3 +41,4 @@ deploy:
     - kubernetes/15-scheduler-db.yml
     - kubernetes/20-scheduler.yml
     - kubernetes/25-rabbitmq.yml
+    - kubernetes/30-webapp.yml

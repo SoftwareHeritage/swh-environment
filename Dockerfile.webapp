@@ -1,0 +1,23 @@
+ARG BASE
+
+FROM $BASE
+
+COPY swh-auth /app/swh-vault
+RUN pip install swh-auth
+COPY swh-vault /app/swh-vault
+RUN pip install swh-vault
+COPY swh-indexer /app/swh-indexer
+RUN pip install swh-indexer
+COPY swh-scheduler /app/swh-scheduler
+RUN pip install swh-scheduler
+COPY swh-search /app/swh-search
+RUN pip install swh-search
+COPY swh-storage /app/swh-storage
+RUN pip install swh-storage
+COPY swh-web /app/swh-web
+RUN pip install swh-web
+
+COPY --chown=swh:swh docker/services/swh-web/entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
+
+# RUN for module in $(ls -d swh-*); do echo Installing $module; pip install $module; done

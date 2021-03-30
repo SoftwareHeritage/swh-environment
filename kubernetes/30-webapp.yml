@@ -1,0 +1,190 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapp
+data:
+  config.yml: |
+    storage:
+      cls: remote
+      args:
+        url: http://storage:5002/
+        timeout: 1
+
+    objstorage:
+      cls: remote
+      args:
+        url: http://objstorage:5003/
+
+    # indexer_storage:
+    #   cls: remote
+    #   args:
+    #     url: http://indexer-storage:5007/
+
+    scheduler:
+      cls: remote
+      args:
+        url: http://scheduler:5008/
+
+    # vault:
+    #   cls: remote
+    #   args:
+    #     url: http://vault:5005/
+
+    # deposit:
+    #   private_api_url: https://deposit:5006/1/private/
+    #   private_api_user: swhworker
+    #   private_api_password: ''
+
+    # TODO: remove the *
+    allowed_hosts:
+      - "*"
+      - appserver
+
+    debug: yes
+
+    serve_assets: yes
+
+    throttling:
+      cache_uri: memcached:11211
+      scopes:
+        swh_api:
+          limiter_rate:
+            default: 120/h
+          exempted_networks:
+            - 0.0.0.0/0
+        swh_api_origin_search:
+          limiter_rate:
+            default: 70/m
+          exempted_networks:
+            - 0.0.0.0/0
+        swh_api_origin_visit_latest:
+          limiter_rate:
+            default: 700/m
+          exempted_networks:
+            - 0.0.0.0/0
+        swh_vault_cooking:
+          limiter_rate:
+            default: 120/h
+          exempted_networks:
+            - 0.0.0.0/0
+        swh_save_origin:
+          limiter_rate:
+            default: 120/h
+          exempted_networks:
+            - 0.0.0.0/0
+
+    development_db: /tmp/db.sqlite3
+    production_db: /tmp/db.sqlite3
+
+    search: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: memcached
+spec:
+  type: ClusterIP
+  selector:
+    app: memcached
+  ports:
+    - port: 11211
+      targetPort: 11211
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memcached
+  labels:
+    app: memcached
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memcached
+  template:
+    metadata:
+      labels:
+        app: memcached
+    spec:
+      containers:
+      - name: memcached
+        image: memcached
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp
+spec:
+  selector:
+    app: webapp
+  ports:
+    - port: 5004
+      targetPort: 5004
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: webapp
+  labels:
+    name: webapp
+spec:
+  rules:
+    - host: webapp.default
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: webapp
+                port:
+                  number: 5004
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+spec:
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp
+          image: swh/webapp:latest
+          command:
+            - /entrypoint.sh
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5004
+          env:
+            - name: PORT
+              value: "5004"
+            - name: VERBOSITY
+              value: "3"
+            - name: DJANGO_SETTINGS_MODULE
+              value: swh.web.settings.production
+            - name: SWH_CONFIG_FILENAME
+              value: /etc/softwareheritage/config.yml
+          volumeMounts:
+            - name: config
+              mountPath: /etc/softwareheritage/config.yml
+              subPath: config.yml
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: webapp
