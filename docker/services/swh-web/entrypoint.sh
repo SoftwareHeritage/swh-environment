@@ -15,6 +15,9 @@ if not User.objects.filter(username = username).exists():
     User.objects.create_superuser(username, email, password);
 "
 
+source /srv/softwareheritage/utils/pgsql.sh
+setup_pgsql
+
 source /srv/softwareheritage/utils/pyutils.sh
 setup_pip
 
@@ -25,6 +28,8 @@ case "$1" in
      *)
         echo "Starting memcached"
         memcached&
+
+        wait_pgsql
 
         echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"
         django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}

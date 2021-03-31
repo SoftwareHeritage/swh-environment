@@ -211,6 +211,10 @@ services:
       - "./services/swh-indexer-storage/entrypoint.sh:/entrypoint.sh:ro"
 
   # Web interface
+  swh-web-db:
+    image: postgres:12
+    env_file:
+      - ./env/01-web-db.env
 
   swh-web:
     build: ./
@@ -220,8 +224,11 @@ services:
     depends_on:
       - swh-storage
       - swh-idx-storage
+      - swh-web-db
     env_file:
       - ./env/common_python.env
+      - ./env/01-web-db.env
+      - ./env/02-web-db.env
     environment:
       VERBOSITY: 3
       DJANGO_SETTINGS_MODULE: swh.web.settings.production

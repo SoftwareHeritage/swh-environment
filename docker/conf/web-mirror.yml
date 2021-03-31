@@ -31,3 +31,10 @@ allowed_hosts:
 debug: yes
 
 serve_assets: yes
+
+production_db:
+  host: swh-web-db
+  port: 5432
+  name: swh-web
+  user: postgres
+  password: testpassword

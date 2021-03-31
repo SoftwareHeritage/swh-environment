@@ -28,8 +28,12 @@ debug: yes
 
 serve_assets: yes
 
-development_db: /tmp/db.sqlite3
-production_db: /tmp/db.sqlite3
+production_db:
+  host: swh-web-db
+  port: 5432
+  name: swh-web
+  user: postgres
+  password: testpassword
 
 throttling:
   cache_uri: 127.0.0.1:11211
