@@ -31,6 +31,12 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
+  - image: swh/loaders
+    docker:
+      dockerfile: Dockerfile.loaders
+    requires:
+      - image: swh/stack-base
+        alias: BASE
 deploy:
   kubectl:
     manifests:
@@ -42,3 +48,4 @@ deploy:
     - kubernetes/20-scheduler.yml
     - kubernetes/25-rabbitmq.yml
     - kubernetes/30-webapp.yml
+    - kubernetes/40-loaders.yml

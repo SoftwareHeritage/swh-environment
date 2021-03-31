@@ -1,0 +1,12 @@
+ARG BASE
+
+FROM $BASE
+
+COPY swh-scheduler /app/swh-scheduler
+COPY swh-loader-core /app/swh-loader-core
+COPY swh-loader-git /app/swh-loader-git
+# COPY swh-loader-svn /app/swh/swh-loader-svn
+# COPY swh-loader-mercurial /app/swh/swh-loader-mercurial
+
+RUN pip install /app/swh-scheduler && pip install /app/swh-loader-core && pip install /app/swh-loader-git
+#    pip install /app/swh-loader-svn && pip install /app/swh-loader-mercurial
