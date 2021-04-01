@@ -16,8 +16,3 @@ COPY swh-storage /app/swh-storage
 RUN pip install swh-storage
 COPY swh-web /app/swh-web
 RUN pip install swh-web
-
-COPY --chown=swh:swh docker/services/swh-web/entrypoint.sh /entrypoint.sh
-RUN chmod u+x /entrypoint.sh
-
-# RUN for module in $(ls -d swh-*); do echo Installing $module; pip install $module; done

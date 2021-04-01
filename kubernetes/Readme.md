@@ -3,7 +3,7 @@
 ### Directories
 
 ```
-# sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka}
+# sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db}
 ```
 
 Must match the content of `05-storage-db.yaml`

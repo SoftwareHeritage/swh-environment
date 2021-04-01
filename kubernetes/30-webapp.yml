@@ -74,10 +74,49 @@ data:
           exempted_networks:
             - 0.0.0.0/0
 
-    development_db: /tmp/db.sqlite3
-    production_db: /tmp/db.sqlite3
-
     search: {}
+  entrypoint-init.sh: |
+    #!/bin/bash
+
+    set -e
+
+    source /srv/softwareheritage/utils/pgsql.sh
+
+    create_admin_script="
+    from django.contrib.auth import get_user_model
+
+    username = 'admin';
+    password = 'admin';
+    email = 'admin@swh-web.org';
+
+    User = get_user_model();
+
+    if not User.objects.filter(username = username).exists():
+        User.objects.create_superuser(username, email, password);
+    "
+
+    echo "waiting for database availability"
+    wait_pgsql ${PGDATABASE}
+
+    echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"
+    django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
+
+    echo "Creating Django admin user"
+    echo "$create_admin_script" | python3 -m swh.web.manage shell
+
+  entrypoint.sh: |
+    #!/bin/bash
+
+    set -e
+
+    echo "starting the swh-web server"
+    exec gunicorn --bind 0.0.0.0:5004 \
+         --threads 2 \
+         --workers 2 \
+         --timeout 3600 \
+         --access-logfile '-' \
+         --config 'python:swh.web.gunicorn_config' \
+         'django.core.wsgi:get_wsgi_application()'
 ---
 apiVersion: v1
 kind: Service
@@ -159,6 +198,41 @@ spec:
       labels:
         app: webapp
     spec:
+      initContainers:
+        - name: web-init
+          image: swh/webapp:latest
+          imagePullPolicy: Always
+          command:
+            - /entrypoint.sh
+          env:
+          - name: PGHOST
+            value: "web-db"
+          - name: PGUSER
+            valueFrom:
+              configMapKeyRef:
+                name: web-db
+                key: POSTGRES_USER
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: web-db
+                key: POSTGRES_PASSWORD
+          - name: PGDATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: web-db
+                key: POSTGRES_DB
+          - name: DJANGO_SETTINGS_MODULE
+            value: swh.web.settings.production
+          volumeMounts:
+            - name: db-password
+              mountPath: /run/secrets/postgres-password
+              subPath: POSTGRES_PASSWORD
+              readOnly: true
+            - name: config
+              mountPath: /entrypoint.sh
+              subPath: entrypoint-init.sh
+              readOnly: true
       containers:
         - name: webapp
           image: swh/webapp:latest
@@ -184,7 +258,15 @@ spec:
               mountPath: /etc/softwareheritage/config.yml
               subPath: config.yml
               readOnly: true
+            - name: config
+              mountPath: /entrypoint.sh
+              subPath: entrypoint.sh
+              readOnly: true
       volumes:
         - name: config
           configMap:
             name: webapp
+            defaultMode: 0777
+        - name: db-password
+          secret:
+            secretName: web-db
