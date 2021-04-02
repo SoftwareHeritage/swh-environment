@@ -224,11 +224,11 @@ spec:
                 name: kafka
           resources:
             requests:
-              memory: "256Mi"
-              cpu: "100m"
-            limits:
-              memory: "512Mi"
+              memory: "1024Mi"
               cpu: "200m"
+            limits:
+              memory: "1536Mi"
+              cpu: "300m"
           volumeMounts:
             - mountPath: "/kafka"
               name: kafka-pvc
