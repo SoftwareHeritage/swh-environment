@@ -3,7 +3,9 @@
 ### Directories
 
 ```
-# sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db}
+# sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog}
+# sudo chown 1000:1000 /srv/softwareheritage-kube/dev/objects
+# sudo chown nobody:nogroup /srv/softwareheritage-kube/dev/prometheus
 ```
 
 Must match the content of `05-storage-db.yaml`
