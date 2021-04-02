@@ -193,6 +193,10 @@ spec:
   selector:
     matchLabels:
       app: webapp
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
   template:
     metadata:
       labels:
@@ -236,8 +240,25 @@ spec:
       containers:
         - name: webapp
           image: swh/webapp:latest
+          imagePullPolicy: Always
           command:
             - /entrypoint.sh
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5004
+              scheme: "HTTP"
+            initialDelaySeconds: 0
+            failureThreshold: 2
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /
+              port: 5004
+              scheme: "HTTP"
+            initialDelaySeconds: 5
+            failureThreshold: 30
+            periodSeconds: 1
           resources:
             limits:
               memory: "256Mi"
