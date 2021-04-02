@@ -1,8 +1,6 @@
 ARG BASE
 
 FROM $BASE
-COPY swh-objstorage/requirements.txt /app/requirements-objstorage.txt
 
-RUN . /srv/softwareheritage/venv/bin/activate && pip install -r /app/requirements-objstorage.txt
-
-COPY swh-objstorage/swh /app/swh
+COPY swh-objstorage /app/swh-objstorage
+RUN pip install /app/swh-objstorage
