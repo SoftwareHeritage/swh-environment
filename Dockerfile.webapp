@@ -2,17 +2,17 @@ ARG BASE
 
 FROM $BASE
 
-COPY swh-auth /app/swh-vault
-RUN pip install swh-auth
+COPY swh-auth /app/swh-auth
+RUN pip install /app/swh-auth
 COPY swh-vault /app/swh-vault
-RUN pip install swh-vault
+RUN pip install /app/swh-vault
 COPY swh-indexer /app/swh-indexer
-RUN pip install swh-indexer
+RUN pip install /app/swh-indexer
 COPY swh-scheduler /app/swh-scheduler
-RUN pip install swh-scheduler
+RUN pip install /app/swh-scheduler
 COPY swh-search /app/swh-search
-RUN pip install swh-search
+RUN pip install /app/swh-search
 COPY swh-storage /app/swh-storage
-RUN pip install swh-storage
+RUN pip install /app/swh-storage
 COPY swh-web /app/swh-web
-RUN pip install swh-web
+RUN pip install /app/swh-web
