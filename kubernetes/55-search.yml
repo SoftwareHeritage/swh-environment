@@ -1,0 +1,148 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: search
+data:
+  config.yml: |
+    search:
+      cls: elasticsearch
+      hosts:
+        - elasticsearch:9200
+  entrypoint-init.sh: |
+    #!/bin/bash
+
+    set -e
+
+    wait-for-it elasticsearch:9200 -s --timeout=0
+
+    echo "Waiting for ElasticSearch cluster to be up"
+    cat << EOF | python3
+    import elasticsearch
+    es = elasticsearch.Elasticsearch(['elasticsearch:9200'])
+    es.cluster.health(wait_for_status='yellow')
+    EOF
+
+    echo "Initialize elasticsearch index"
+    swh search -C $SWH_CONFIG_FILENAME initialize
+
+  entrypoint.sh: |
+    #!/bin/bash
+
+    set -e
+
+    exec gunicorn --bind 0.0.0.0:5010 \
+         --reload \
+         --threads 4 \
+         --workers 2 \
+         --log-level DEBUG \
+         --timeout 3600 \
+         --config 'python:swh.core.api.gunicorn_config' \
+         'swh.search.api.server:make_app_from_configfile()'
+      ;;
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search
+  labels:
+    app: search
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: search
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: search
+    spec:
+      initContainers:
+      - name: search-init
+        image: swh/search:latest
+        imagePullPolicy: Always
+        command:
+        - /entrypoint.sh
+        env:
+          - name: SWH_CONFIG_FILENAME
+            value: /etc/softwareheritage/config.yml
+        volumeMounts:
+          - name: config
+            mountPath: /etc/softwareheritage/config.yml
+            subPath: config.yml
+            readOnly: true
+          - name: config
+            mountPath: /entrypoint.sh
+            subPath: entrypoint-init.sh
+            readOnly: true
+      containers:
+      - name: search
+        image: swh/search:latest
+        imagePullPolicy: Always
+        command:
+          - /entrypoint.sh
+        ports:
+          - containerPort: 5010
+        env:
+          - name: PORT
+            value: "5010"
+          - name: STATSD_HOST
+            value: "prometheus-statsd-exporter"
+          - name: STATSD_PORT
+            value: "9125"
+          - name: SWH_CONFIG_FILENAME
+            value: /etc/softwareheritage/config.yml
+        volumeMounts:
+          - name: config
+            mountPath: /etc/softwareheritage/config.yml
+            subPath: config.yml
+            readOnly: true
+          - name: config
+            mountPath: /entrypoint.sh
+            subPath: entrypoint.sh
+            readOnly: true
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1024Mi"
+            cpu: "500m"
+      volumes:
+        - name: config
+          configMap:
+            name: search
+            defaultMode: 0777
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: search
+spec:
+  type: ClusterIP
+  selector:
+    app: search
+  ports:
+    - port: 5010
+      targetPort: 5010
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: search
+spec:
+  rules:
+  - host: search.default
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: search
+            port:
+              number: 5010

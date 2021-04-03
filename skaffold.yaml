@@ -40,6 +40,12 @@ build:
   - image: swh/grafana
     docker:
       dockerfile: Dockerfile.grafana
+  - image: swh/search
+    docker:
+      dockerfile: Dockerfile.search
+    requires:
+      - image: swh/stack-base
+        alias: BASE
 deploy:
   kubectl:
     manifests:
@@ -56,3 +62,4 @@ deploy:
     - kubernetes/30-webapp.yml
     - kubernetes/40-loaders.yml
     - kubernetes/50-elasticsearch.yml
+    - kubernetes/55-search.yml
