@@ -1,0 +1,133 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scheduler-runner
+data:
+  config.yml: |
+    scheduler:
+      cls: remote
+      url: http://scheduler:5008
+    celery:
+      task_broker: amqp://guest:guest@amqp/%2f
+      broker_transport_options:
+        max_retries: 1
+
+  entrypoint-init.sh: |
+    #!/bin/bash
+
+    set -e
+
+    echo Waiting on the scheduler service
+    wait-for-it scheduler:5008 -s --timeout=0
+
+    echo Waiting on the rabbit
+    exec wait-for-it amqp:5672 -s --timeout=0
+  entrypoint.sh: |
+    #!/bin/bash
+
+    set -e
+
+    echo "Starting the swh-scheduler"
+    swh --log-level ${LOGLEVEL} scheduler -C /etc/softwareheritage/config.yml start-runner --period 10
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scheduler-runner
+  labels:
+    app: scheduler-runner
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: scheduler-runner
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: scheduler-runner
+    spec:
+      initContainers:
+        - name: scheduler-runner-init
+          image: swh/scheduler:latest
+          imagePullPolicy: Always
+          command:
+          - /entrypoint-init.sh
+          volumeMounts:
+          - name: config
+            mountPath: /entrypoint-init.sh
+            subPath: entrypoint-init.sh
+            readOnly: true
+      containers:
+      - name: scheduler-runner
+        image: swh/scheduler:latest
+        imagePullPolicy: Always
+        command:
+        - /entrypoint.sh
+        ports:
+        - containerPort: 5008
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "128Mi"
+          limits:
+            cpu: "250m"
+            memory: "256Mi"
+        env:
+        - name: PORT
+          value: "5008"
+        - name: STATSD_HOST
+          value: "prometheus-statsd-exporter"
+        - name: STATSD_PORT
+          value: "9125"
+        - name: SWH_CONFIG_FILENAME
+          value: /etc/softwareheritage/config.yml
+        - name: LOGLEVEL
+          value: DEBUG
+        volumeMounts:
+          - name: config
+            mountPath: /etc/softwareheritage/config.yml
+            subPath: config.yml
+            readOnly: true
+          - name: config
+            mountPath: /entrypoint.sh
+            subPath: entrypoint.sh
+            readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: scheduler-runner
+            defaultMode: 0777
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scheduler-runner
+spec:
+  type: ClusterIP
+  selector:
+    app: scheduler-runner
+  ports:
+    - port: 5008
+      targetPort: 5008
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: scheduler-runner
+spec:
+  rules:
+  - host: scheduler-runner.default
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: scheduler-runner
+            port:
+              number: 5008
