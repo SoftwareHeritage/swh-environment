@@ -55,3 +55,4 @@ deploy:
     - kubernetes/29-web-db.yml
     - kubernetes/30-webapp.yml
     - kubernetes/40-loaders.yml
+    - kubernetes/50-elasticsearch.yml

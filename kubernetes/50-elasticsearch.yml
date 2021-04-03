@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: elasticsearch-data-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: elasticsearch-data-pv
+  local:
+    path: /srv/softwareheritage-kube/dev/elasticsearch/nodes
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            # TODO adapt for your needs
+            - key: kubernetes.io/os
+              operator: In
+              values:
+                - linux
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: elasticsearch-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: elasticsearch-data-pv
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elasticsearch
+  labels:
+    app: elasticsearch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels:
+        app: elasticsearch
+    spec:
+      containers:
+        - name: elasticsearch
+          image: elasticsearch:7.9.3
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9200
+          resources:
+            requests:
+              memory: "768Mi"
+              cpu: "50m"
+            limits:
+              memory: "2048Mi"
+              cpu: "1000m"
+          env:
+            - name: discovery.type
+              value: single-node
+          volumeMounts:
+            - mountPath: "/data"
+              name: elasticsearch-data-pvc
+      volumes:
+        - name: elasticsearch-data-pvc
+          persistentVolumeClaim:
+            claimName: elasticsearch-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+spec:
+  type: ClusterIP
+  selector:
+    app: elasticsearch
+  ports:
+    - port: 9200
+      targetPort: 9200
