@@ -45,8 +45,8 @@ deploy:
     - kubernetes/10-objstorage.yml
     - kubernetes/11-storage.yml
     - kubernetes/15-scheduler-db.yml
+    - kubernetes/16-rabbitmq.yml
     - kubernetes/20-scheduler.yml
-    - kubernetes/25-rabbitmq.yml
     - kubernetes/29-web-db.yml
     - kubernetes/30-webapp.yml
     - kubernetes/40-loaders.yml
