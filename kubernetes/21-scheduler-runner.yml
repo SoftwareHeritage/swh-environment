@@ -87,7 +87,7 @@ spec:
         - name: SWH_CONFIG_FILENAME
           value: /etc/softwareheritage/config.yml
         - name: LOGLEVEL
-          value: DEBUG
+          value: INFO
         volumeMounts:
           - name: config
             mountPath: /etc/softwareheritage/config.yml
