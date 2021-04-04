@@ -40,3 +40,24 @@ spec:
   ports:
     - port: 5672
       targetPort: 5672
+      name: rabbitmq
+    - port: 15672
+      targetPort: 15672
+      name: rabbitmq-admin
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: amqp
+spec:
+  rules:
+  - host: rabbitmq.default
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: amqp
+            port:
+              number: 15672
