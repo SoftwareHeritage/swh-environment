@@ -63,3 +63,4 @@ deploy:
     - kubernetes/40-loaders.yml
     - kubernetes/50-elasticsearch.yml
     - kubernetes/55-search.yml
+    - kubernetes/22-scheduler-listener.yml
