@@ -1,0 +1,334 @@
+# -------
+# Prometheus statsd exporter configuration
+# -------
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-statsd-exporter
+data:
+  config.yml: |
+    defaults:
+      timer_type: histogram
+      buckets:
+        - .005
+        - .01
+        - .025
+        - .05
+        - .1
+        - .25
+        - .5
+        - .75
+        - 1
+        - 2
+        - 5
+        - 10
+        - 15
+        - 30
+        - 45
+        - 60
+        - 120
+        - 300
+        - 600
+        - 900
+        - 1800
+        - 2700
+        - 3600
+        - 7200
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-statsd-exporter
+  labels:
+    app: prometheus-statsd-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-statsd-exporter
+  template:
+    metadata:
+      labels:
+        app: prometheus-statsd-exporter
+    spec:
+      containers:
+      - name: prometheus-statsd-exporter
+        image: prom/statsd-exporter
+        imagePullPolicy: Always
+        args:
+          - "--statsd.mapping-config=/etc/prometheus/statsd-mapping.yml"
+        ports:
+        - containerPort: 9125
+        volumeMounts:
+          - name: config
+            mountPath: /etc/prometheus/statsd-mapping.yml
+            subPath: config.yml
+            readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-statsd-exporter
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus-statsd-exporter
+spec:
+  type: ClusterIP
+  selector:
+    app: prometheus-statsd-exporter
+  ports:
+    - name: statsd
+      port: 9125
+      targetPort: 9125
+    - name: http
+      port: 9102
+      targetPort: 9102
+---
+# -------
+# Prometheus configuration
+# -------
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus
+data:
+  config.yml: |
+    # my global config
+    global:
+      scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+      evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+      # scrape_timeout is set to the global default (10s).
+
+    scrape_configs:
+      - job_name: prometheus
+        static_configs:
+        - targets:
+            - prometheus:9090
+        metrics_path: /prometheus/metrics
+
+      - job_name: statsd-exporter
+        static_configs:
+        - targets:
+            - prometheus-statsd-exporter:9102
+
+      - job_name: jmx-exporter-cassandra
+        static_configs:
+        - targets:
+            - prometheus-jmx-exporter-cassandra:5556
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: prometheus-pv
+  local:
+    path: /srv/softwareheritage-kube/dev/prometheus
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        # TODO adapt for your needs
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+spec:
+  type: ClusterIP
+  selector:
+    app: prometheus
+  ports:
+    - port: 9090
+      targetPort: 9090
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus
+spec:
+  rules:
+  - host: prometheus.default
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus
+            port: 
+              number: 9090
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: prometheus-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: prometheus-pv
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: prom/prometheus
+        imagePullPolicy: Always
+        args:
+          - "--config.file=/etc/prometheus/prometheus.yml"
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+          - name: config
+            mountPath: /etc/prometheus/prometheus.yml
+            subPath: config.yml
+            readOnly: true
+          - mountPath: "/prometheus/data"
+            name: prometheus-pvc
+        resources:
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus
+        - name: prometheus-pvc
+          persistentVolumeClaim:
+            claimName: prometheus-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: grafana-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: grafana-pv
+  local:
+    path: /srv/softwareheritage-kube/dev/grafana
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        # TODO adapt for your needs
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: grafana-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: grafana-pv
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+spec:
+  type: ClusterIP
+  selector:
+    app: grafana
+  ports:
+    - port: 3000
+      targetPort: 3000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+spec:
+  rules:
+  - host: grafana.default
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: grafana
+            port: 
+              number: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    app: grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      containers:
+      - name: grafana
+        image: swh/grafana
+        imagePullPolicy: Always
+        env:
+          - name: GF_SERVER_ROOT_URL
+            value: http://grafana.default
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: "50m"
+            memory: "128Mi"
+          limits:
+            cpu: "100m"
+            memory: "256Mi"
+        volumeMounts:
+          - mountPath: "/var/lib/grafana"
+            name: grafana-pvc
+      volumes:
+        - name: grafana-pvc
+          persistentVolumeClaim:
+            claimName: grafana-pvc

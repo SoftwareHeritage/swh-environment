@@ -37,10 +37,14 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
+  - image: swh/grafana
+    docker:
+      dockerfile: Dockerfile.grafana
 deploy:
   kubectl:
     manifests:
     - kubernetes/01-journal.yml
+    - kubernetes/02-monitoring.yml
     - kubernetes/05-storage-db.yml
     - kubernetes/10-objstorage.yml
     - kubernetes/11-storage.yml

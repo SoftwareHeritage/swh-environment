@@ -3,8 +3,9 @@
 ### Directories
 
 ```
-# sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog}
+# sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog,grafana}
 # sudo chown 1000:1000 /srv/softwareheritage-kube/dev/objects
+# sudo chown 472:0 /srv/softwareheritage-kube/dev/grafana
 # sudo chown nobody:nogroup /srv/softwareheritage-kube/dev/prometheus
 ```
 

@@ -1,0 +1,8 @@
+FROM grafana/grafana
+
+COPY --chown=grafana:root docker/conf/grafana/provisioning /etc/grafana/provisioning
+COPY --chown=grafana:root docker/conf/grafana/dashboards /etc/grafana/dashboards
+
+RUN sed -i 's|localhost:5080/prometheus|prometheus:9090|g' /etc/grafana/provisioning/datasources/prometheus.yaml && \
+    sed -i 's|access: direct|access: proxy|g' /etc/grafana/provisioning/datasources/prometheus.yaml && \
+    sed -i 's|/var/lib/grafana/dashboards|/etc/grafana/dashboards|g' /etc/grafana/provisioning/dashboards/all.yaml
