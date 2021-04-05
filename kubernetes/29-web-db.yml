@@ -102,7 +102,7 @@ spec:
                 name: web-db
                 key: POSTGRES_DB
         volumeMounts:
-        - mountPath: "/var/lib/postgresql"
+        - mountPath: "/var/lib/postgresql/data"
           name: web-db-pvc
         resources:
           requests:
@@ -139,4 +139,3 @@ spec:
   ports:
     - port: 5437
       targetPort: 5432  # internal port of the service
-

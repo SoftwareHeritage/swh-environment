@@ -102,7 +102,7 @@ spec:
                 name: scheduler-db
                 key: POSTGRES_DB
         volumeMounts:
-        - mountPath: "/var/lib/postgresql"
+        - mountPath: "/var/lib/postgresql/data"
           name: scheduler-db-pvc
         resources:
           requests:
