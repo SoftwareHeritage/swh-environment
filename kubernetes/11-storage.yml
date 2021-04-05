@@ -129,6 +129,22 @@ spec:
           - /entrypoint.sh
         ports:
         - containerPort: 5002
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5002
+            scheme: "HTTP"
+          initialDelaySeconds: 0
+          failureThreshold: 2
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /
+            port: 5002
+            scheme: "HTTP"
+          initialDelaySeconds: 5
+          failureThreshold: 30
+          periodSeconds: 1
         env:
         - name: PORT
           value: "5002"
@@ -173,10 +189,10 @@ spec:
         resources:
           requests:
             memory: "512Mi"
-            cpu: "250m"
+            cpu: "200m"
           limits:
             memory: "1024Mi"
-            cpu: "500m"
+            cpu: "300m"
       volumes:
         - name: config
           configMap:

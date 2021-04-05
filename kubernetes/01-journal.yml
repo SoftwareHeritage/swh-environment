@@ -94,10 +94,10 @@ spec:
             - containerPort: 2181
           resources:
             requests:
-              memory: "128Mi"
+              memory: "100Mi"
               cpu: "50m"
             limits:
-              memory: "256Mi"
+              memory: "200Mi"
               cpu: "100m"
           volumeMounts:
             - mountPath: "/data"
@@ -224,11 +224,11 @@ spec:
                 name: kafka
           resources:
             requests:
+              memory: "512Mi"
+              cpu: "100m"
+            limits:
               memory: "1024Mi"
               cpu: "200m"
-            limits:
-              memory: "1536Mi"
-              cpu: "300m"
           volumeMounts:
             - mountPath: "/kafka"
               name: kafka-pvc

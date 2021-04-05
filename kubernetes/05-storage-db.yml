@@ -80,13 +80,13 @@ spec:
         - containerPort: 5432
         args:
           - "-c"
-          - "shared_buffers=512MB"
+          - "shared_buffers=256MB"
           - "-c"
-          - "effective_cache_size=512MB"
+          - "effective_cache_size=256MB"
           - "-c"
           - "random_page_cost=1.5"
           - "-c"
-          - "max_wal_size=512MB"
+          - "max_wal_size=256MB"
         env:
           - name: POSTGRES_USER
             valueFrom:
@@ -108,11 +108,11 @@ spec:
           name: storage-db-pvc
         resources:
           requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
             memory: "512Mi"
             cpu: "250m"
-          limits:
-            memory: "1024Mi"
-            cpu: "500m"
       volumes:
         - name: storage-db-pvc
           persistentVolumeClaim:

@@ -268,9 +268,12 @@ spec:
             failureThreshold: 30
             periodSeconds: 1
           resources:
+            requests:
+              memory: "196Mi"
+              cpu: "50m"
             limits:
               memory: "256Mi"
-              cpu: "500m"
+              cpu: "512m"
           ports:
             - containerPort: 5004
           env:

@@ -216,6 +216,9 @@ spec:
           - mountPath: "/prometheus/data"
             name: prometheus-pvc
         resources:
+          requests:
+            cpu: "20m"
+            memory: "100Mi"
           limits:
             cpu: "100m"
             memory: "256Mi"

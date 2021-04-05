@@ -108,6 +108,13 @@ spec:
           - /entrypoint.sh
         ports:
         - containerPort: 5002
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "3000Mi"
+            cpu: "1200m"
         env:
         - name: CONCURRENCY
           value: "1"
