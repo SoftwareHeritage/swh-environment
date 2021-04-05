@@ -45,6 +45,14 @@ data:
 
     serve_assets: yes
 
+    # TODO find a way to make this dynamic
+    production_db:
+      host: web-db
+      port: 5432
+      name: swh-web
+      user: swh
+      password: swh
+
     throttling:
       cache_uri: memcached:11211
       scopes:
