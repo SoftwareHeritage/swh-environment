@@ -37,6 +37,12 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
+  - image: swh/listers
+    docker:
+      dockerfile: Dockerfile.listers
+    requires:
+      - image: swh/stack-base
+        alias: BASE
   - image: swh/grafana
     docker:
       dockerfile: Dockerfile.grafana
@@ -61,6 +67,7 @@ deploy:
     - kubernetes/29-web-db.yml
     - kubernetes/30-webapp.yml
     - kubernetes/40-loaders.yml
+    - kubernetes/45-listers.yml
     - kubernetes/50-elasticsearch.yml
     - kubernetes/55-search.yml
     - kubernetes/22-scheduler-listener.yml
