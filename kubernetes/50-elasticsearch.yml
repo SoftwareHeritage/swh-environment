@@ -12,7 +12,7 @@ spec:
   persistentVolumeReclaimPolicy: Delete
   storageClassName: elasticsearch-data-pv
   local:
-    path: /srv/softwareheritage-kube/dev/elasticsearch/nodes
+    path: /srv/softwareheritage-kube/dev/elasticsearch
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -43,6 +43,8 @@ metadata:
     app: elasticsearch
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: elasticsearch
@@ -67,9 +69,26 @@ spec:
           env:
             - name: discovery.type
               value: single-node
+            - name: ES_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
           volumeMounts:
             - mountPath: "/data"
               name: elasticsearch-data-pvc
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9200
+              scheme: "HTTP"
+            failureThreshold: 5
+            periodSeconds: 1
+          startupProbe:
+            httpGet:
+              path: /
+              port: 9200
+              scheme: "HTTP"
+            initialDelaySeconds: 5
+            failureThreshold: 60
+            periodSeconds: 2
       volumes:
         - name: elasticsearch-data-pvc
           persistentVolumeClaim:
