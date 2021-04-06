@@ -106,11 +106,11 @@ spec:
           name: web-db-pvc
         resources:
           requests:
-            memory: "128Mi"
-            cpu: "50m"
+            memory: "50Mi"
+            cpu: "10m"
           limits:
-            memory: "256Mi"
-            cpu: "200m"
+            memory: "100Mi"
+            cpu: "50m"
       volumes:
         - name: web-db-pvc
           persistentVolumeClaim:
