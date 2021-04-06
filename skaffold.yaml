@@ -64,10 +64,10 @@ deploy:
     - kubernetes/16-rabbitmq.yml
     - kubernetes/20-scheduler.yml
     - kubernetes/21-scheduler-runner.yml
+    - kubernetes/22-scheduler-listener.yml
     - kubernetes/29-web-db.yml
     - kubernetes/30-webapp.yml
     - kubernetes/40-loaders.yml
     - kubernetes/45-listers.yml
     - kubernetes/50-elasticsearch.yml
     - kubernetes/55-search.yml
-    - kubernetes/22-scheduler-listener.yml
