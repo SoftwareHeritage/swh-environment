@@ -71,3 +71,4 @@ deploy:
     - kubernetes/45-listers.yml
     - kubernetes/50-elasticsearch.yml
     - kubernetes/55-search.yml
+    - kubernetes/56-search-journal-client.yml
