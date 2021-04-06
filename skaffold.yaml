@@ -65,6 +65,7 @@ deploy:
     - kubernetes/20-scheduler.yml
     - kubernetes/21-scheduler-runner.yml
     - kubernetes/22-scheduler-listener.yml
+    - kubernetes/23-scheduler-journal-client.yml
     - kubernetes/29-web-db.yml
     - kubernetes/30-webapp.yml
     - kubernetes/40-loaders.yml
