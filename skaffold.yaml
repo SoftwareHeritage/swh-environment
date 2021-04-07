@@ -52,6 +52,12 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
+  - image: swh/counters
+    docker:
+      dockerfile: Dockerfile.counters
+    requires:
+      - image: swh/stack-base
+        alias: BASE
 deploy:
   kubectl:
     manifests:
@@ -73,3 +79,6 @@ deploy:
     - kubernetes/50-elasticsearch.yml
     - kubernetes/55-search.yml
     - kubernetes/56-search-journal-client.yml
+    - kubernetes/60-redis.yml
+    - kubernetes/61-counters.yml
+    - kubernetes/62-counters-journal-client.yml

@@ -1,0 +1,93 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-data-pv
+spec:
+  capacity:
+    storage: 1Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: redis-data-pv
+  local:
+    path: /srv/softwareheritage-kube/dev/redis
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            # TODO adapt for your needs
+            - key: kubernetes.io/os
+              operator: In
+              values:
+                - linux
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: redis-data-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: redis-data-pv
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  type: ClusterIP
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:latest
+          imagePullPolicy: Always
+          args:
+            - "--save"
+            - "60"
+            - "1" # flush every minutes
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "50m"
+            limits:
+              memory: "100Mi"
+              cpu: "100m"
+          volumeMounts:
+            - mountPath: "/data"
+              name: redis-data-pvc
+      volumes:
+        - name: redis-data-pvc
+          persistentVolumeClaim:
+            claimName: redis-data-pvc

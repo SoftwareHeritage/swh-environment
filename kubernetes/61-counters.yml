@@ -1,0 +1,167 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: counters
+data:
+  config.yml: |
+    counters:
+      cls: redis
+      host: redis:6379
+    history:
+      cls: prometheus
+      prometheus_host: prometheus
+      prometheus_port: 9090
+      live_data_start: 1609462861 # 2021-01-01
+      cache_base_directory: /tmp
+      interval: 1h
+  entrypoint.sh: |
+    #!/bin/bash
+
+    set -e
+
+    wait-for-it redis:6379 -s --timeout=0
+
+    exec gunicorn --bind 0.0.0.0:5011 \
+         --reload \
+         --threads 4 \
+         --workers 2 \
+         --log-level DEBUG \
+         --timeout 3600 \
+         --config 'python:swh.core.api.gunicorn_config' \
+         'swh.counters.api.server:make_app_from_configfile()'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counters
+  labels:
+    app: counters
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: counters
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: counters
+    spec:
+      containers:
+        - name: counters
+          image: swh/counters:latest
+          imagePullPolicy: Always
+          command:
+            - /entrypoint.sh
+          ports:
+            - containerPort: 5011
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5011
+              scheme: "HTTP"
+            initialDelaySeconds: 0
+            failureThreshold: 1
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /
+              port: 5011
+              scheme: "HTTP"
+            initialDelaySeconds: 5
+            failureThreshold: 30
+            periodSeconds: 1
+          env:
+            - name: PORT
+              value: "5010"
+            - name: STATSD_HOST
+              value: "prometheus-statsd-exporter"
+            - name: STATSD_PORT
+              value: "9125"
+            - name: SWH_CONFIG_FILENAME
+              value: /etc/softwareheritage/config.yml
+          volumeMounts:
+            - name: config
+              mountPath: /etc/softwareheritage/config.yml
+              subPath: config.yml
+              readOnly: true
+            - name: config
+              mountPath: /entrypoint.sh
+              subPath: entrypoint.sh
+              readOnly: true
+          resources:
+            requests:
+              memory: "75Mi"
+              cpu: "20m"
+            limits:
+              memory: "150Mi"
+              cpu: "200m"
+      volumes:
+        - name: config
+          configMap:
+            name: counters
+            defaultMode: 0777
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: counters
+spec:
+  type: ClusterIP
+  selector:
+    app: counters
+  ports:
+    - port: 5011
+      targetPort: 5011
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: counters
+spec:
+  rules:
+    - host: counters.default
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: counters
+                port:
+                  number: 5011
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: counters-history
+  labels:
+    app: counters-history
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: counters-history
+            image: curlimages/curl
+            imagePullPolicy: Always
+            args:
+            - -v
+            - -f
+            - -X
+            - POST 
+            - -H 
+            - "Content-Type: application/json"
+            - "http://counters:5011/refresh_history"
+            - "-d" 
+            - '{"cache_file": "history.json", "objects": ["content", "directory", "origin", "origin_visit", "origin_visit_status", "release", "revision", "snapshot"]}'
+          restartPolicy: Never
