@@ -4,11 +4,11 @@
 
 PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy"
 
-pip install --upgrade pip "$@"
+python3 -m pip install --upgrade pip "$@"
 
-pip install $PREREQUISITES "$@"
+python3 -m pip install $PREREQUISITES "$@"
 
 bin/pip-swh-packages --with-testing | \
     while read pkg_spec ; do
-        pip install $pkg_spec
+        python3 -m pip install $pkg_spec "$@"
     done
