@@ -163,5 +163,5 @@ spec:
             - "Content-Type: application/json"
             - "http://counters:5011/refresh_history"
             - "-d" 
-            - '{"cache_file": "history.json", "objects": ["content", "directory", "origin", "origin_visit", "origin_visit_status", "release", "revision", "snapshot"]}'
+            - '{"cache_file": "history.json", "objects": ["content", "origin", "revision"]}'
           restartPolicy: Never

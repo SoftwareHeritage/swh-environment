@@ -3,7 +3,7 @@
 ### Directories
 
 ```
-# sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog,grafana,elasticsearch}
+# sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog,grafana,elasticsearch,redis}
 # sudo chown 1000:1000 /srv/softwareheritage-kube/dev/{objects,elasticsearch}
 # sudo chown -R 999:999 /srv/softwareheritage-kube/dev/*-db
 # sudo chown 472:0 /srv/softwareheritage-kube/dev/grafana
@@ -190,7 +190,7 @@ and API</a> for more information</p>
 
 To access the services, they must be declared on the `/etc/hosts` file:
 ```
-127.0.0.1 objstorage.default storage.default webapp.default scheduler.default rabbitmq.default grafana.default prometheus.default
+127.0.0.1 objstorage.default storage.default webapp.default scheduler.default rabbitmq.default grafana.default prometheus.default counters.default
 ```
 
 ### Skaffold

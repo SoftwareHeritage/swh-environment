@@ -1,0 +1,7 @@
+ARG BASE
+
+FROM $BASE
+
+COPY swh-counters /app/swh-counters
+
+RUN pip install /app/swh-counters
