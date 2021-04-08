@@ -124,6 +124,12 @@ data:
         - targets:
             - counters:5011
         metrics_path: /metrics
+
+      - job_name: swh-webapp-metrics
+        static_configs:
+        - targets:
+            - webapp:5004
+        metrics_path: /metrics/prometheus/
 ---
 apiVersion: v1
 kind: PersistentVolume
