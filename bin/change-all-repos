@@ -5,7 +5,6 @@ import subprocess
 import sys
 from typing import List
 
-
 BIN_DIR = os.path.dirname(__file__)
 SWH_ENV_DIR = os.path.join(BIN_DIR, "..")
 
@@ -19,7 +18,7 @@ def change_repo(repo: str, command: str, commit_message: str):
     path = os.path.join(SWH_ENV_DIR, repo)
 
     print()
-    print("="*50)
+    print("=" * 50)
     print(f"In {repo}")
 
     # Check the repo doesn't have any uncommitted changes to tracked files
@@ -62,7 +61,6 @@ def change_repo(repo: str, command: str, commit_message: str):
             return
         else:
             exit(1)
-
 
     # Show the changes
     proc = subprocess.run(

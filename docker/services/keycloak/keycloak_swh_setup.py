@@ -6,8 +6,8 @@
 # See top-level LICENSE file for more information
 
 import logging
-from keycloak import KeycloakAdmin
 
+from keycloak import KeycloakAdmin
 
 SERVER_URL = "http://localhost:8080/keycloak/auth/"
 REALM_NAME = "SoftwareHeritage"
