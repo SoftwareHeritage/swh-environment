@@ -49,7 +49,7 @@ def test_git_loader(scheduler_host, git_origin):
 
     for tag, revision in tag_revision.items():
         # check that every release tag listed in the snapshot is known by the
-        # archive and consistant
+        # archive and consistent
         release_id = tag_release[tag]
         release = apiget(f"release/{release_id}")
         assert release["id"] == release_id

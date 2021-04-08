@@ -583,7 +583,7 @@ Starting a kafka-powered mirror of the storage
 
 This repo comes with an optional ``docker-compose.storage-mirror.yml``
 docker compose file that can be used to test the kafka-powered mirror
-mecanism for the main storage.
+mechanism for the main storage.
 
 This can be used like::
 
@@ -593,7 +593,7 @@ This can be used like::
 Compared to the original compose file, this will:
 
 -  overrides the swh-storage service to activate the kafka direct writer
-   on swh.journal.objects prefixed topics using thw swh.storage.master
+   on swh.journal.objects prefixed topics using the swh.storage.master
    ID,
 -  overrides the swh-web service to make it use the mirror instead of
    the master storage,
@@ -633,7 +633,7 @@ Using Sentry
 ------------
 
 All entrypoints to SWH code (CLI, gunicorn, celery, …) are, or should
-be, intrumented using Sentry. By default this is disabled, but if you
+be, instrumented using Sentry. By default this is disabled, but if you
 run your own Sentry instance, you can use it.
 
 To do so, you must get a DSN from your Sentry instance, and set it as
@@ -651,7 +651,7 @@ space regularly when playing with this stack.
 Also, a few containers (``swh-storage``, ``swh-xxx-db``) use a volume
 for storing the blobs or the database files. With the default
 configuration provided in the ``docker-compose.yml`` file, these volumes
-are not persistant. So removing the containers will delete the volumes!
+are not persistent. So removing the containers will delete the volumes!
 
 Also note that for the ``swh-objstorage``, since the volume can be
 pretty big, the remove operation can be quite long (several minutes is

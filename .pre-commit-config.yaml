@@ -15,6 +15,7 @@ repos:
     rev: v1.16.0
     hooks:
       - id: codespell
+        args: [-L cas]
 
   - repo: https://github.com/PyCQA/isort
     rev: 5.5.2
