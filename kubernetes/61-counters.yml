@@ -26,7 +26,7 @@ data:
          --reload \
          --threads 4 \
          --workers 2 \
-         --log-level DEBUG \
+         --log-level ${LOGLEVEL} \
          --timeout 3600 \
          --config 'python:swh.core.api.gunicorn_config' \
          'swh.counters.api.server:make_app_from_configfile()'
@@ -84,6 +84,8 @@ spec:
               value: "9125"
             - name: SWH_CONFIG_FILENAME
               value: /etc/softwareheritage/config.yml
+            - name: LOGLEVEL
+              value: INFO
           volumeMounts:
             - name: config
               mountPath: /etc/softwareheritage/config.yml

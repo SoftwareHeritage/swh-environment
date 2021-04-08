@@ -48,7 +48,7 @@ data:
 
     echo Starting the swh-scheduler API server
     exec gunicorn --bind 0.0.0.0:5008 \
-         --log-level DEBUG \
+         --log-level ${LOGLEVEL} \
          --threads 4 \
          --workers 2 \
          --reload \
@@ -149,6 +149,8 @@ spec:
               key: POSTGRES_DB
         - name: SWH_CONFIG_FILENAME
           value: /etc/softwareheritage/config.yml
+        - name: LOGLEVEL
+          value: INFO
         volumeMounts:
           - name: db-password
             mountPath: /run/secrets/postgres-password
