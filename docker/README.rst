@@ -578,8 +578,19 @@ on destination path.
 This way, ``docker-compose down`` without the ``-v`` flag will not
 remove those volumes and data will persist.
 
+
+Additional components
+---------------------
+
+We provide some extra modularity in what components to run through
+additional ``docker-compose.*.yml`` files.
+
+They are disabled by default, because they add layers of complexity
+and increase resource usage, while not being necessary to operate
+a small Software Heritage instance.
+
 Starting a kafka-powered mirror of the storage
-----------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This repo comes with an optional ``docker-compose.storage-mirror.yml``
 docker compose file that can be used to test the kafka-powered mirror
@@ -611,7 +622,7 @@ Note that the object storage is not replicated here, only the graph
 storage.
 
 Starting the backfiller
------------------------
+"""""""""""""""""""""""
 
 Reading from the storage the objects from within range [start-object,
 end-object] to the kafka topics.
@@ -628,6 +639,62 @@ end-object] to the kafka topics.
                 --start-object 000000 \
                 --end-object 000001 \
                 --dry-run
+
+Cassandra
+^^^^^^^^^
+
+We are working on an alternative backend for swh-storage, based on Cassandra
+instead of PostgreSQL.
+
+This can be used like::
+
+   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.cassandra.yml up -d
+   [...]
+
+
+This launches two Cassandra servers, and reconfigures swh-storage to use them.
+
+Efficient origin search
+^^^^^^^^^^^^^^^^^^^^^^^
+
+By default, swh-web uses swh-storage and swh-indexer-storage to provide its
+search bar. They are both based on PostgreSQL and rather inefficient
+(or Cassandra, which is even slower).
+
+Instead, you can enable swh-search, which is based on ElasticSearch
+and much more efficient, like this::
+
+   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.search.yml up -d
+   [...]
+
+Efficient counters
+^^^^^^^^^^^^^^^^^^
+
+The web interface shows counters of the number of objects in your archive,
+by counting objects in the PostgreSQL or Cassandra database.
+
+While this should not be an issue at the scale of your local Docker instance,
+counting objects can actually be a bottleneck at Software Heritage's scale.
+So swh-storage uses heuristics, that can be either not very efficient
+or inaccurate.
+
+So we have an alternative based on Redis' HyperLogLog feature, which you
+can test with::
+
+   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.counters.yml up -d
+   [...]
+
+Keycloak
+^^^^^^^^
+
+If you really want to hack on swh-web's authentication features,
+you will need to enable Keycloak as well, instead of the default
+Django-based authentication::
+
+   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.keycloak.yml up -d
+   [...]
+
+
 
 Using Sentry
 ------------
