@@ -42,8 +42,14 @@ def test_vault_directory(scheduler_host, git_origin):
         tfinfo = tarfiles.get(join(dir_id, fname))
         assert tfinfo, f"Missing path {fname} in retrieved tarfile"
         if fdesc["type"] == "file":
-            assert fdesc["length"] == tfinfo.size, f"File {fname}: length mismatch"
-            fdata = tarf.extractfile(tfinfo).read()
+            if tfinfo.issym():
+                # checksum was computed from targeted path for symlink
+                fdata = tfinfo.linkname.encode()
+            else:
+                # symlink has no size in tar archive so this test fails
+                assert fdesc["length"] == tfinfo.size, f"File {fname}: length mismatch"
+                fdata = tarf.extractfile(tfinfo).read()
+
             for algo in fdesc["checksums"]:
                 if algo not in hashlib.algorithms_available:
                     continue
