@@ -62,7 +62,7 @@ data:
                 --concurrency=${CONCURRENCY} \
                 --max-tasks-per-child=${MAX_TASKS_PER_CHILD} \
                 -Ofair --loglevel=${LOGLEVEL} \
-                --hostname "swh-worker@foobar"
+                --hostname "${HOSTNAME}"
 
 ---
 apiVersion: apps/v1
