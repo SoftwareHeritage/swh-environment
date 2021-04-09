@@ -115,6 +115,10 @@ spec:
           limits:
             memory: "3000Mi"
             cpu: "1200m"
+        lifecycle:
+          preStop:
+           exec:
+             command: ["kill", "1"]
         env:
         - name: CONCURRENCY
           value: "1"
