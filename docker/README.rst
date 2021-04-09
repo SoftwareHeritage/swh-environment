@@ -173,7 +173,7 @@ the same setup described in the getting-started starting directly at
 https://docs.softwareheritage.org/devel/getting-started.html#step-4-ingest-repositories
 
 Exposed Ports
-~~~~~~~~~~~~~
+^^^^^^^^^^^^^
 
 Several services have their listening ports exposed on the host:
 
@@ -233,7 +233,7 @@ fields ``current_interval`` and ``priority`` (can be ‘high’, ‘normal’ or
 ‘low’) of the task database entity.
 
 Inserting a new lister task
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To list the content of a source code provider like github or a Debian
 distribution, you may add a new task for this.
@@ -332,7 +332,7 @@ To list all existing task types::
      Origin Metadata indexer task
 
 Monitoring activity
-~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^
 
 You can monitor the workers activity by connecting to the RabbitMQ
 console on ``http://localhost:5080/rabbitmq`` or the grafana dashboard
@@ -386,7 +386,7 @@ From there, we will checkout or update all the swh packages::
    ~/swh-environment$ ./bin/update
 
 Install a swh package from sources in a container
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 It is possible to run a docker container with some swh packages
 installed from sources instead of using the latest published packages
@@ -414,7 +414,7 @@ If the application you play with has autoreload support, there is no
 need to restart the impacted container.)
 
 Using locally installed swh tools with docker
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In all examples above, we have executed swh commands from within a
 running container. Now we also have these swh commands locally available
@@ -452,7 +452,7 @@ And we can use the ``swh-scheduler`` command all the same::
    [...]
 
 Make your life a bit easier
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When you use virtualenvwrapper, you can add postactivation commands::
 
