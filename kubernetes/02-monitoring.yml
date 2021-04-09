@@ -125,7 +125,7 @@ data:
             - counters:5011
         metrics_path: /metrics
 
-      - job_name: swh-webapp-metrics
+      - job_name: swh-web-exporter
         static_configs:
         - targets:
             - webapp:5004
