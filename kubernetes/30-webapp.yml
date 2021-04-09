@@ -45,6 +45,8 @@ data:
 
     serve_assets: yes
 
+    history_counters_url: http://counters:5011/counters_history/history.json
+
     # TODO find a way to make this dynamic
     production_db:
       host: web-db
