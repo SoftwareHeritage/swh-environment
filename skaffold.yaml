@@ -86,3 +86,4 @@ deploy:
     - kubernetes/60-redis.yml
     - kubernetes/61-counters.yml
     - kubernetes/62-counters-journal-client.yml
+    - kubernetes/70-idx-storage-db.yml
