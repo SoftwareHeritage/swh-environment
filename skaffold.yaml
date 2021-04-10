@@ -94,3 +94,4 @@ deploy:
     - kubernetes/62-counters-journal-client.yml
     - kubernetes/70-idx-storage-db.yml
     - kubernetes/71-idx-storage.yml
+    - kubernetes/72-indexers.yml
