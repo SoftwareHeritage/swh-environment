@@ -1,0 +1,8 @@
+ARG BASE
+
+FROM $BASE
+
+COPY swh-storage /app/swh-storage
+COPY swh-indexer /app/swh-indexer
+
+RUN pip install /app/swh-storage && pip install /app/swh-indexer

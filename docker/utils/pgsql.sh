@@ -4,12 +4,16 @@ setup_pgsql () {
     : > ~/.pgpass
     : > ~/.pg_service.conf
 
-    echo "${PGHOST}:5432:template1:${PGUSER}:${POSTGRES_PASSWORD}" >> ~/.pgpass
-    echo "${PGHOST}:5432:${PGUSER}:${PGUSER}:${POSTGRES_PASSWORD}" >> ~/.pgpass
-    echo "${PGHOST}:5432:${POSTGRES_DB}:${PGUSER}:${POSTGRES_PASSWORD}" >> ~/.pgpass
+   # Configure the standard PG env variables (out of the container expected env
+   # variables)
+   [ -z "$PGDATABASE" ] && export PGDATABASE=$POSTGRES_DB
+   [ -z "$PGPASSWORD" ] && export PGPASSWORD=$POSTGRES_PASSWORD
+
+    echo "${PGHOST}:5432:${PGUSER}:${PGUSER}:${PGPASSWORD}" >> ~/.pgpass
+    echo "${PGHOST}:5432:${PGDATABASE}:${PGUSER}:${PGPASSWORD}" >> ~/.pgpass
     cat >> ~/.pg_service.conf <<EOF
-[${POSTGRES_DB}]
-dbname=${POSTGRES_DB}
+[${PGDATABASE}]
+dbname=${PGDATABASE}
 host=${PGHOST}
 port=5432
 user=${PGUSER}
