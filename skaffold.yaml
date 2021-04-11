@@ -3,6 +3,9 @@ kind: Config
 metadata:
   name: swh-environment
 build:
+  local:
+    useBuildkit: true
+    concurrency: 2
   artifacts:
   - image: swh/stack-base
     context: docker
