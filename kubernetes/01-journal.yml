@@ -227,7 +227,7 @@ spec:
               memory: "512Mi"
               cpu: "100m"
             limits:
-              memory: "768Mi"
+              memory: "1536Mi"
               cpu: "1000m"
           volumeMounts:
             - mountPath: "/kafka"
