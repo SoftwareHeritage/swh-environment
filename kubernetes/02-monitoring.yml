@@ -121,7 +121,9 @@ data:
 
       - job_name: swh-counters-exporter
         static_configs:
-        - targets:
+        - labels:
+            environment: dev
+          targets:
             - counters:5011
         metrics_path: /metrics
 
