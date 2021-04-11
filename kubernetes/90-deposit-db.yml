@@ -1,0 +1,131 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: deposit-db-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: deposit-db
+  local:
+    path: /srv/softwareheritage-kube/dev/deposit-db
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        # TODO adapt for your needs
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: deposit-db-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: deposit-db
+  resources:
+    requests:
+      storage: 10Gi
+---
+## TODO Change this to your real postgresql password
+apiVersion: v1
+kind: Secret
+metadata:
+  name: deposit-db
+type: Opaque
+# data:
+#   POSTGRES_PASSWORD: |
+#         "echo 'strong password' | base64"
+stringData:
+  POSTGRES_PASSWORD: swh
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: deposit-db
+data:
+  # property-like keys; each key maps to a simple value
+  POSTGRES_USER: swh
+  POSTGRES_DB: swh
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deposit-db
+  labels:
+    app: deposit-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deposit-db
+  template:
+    metadata:
+      labels:
+        app: deposit-db
+    spec:
+      containers:
+      - name: deposit-db
+        image: postgres:13.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5432
+        args:
+          - "-c"
+          - "shared_buffers=256MB"
+          - "-c"
+          - "effective_cache_size=256MB"
+          - "-c"
+          - "random_page_cost=1.5"
+          - "-c"
+          - "max_wal_size=256MB"
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: deposit-db
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: deposit-db
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: deposit-db
+                key: POSTGRES_DB
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql/data"
+          name: deposit-db-pvc
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+      volumes:
+        - name: deposit-db-pvc
+          persistentVolumeClaim:
+            claimName: deposit-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deposit-db
+spec:
+  type: ClusterIP
+  selector:
+    app: deposit-db
+  ports:
+    - port: 5432
+      targetPort: 5432

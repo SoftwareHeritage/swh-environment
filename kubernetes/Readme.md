@@ -3,7 +3,7 @@
 ### Directories
 
 ```
-sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog,grafana,elasticsearch,redis,registry,idx-storage-db,vault-db,vault-cache}
+sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog,grafana,elasticsearch,redis,registry,idx-storage-db,vault-db,vault-cache,deposit-db}
 sudo chown 1000:1000 /srv/softwareheritage-kube/dev/{objects,elasticsearch,vault-cache}
 sudo chown -R 999:999 /srv/softwareheritage-kube/dev/*-db
 sudo chown 472:0 /srv/softwareheritage-kube/dev/grafana

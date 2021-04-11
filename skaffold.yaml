@@ -105,3 +105,4 @@ deploy:
     - kubernetes/80-vault-db.yml
     - kubernetes/81-vault.yml
     - kubernetes/82-cookers.yml
+    - kubernetes/90-deposit-db.yml
