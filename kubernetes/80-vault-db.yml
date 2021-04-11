@@ -1,0 +1,131 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vault-db-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: vault-db
+  local:
+    path: /srv/softwareheritage-kube/dev/vault-db
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        # TODO adapt for your needs
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: vault-db-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: vault-db
+  resources:
+    requests:
+      storage: 10Gi
+---
+## TODO Change this to your real postgresql password
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vault-db
+type: Opaque
+# data:
+#   POSTGRES_PASSWORD: |
+#         "echo 'strong password' | base64"
+stringData:
+  POSTGRES_PASSWORD: swh
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-db
+data:
+  # property-like keys; each key maps to a simple value
+  POSTGRES_USER: swh
+  POSTGRES_DB: swh
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault-db
+  labels:
+    app: vault-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault-db
+  template:
+    metadata:
+      labels:
+        app: vault-db
+    spec:
+      containers:
+      - name: vault-db
+        image: postgres:13.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5432
+        args:
+          - "-c"
+          - "shared_buffers=256MB"
+          - "-c"
+          - "effective_cache_size=256MB"
+          - "-c"
+          - "random_page_cost=1.5"
+          - "-c"
+          - "max_wal_size=256MB"
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: vault-db
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: vault-db
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: vault-db
+                key: POSTGRES_DB
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql/data"
+          name: vault-db-pvc
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "250m"
+      volumes:
+        - name: vault-db-pvc
+          persistentVolumeClaim:
+            claimName: vault-db-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault-db
+spec:
+  type: ClusterIP
+  selector:
+    app: vault-db
+  ports:
+    - port: 5432
+      targetPort: 5432

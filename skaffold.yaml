@@ -96,3 +96,4 @@ deploy:
     - kubernetes/71-idx-storage.yml
     - kubernetes/72-indexers.yml
     - kubernetes/73-indexer-journal-client.yml
+    - kubernetes/80-vault-db.yml
