@@ -5,6 +5,7 @@ metadata:
 build:
   artifacts:
   - image: swh/stack-base
+    context: docker
     docker:
       dockerfile: Dockerfile
   - image: swh/objstorage
