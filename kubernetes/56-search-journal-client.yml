@@ -17,6 +17,17 @@ data:
         - origin
         - origin_visit
         - origin_visit_status
+  config-journal-client-indexed.yml: |
+    search:
+      cls: remote
+      url: http://search:5010/
+    journal:
+      brokers:
+        - kafka
+      group_id: swh.search.journal_client.indexed
+      prefix: swh.journal.indexed
+      object_types:
+        - origin_intrinsic_metadata
   entrypoint-journal-client-objects.sh: |
     #!/bin/bash
 
@@ -60,6 +71,55 @@ spec:
           - name: config
             mountPath: /etc/softwareheritage/config.yml
             subPath: config-journal-client-objects.yml
+            readOnly: true
+          - name: config
+            mountPath: /entrypoint.sh
+            subPath: entrypoint-journal-client-objects.sh
+            readOnly: true
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "20m"
+          limits:
+            memory: "100Mi"
+            cpu: "100m"
+      volumes:
+        - name: config
+          configMap:
+            name: search-journal-client
+            defaultMode: 0777
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: search-journal-client-indexed
+  labels:
+    app: search-journal-client-indexed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: search-journal-client-indexed
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: search-journal-client-indexed
+    spec:
+      containers:
+      - name: search-journal-client-indexed
+        image: swh/search:latest
+        imagePullPolicy: Always
+        command:
+          - /entrypoint.sh
+        env:
+          - name: SWH_CONFIG_FILENAME
+            value: /etc/softwareheritage/config.yml
+        volumeMounts:
+          - name: config
+            mountPath: /etc/softwareheritage/config.yml
+            subPath: config-journal-client-indexed.yml
             readOnly: true
           - name: config
             mountPath: /entrypoint.sh

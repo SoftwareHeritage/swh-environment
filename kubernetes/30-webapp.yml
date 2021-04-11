@@ -16,10 +16,10 @@ data:
       args:
         url: http://objstorage:5003/
 
-    # indexer_storage:
-    #   cls: remote
-    #   args:
-    #     url: http://indexer-storage:5007/
+    indexer_storage:
+      cls: remote
+      args:
+        url: http://idx-storage:5007/
 
     scheduler:
       cls: remote
@@ -87,6 +87,8 @@ data:
     search:
       cls: remote
       url: http://search:5010/
+    metadata_search_backend: swh-search
+
   entrypoint-init.sh: |
     #!/bin/bash
 
