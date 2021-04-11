@@ -190,7 +190,7 @@ and API</a> for more information</p>
 
 To access the services, they must be declared on the `/etc/hosts` file:
 ```
-127.0.0.1 objstorage.default storage.default webapp.default scheduler.default rabbitmq.default grafana.default prometheus.default counters.default
+127.0.0.1 objstorage.default storage.default webapp.default scheduler.default rabbitmq.default grafana.default prometheus.default counters.default registry-ui
 ```
 
 ### Skaffold

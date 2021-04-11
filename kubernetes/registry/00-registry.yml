@@ -83,6 +83,11 @@ spec:
       containers:
       - name: registry
         image: registry:latest
+        resources:
+          {}
+        env:
+          - name: REGISTRY_STORAGE_DELETE_ENABLED
+            value: "true"
         ports:
         - containerPort: 5000
         volumeMounts:
@@ -92,3 +97,76 @@ spec:
         - name: registry-pvc
           persistentVolumeClaim:
             claimName: registry-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry-ui
+spec:
+  type: ClusterIP
+  selector:
+    app: registry-ui
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: registry-ui
+spec:
+  rules:
+  - host: registry-ui.default
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: registry-ui
+            port:
+              number: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: registry-ui
+  labels:
+    app: registry-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry-ui
+  template:
+    metadata:
+      labels:
+        app: registry-ui
+    spec:
+      containers:
+        - name: registry-ui
+          image: "docker.io/joxit/docker-registry-ui:static"
+          imagePullPolicy: Always
+          env:
+            - name: REGISTRY_TITLE
+              value: "Docker registry UI"
+            - name: DELETE_IMAGES
+              value: "true"
+            - name: REGISTRY_URL
+              value: "http://registry.default"
+            - name: PULL_URL
+              value: "registry.default"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {}
