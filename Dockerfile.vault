@@ -1,0 +1,7 @@
+ARG BASE
+
+FROM $BASE
+
+COPY swh-vault /app/swh-vault
+
+RUN pip install /app/swh-vault

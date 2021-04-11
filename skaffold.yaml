@@ -68,6 +68,12 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
+  - image: swh/vault
+    docker:
+      dockerfile: Dockerfile.vault
+    requires:
+      - image: swh/stack-base
+        alias: BASE
 deploy:
   kubectl:
     manifests:
@@ -97,3 +103,4 @@ deploy:
     - kubernetes/72-indexers.yml
     - kubernetes/73-indexer-journal-client.yml
     - kubernetes/80-vault-db.yml
+    - kubernetes/81-vault.yml

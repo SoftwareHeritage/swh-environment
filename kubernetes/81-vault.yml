@@ -1,0 +1,255 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault
+data:
+  config.yml: |
+    vault:
+      cls: local
+      db: postgresql:///?service=swh
+    cache:
+      cls: pathslicing
+      root: /srv/softwareheritage/vault
+      slicing: 0:5
+    storage:
+      cls: remote
+      url: http://storage:5002/
+    scheduler:
+      cls: remote
+      url: http://scheduler:5008/
+  entrypoint-init-db.sh: |
+    #!/bin/bash
+
+    set -e
+
+    source /srv/softwareheritage/utils/pgsql.sh
+    wait_pgsql ${PGDATABASE}
+
+    echo Init swh-vault database
+    echo Creating extensions...
+    swh db init-admin --db-name ${PGDATABASE} vault
+
+    echo Initializing the database...
+    swh db init --db-name ${PGDATABASE} vault
+
+  entrypoint.sh: |
+    #!/bin/bash
+
+    set -e
+
+    source /srv/softwareheritage/utils/pgsql.sh
+    setup_pgsql
+
+    echo Starting the swh-vault API server
+    exec swh vault rpc-serve -C ${SWH_CONFIG_FILENAME}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: vault-cache-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: vault-cache-pv
+  local:
+    path: /srv/softwareheritage-kube/dev/vault-cache
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        # TODO adapt for your needs
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vault-cache-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: vault-cache-pv
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault
+  labels:
+    app: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      initContainers:
+        - name: vault-init
+          image: swh/vault:latest
+          imagePullPolicy: Always
+          command:
+            - /entrypoint.sh
+          env:
+          - name: PGHOST
+            value: "vault-db"
+          - name: PGUSER
+            valueFrom:
+              configMapKeyRef:
+                name: vault-db
+                key: POSTGRES_USER
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: vault-db
+                key: POSTGRES_PASSWORD
+          - name: PGDATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: vault-db
+                key: POSTGRES_DB
+          - name: SWH_CONFIG_FILENAME
+            value: /etc/softwareheritage/config.yml
+          volumeMounts:
+            - name: db-password
+              mountPath: /run/secrets/postgres-password
+              subPath: POSTGRES_PASSWORD
+              readOnly: true
+            - name: config
+              mountPath: /etc/softwareheritage/config.yml
+              subPath: config.yml
+              readOnly: true
+            - name: config
+              mountPath: /entrypoint.sh
+              subPath: entrypoint-init-db.sh
+              readOnly: true
+      containers:
+      - name: vault
+        image: swh/vault:latest
+        imagePullPolicy: Always
+        command:
+          - /entrypoint.sh
+        ports:
+        - containerPort: 5005
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5005
+            scheme: "HTTP"
+          initialDelaySeconds: 0
+          failureThreshold: 2
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /
+            port: 5005
+            scheme: "HTTP"
+          initialDelaySeconds: 5
+          failureThreshold: 30
+          periodSeconds: 1
+        env:
+        - name: PORT
+          value: "5005"
+        - name: STATSD_HOST
+          value: "prometheus-statsd-exporter"
+        - name: STATSD_PORT
+          value: "9125"
+        - name: POSTGRES_PASSWORD_FILE
+          value: "/run/secrets/postgres-password"
+        - name: PGHOST
+          value: "vault-db"
+        - name: PGUSER
+          valueFrom:
+            configMapKeyRef:
+              name: vault-db
+              key: POSTGRES_USER
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: vault-db
+              key: POSTGRES_PASSWORD
+        - name: PGDATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: vault-db
+              key: POSTGRES_DB
+        - name: SWH_CONFIG_FILENAME
+          value: /etc/softwareheritage/config.yml
+        volumeMounts:
+          - name: db-password
+            mountPath: /run/secrets/postgres-password
+            subPath: POSTGRES_PASSWORD
+            readOnly: true
+          - name: config
+            mountPath: /etc/softwareheritage/config.yml
+            subPath: config.yml
+            readOnly: true
+          - name: config
+            mountPath: /entrypoint.sh
+            subPath: entrypoint.sh
+            readOnly: true
+          - name: vault-cache-pvc
+            mountPath: "/srv/softwareheritage/vault"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "200m"
+          limits:
+            memory: "1536Mi"
+            cpu: "300m"
+      volumes:
+        - name: config
+          configMap:
+            name: vault
+            defaultMode: 0777
+        - name: db-password
+          secret:
+            secretName: vault-db
+        - name: vault-cache-pvc
+          persistentVolumeClaim:
+            claimName: vault-cache-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+spec:
+  type: ClusterIP
+  selector:
+    app: vault
+  ports:
+    - port: 5005
+      targetPort: 5005
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vault
+spec:
+  rules:
+  - host: vault.default
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: vault
+            port:
+              number: 5005
