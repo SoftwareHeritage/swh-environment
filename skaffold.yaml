@@ -74,6 +74,12 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
+  - image: swh/deposit
+    docker:
+      dockerfile: Dockerfile.deposit
+    requires:
+      - image: swh/stack-base
+        alias: BASE
 deploy:
   kubectl:
     manifests:
@@ -106,3 +112,4 @@ deploy:
     - kubernetes/81-vault.yml
     - kubernetes/82-cookers.yml
     - kubernetes/90-deposit-db.yml
+    - kubernetes/91-deposit.yml

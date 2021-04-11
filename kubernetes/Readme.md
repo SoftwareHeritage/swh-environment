@@ -3,8 +3,8 @@
 ### Directories
 
 ```
-sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog,grafana,elasticsearch,redis,registry,idx-storage-db,vault-db,vault-cache,deposit-db}
-sudo chown 1000:1000 /srv/softwareheritage-kube/dev/{objects,elasticsearch,vault-cache}
+sudo mkdir -p /srv/softwareheritage-kube/dev/{objects,storage-db,scheduler-db,kafka,web-db,prometheus,zookeeper/data,zookeeper/datalog,grafana,elasticsearch,redis,registry,idx-storage-db,vault-db,vault-cache,deposit-db,deposit-cache}
+sudo chown 1000:1000 /srv/softwareheritage-kube/dev/{objects,elasticsearch,vault-cache,deposit-cache}
 sudo chown -R 999:999 /srv/softwareheritage-kube/dev/*-db
 sudo chown 472:0 /srv/softwareheritage-kube/dev/grafana
 sudo chown nobody:nogroup /srv/softwareheritage-kube/dev/prometheus
@@ -46,7 +46,7 @@ docker push registry.default/swh/stack:latest
 
 To access the services, they must be declared on the `/etc/hosts` file:
 ```
-127.0.0.1 objstorage.default storage.default webapp.default scheduler.default rabbitmq.default grafana.default prometheus.default counters.default registry-ui idx-storage.default vault.default
+127.0.0.1 objstorage.default storage.default webapp.default scheduler.default rabbitmq.default grafana.default prometheus.default counters.default registry-ui idx-storage.default vault.default deposit.default
 ```
 
 ### Skaffold

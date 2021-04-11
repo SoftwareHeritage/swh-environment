@@ -1,0 +1,259 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: deposit
+data:
+  config.yml: |
+    scheduler:
+      cls: remote
+      url: http://scheduler:5008
+
+    storage:
+      cls: remote
+      url: http://storage:5002/
+
+    storage_metadata:
+      cls: remote
+      url: http://storage:5002/
+
+    allowed_hosts:
+      - '*'
+
+    private:
+      secret_key: prod-in-kube
+      db:
+        host: deposit-db
+        port: 5432
+        name: swh
+        user: swh
+        password: swh
+      media_root: /tmp/swh-deposit/uploads
+
+    authentication_provider: basic
+
+    extraction_dir: "/srv/softwareheritage/deposit-archive/"
+
+    swh_authority_url: http://deposit.swh.example/
+  entrypoint-init.sh: |
+    #!/bin/bash
+
+    set -e
+
+    source /srv/softwareheritage/utils/pgsql.sh
+    wait_pgsql ${PGDATABASE}
+
+    echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"
+    django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
+
+    swh-deposit admin user exists test || \
+        swh-deposit admin user create \
+                    --username test \
+                    --password test \
+                    --provider-url https://softwareheritage.org \
+                    --domain softwareheritage.org
+
+  entrypoint.sh: |
+    #!/bin/bash
+
+    set -e
+
+    echo "starting the swh-deposit server"
+    exec gunicorn --bind 0.0.0.0:5006 \
+         --reload \
+         --threads 2 \
+         --workers 2 \
+         --log-level ${LOGLEVEL} \
+         --timeout 3600 \
+         --access-logfile '-' \
+         --config 'python:swh.deposit.gunicorn_config' \
+         'django.core.wsgi:get_wsgi_application()'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deposit
+spec:
+  selector:
+    app: deposit
+  ports:
+    - port: 5006
+      targetPort: 5006
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: deposit
+  labels:
+    name: deposit
+spec:
+  rules:
+    - host: deposit.default
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: deposit
+                port:
+                  number: 5006
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: deposit-cache-pv
+spec:
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: deposit-cache-pv
+  local:
+    path: /srv/softwareheritage-kube/dev/deposit-cache
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        # TODO adapt for your needs
+        - key: kubernetes.io/os
+          operator: In
+          values:
+          - linux
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: deposit-cache-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: deposit-cache-pv
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deposit
+spec:
+  selector:
+    matchLabels:
+      app: deposit
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: deposit
+    spec:
+      initContainers:
+        - name: deposit-init
+          image: swh/deposit:latest
+          imagePullPolicy: Always
+          command:
+            - /entrypoint.sh
+          env:
+          - name: PGHOST
+            value: "deposit-db"
+          - name: PGUSER
+            valueFrom:
+              configMapKeyRef:
+                name: deposit-db
+                key: POSTGRES_USER
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: deposit-db
+                key: POSTGRES_PASSWORD
+          - name: PGDATABASE
+            valueFrom:
+              configMapKeyRef:
+                name: deposit-db
+                key: POSTGRES_DB
+          - name: DJANGO_SETTINGS_MODULE
+            value: swh.deposit.settings.production
+          - name: SWH_CONFIG_FILENAME
+            value: /etc/softwareheritage/config.yml
+          volumeMounts:
+            - name: db-password
+              mountPath: /run/secrets/postgres-password
+              subPath: POSTGRES_PASSWORD
+              readOnly: true
+            - name: config
+              mountPath: /entrypoint.sh
+              subPath: entrypoint-init.sh
+              readOnly: true
+            - name: config
+              mountPath: /etc/softwareheritage/config.yml
+              subPath: config.yml
+              readOnly: true
+      containers:
+        - name: deposit
+          image: swh/deposit:latest
+          imagePullPolicy: Always
+          command:
+            - /entrypoint.sh
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5006
+              scheme: "HTTP"
+            initialDelaySeconds: 0
+            failureThreshold: 2
+            periodSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /
+              port: 5006
+              scheme: "HTTP"
+            initialDelaySeconds: 5
+            failureThreshold: 30
+            periodSeconds: 1
+          resources:
+            requests:
+              memory: "196Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "512m"
+          ports:
+            - containerPort: 5006
+          env:
+            - name: PORT
+              value: "5006"
+            - name: VERBOSITY
+              value: "3"
+            - name: DJANGO_SETTINGS_MODULE
+              value: swh.deposit.settings.production
+            - name: SWH_CONFIG_FILENAME
+              value: /etc/softwareheritage/config.yml
+            - name: LOGLEVEL
+              value: INFO
+          volumeMounts:
+            - name: config
+              mountPath: /etc/softwareheritage/config.yml
+              subPath: config.yml
+              readOnly: true
+            - name: config
+              mountPath: /entrypoint.sh
+              subPath: entrypoint.sh
+              readOnly: true
+            - name: deposit-cache-pvc
+              mountPath: /srv/softwareheritage/deposit-archive/
+      volumes:
+        - name: config
+          configMap:
+            name: deposit
+            defaultMode: 0777
+        - name: db-password
+          secret:
+            secretName: deposit-db
+        - name: deposit-cache-pvc
+          persistentVolumeClaim:
+            claimName: deposit-cache-pvc
