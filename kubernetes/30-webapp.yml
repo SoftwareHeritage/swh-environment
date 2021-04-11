@@ -26,10 +26,10 @@ data:
       args:
         url: http://scheduler:5008/
 
-    # vault:
-    #   cls: remote
-    #   args:
-    #     url: http://vault:5005/
+    vault:
+      cls: remote
+      args:
+        url: http://vault:5005/
 
     # deposit:
     #   private_api_url: https://deposit:5006/1/private/
