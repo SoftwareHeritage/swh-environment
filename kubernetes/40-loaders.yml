@@ -32,6 +32,7 @@ data:
        - swh.loader.package.npm.tasks.LoadNpm
        - swh.loader.package.pypi.tasks.LoadPyPI
 
+       - save_code_now:swh.loader.git.tasks.UpdateGitRepository
        # - swh.loader.mercurial.tasks.LoadArchiveMercurial
        # - swh.loader.mercurial.tasks.LoadMercurial
        # - swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
