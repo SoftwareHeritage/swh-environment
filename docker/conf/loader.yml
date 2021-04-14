@@ -28,3 +28,8 @@ celery:
     - swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
     - swh.loader.svn.tasks.LoadSvnRepository
     - swh.loader.svn.tasks.MountAndLoadSvnRepository
+    - save_code_now:swh.loader.git.tasks.UpdateGitRepository
+    - save_code_now:swh.loader.mercurial.tasks.LoadArchiveMercurial
+    - save_code_now:swh.loader.mercurial.tasks.LoadMercurial
+    - save_code_now:swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
+    - save_code_now:swh.loader.svn.tasks.MountAndLoadSvnRepository
