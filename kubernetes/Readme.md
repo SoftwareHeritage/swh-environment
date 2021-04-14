@@ -46,7 +46,7 @@ docker push registry.default/swh/stack:latest
 
 To access the services, they must be declared on the `/etc/hosts` file:
 ```
-127.0.0.1 objstorage.default storage.default webapp.default scheduler.default rabbitmq.default grafana.default prometheus.default counters.default registry-ui idx-storage.default vault.default deposit.default
+127.0.0.1 objstorage.default storage.default webapp.default scheduler.default rabbitmq.default grafana.default prometheus.default counters.default registry-ui.default idx-storage.default vault.default deposit.default
 ```
 
 ### Skaffold
