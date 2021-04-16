@@ -114,7 +114,7 @@ spec:
             memory: "256Mi"
             cpu: "200m"
           limits:
-            memory: "3000Mi"
+            memory: "4000Mi"
             cpu: "1200m"
         lifecycle:
           preStop:
