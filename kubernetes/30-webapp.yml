@@ -9,7 +9,12 @@ data:
       cls: remote
       args:
         url: http://storage:5002/
-        timeout: 1
+        timeout: 5
+
+    counters:
+      cls: remote
+      url: http://counters:5011/
+      timeout: 1
 
     objstorage:
       cls: remote
@@ -88,6 +93,7 @@ data:
       cls: remote
       url: http://search:5010/
     metadata_search_backend: swh-search
+    counters_backend: swh-counters
 
   entrypoint-init.sh: |
     #!/bin/bash
