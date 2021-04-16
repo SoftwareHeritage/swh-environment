@@ -9,7 +9,7 @@ data:
       cls: pathslicing
       args:
         root: "/srv/softwareheritage/objects"
-        slicing: 0:5
+        slicing: 0:2/2:4/4:6
     client_max_size: 1073741824
   entrypoint.sh: |
     #!/bin/bash
