@@ -97,6 +97,7 @@ deploy:
     - kubernetes/29-web-db.yml
     - kubernetes/30-webapp.yml
     - kubernetes/40-loaders.yml
+    - kubernetes/41-deposit-loaders.yml
     - kubernetes/45-listers.yml
     - kubernetes/50-elasticsearch.yml
     - kubernetes/55-search.yml
