@@ -113,3 +113,12 @@ kubectl rollout restart deployment storage
 ```
 kubectl exec -ti deployment/registry-deployment -- /bin/registry garbage-collect  -m /etc/docker/registry/config.yml
 ```
+
+## Basic swh commands
+
+- Connect to a db (for example the scheduler db)
+
+```
+$ kubectl exec -ti deployment/scheduler -- psql
+```
+(This works because the PG* variables are correctly set in the container)
