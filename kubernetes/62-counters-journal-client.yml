@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
  name: counters-journal-client
 data:
-  config.yml: |
+  config-keys.yml: |
     counters:
       cls: remote
       url: http://counters:5011
@@ -24,6 +24,19 @@ data:
       - skipped_content
       - snapshot
       message.max.bytes: 524288000
+  config-messages.yml: |
+    counters:
+      cls: remote
+      url: http://counters:5011
+    journal:
+      brokers:
+      - kafka
+      group_id: swh.counters.journal_client_messages
+      prefix: swh.journal.objects
+      object_types:
+      - release
+      - revision
+      message.max.bytes: 524288000
   entrypoint.sh: |
     #!/bin/bash
 
@@ -34,28 +47,28 @@ data:
 
     swh --log-level INFO counters \
       --config-file /etc/softwareheritage/config.yml \
-      journal-client
+      journal-client ${TYPE}  #key or messages
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: counters-journal-client
+  name: counters-journal-client-keys
   labels:
-    app: counters-journal-client
+    app: counters-journal-client-keys
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: counters-journal-client
+      app: counters-journal-client-keys
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: counters-journal-client
+        app: counters-journal-client-keys
     spec:
       containers:
-      - name: counters-journal-client
+      - name: counters-journal-client-keys
         image: swh/counters:latest
         imagePullPolicy: Always
         command:
@@ -63,10 +76,12 @@ spec:
         env:
           - name: SWH_CONFIG_FILENAME
             value: /etc/softwareheritage/config.yml
+          - name: TYPE
+            value: keys
         volumeMounts:
           - name: config
             mountPath: /etc/softwareheritage/config.yml
-            subPath: config.yml
+            subPath: config-keys.yml
             readOnly: true
           - name: config
             mountPath: /entrypoint.sh
@@ -79,6 +94,57 @@ spec:
           limits:
             memory: "150Mi"
             cpu: "100m"
+      volumes:
+        - name: config
+          configMap:
+            name: counters-journal-client
+            defaultMode: 0777
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counters-journal-client-messages
+  labels:
+    app: counters-journal-client-messages
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: counters-journal-client-messages
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: counters-journal-client-messages
+    spec:
+      containers:
+      - name: counters-journal-client-messages
+        image: swh/counters:latest
+        imagePullPolicy: Always
+        command:
+          - /entrypoint.sh
+        env:
+          - name: SWH_CONFIG_FILENAME
+            value: /etc/softwareheritage/config.yml
+          - name: TYPE
+            value: messages
+        volumeMounts:
+          - name: config
+            mountPath: /etc/softwareheritage/config.yml
+            subPath: config-messages.yml
+            readOnly: true
+          - name: config
+            mountPath: /entrypoint.sh
+            subPath: entrypoint.sh
+            readOnly: true
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "20m"
+          limits:
+            memory: "300Mi"
+            cpu: "200m"
       volumes:
         - name: config
           configMap:
