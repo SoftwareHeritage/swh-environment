@@ -21,6 +21,7 @@ services:
         swh.journal.objects.origin_visit:1:1,
         swh.journal.objects.origin_visit_status:1:1,
         swh.journal.objects.revision:1:1,
+        swh.journal.objects.release:1:1,
         swh.journal.indexed.origin_intrinsic_metadata:1:1
     depends_on:
       - zookeeper
