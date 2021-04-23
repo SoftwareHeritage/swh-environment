@@ -314,3 +314,32 @@ spec:
         - name: db-password
           secret:
             secretName: web-db
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: save-code-now-refresh-visit-status
+  labels:
+    app: webapp
+spec:
+  schedule: "*/1 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: save-code-now-refresh-visit-status
+            image: curlimages/curl
+            imagePullPolicy: Always
+            args:
+            - -v
+            - -f
+            - -X
+            - GET
+            - -H
+            - "Content-Type: application/json"
+            - "http://webapp:5004/api/1/origin/save/refresh/"
+          restartPolicy: Never
