@@ -330,16 +330,16 @@ spec:
     spec:
       template:
         spec:
+          restartPolicy: Never
           containers:
           - name: save-code-now-refresh-visit-status
-            image: curlimages/curl
+            image: swh/webapp:latest
             imagePullPolicy: Always
             args:
-            - -v
-            - -f
-            - -X
-            - GET
-            - -H
-            - "Content-Type: application/json"
-            - "http://webapp:5004/api/1/origin/save/refresh/"
-          restartPolicy: Never
+            - django-admin
+            - refresh_savecodenow_statuses
+            env:
+            - name: DJANGO_SETTINGS_MODULE
+              value: swh.web.settings.production
+            - name: SWH_CONFIG_FILENAME
+              value: /etc/softwareheritage/config.yml
