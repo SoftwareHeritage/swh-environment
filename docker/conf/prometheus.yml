@@ -30,7 +30,7 @@ scrape_configs:
     static_configs:
     - targets:
         - swh-web:5004
-    metrics_path: /metrics/prometheus
+    metrics_path: /metrics/prometheus/
 
   - job_name: swh-counters-exporter
     static_configs:

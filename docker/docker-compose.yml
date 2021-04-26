@@ -9,6 +9,8 @@ services:
   zookeeper:
     image: wurstmeister/zookeeper
     restart: always
+    environment:
+        ZOO_LOG4J_PROP: WARN,CONSOLE
 
   kafka:
     image: wurstmeister/kafka
