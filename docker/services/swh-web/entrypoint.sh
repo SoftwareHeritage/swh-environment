@@ -31,6 +31,15 @@ case "$1" in
 
         wait_pgsql
 
+        # when overriding swh-web sources only
+        if [[ -d /src/swh-web ]] ; then
+            echo "Install and compile swh-web static assets"
+            pushd /src/swh-web
+            yarn install --frozen-lockfile
+            yarn build-dev
+            popd
+        fi
+
         echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"
         django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
 
