@@ -46,6 +46,17 @@ case "$1" in
         echo "Creating Django admin user"
         echo "$create_admin_script" | python3 -m swh.web.manage shell
 
+        echo "Start periodic save code now refresh statuses routine (in background)"
+        (
+            while true
+            do
+                (date && django-admin refresh_savecodenow_statuses \
+                    --settings=${DJANGO_SETTINGS_MODULE} 2>&1) >> /tmp/refresh-statuses.log
+                sleep 15
+            done
+        ) &
+        disown
+
         echo "starting the swh-web server"
         exec gunicorn --bind 0.0.0.0:5004 \
              --threads 2 \
