@@ -6,3 +6,4 @@ swh-web/node_modules
 packages/
 */.eggs
 */*.egg-info
+*/cypress/
