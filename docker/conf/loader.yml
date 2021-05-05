@@ -33,3 +33,4 @@ celery:
     - save_code_now:swh.loader.mercurial.tasks.LoadMercurial
     - save_code_now:swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
     - save_code_now:swh.loader.svn.tasks.MountAndLoadSvnRepository
+    - save_code_now:swh.loader.package.archive.tasks.LoadArchive
