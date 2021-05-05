@@ -34,6 +34,16 @@ def assign_client_role_to_user(keycloak_admin, client_name, client_role, usernam
     keycloak_admin.assign_client_role(user_id, client_id, user_role)
 
 
+def assign_realm_roles_to_user(keycloak_admin, realm_roles, username):
+    roles = []
+    for realm_role in realm_roles:
+        roles.append(keycloak_admin.get_realm_role(realm_role))
+    user_id = keycloak_admin.get_user_id(username)
+    # due to a design bug in python-keycloak API, client_id parameter must
+    # be provided while it is not used
+    keycloak_admin.assign_realm_roles(user_id, client_id="", roles=roles)
+
+
 def assign_client_roles_to_user(keycloak_admin, client_name, client_roles, username):
     for client_role in client_roles:
         assign_client_role_to_user(keycloak_admin, client_name, client_role, username)
@@ -53,7 +63,15 @@ def create_client_roles(keycloak_admin, client_name, client_roles):
                 client_name, payload={"name": client_role}
             )
         except Exception as e:
-            logger.warning(f"User already created: {e}, skipping.")
+            logger.warning(f"Client role already created: {e}, skipping.")
+
+
+def create_realm_roles(keycloak_admin, realm_roles):
+    for realm_role in realm_roles:
+        try:
+            keycloak_admin.create_realm_role(payload={"name": realm_role})
+        except Exception as e:
+            logger.warning(f"Realm role already created: {e}, skipping.")
 
 
 # login as admin in master realm
@@ -263,6 +281,17 @@ for user_data in [
         "enabled": True,
         "emailVerified": True,
     },
+    {
+        "email": "ambassador@swh.org",
+        "username": "ambassador",
+        "firstName": "ambassador",
+        "lastName": "ambassador",
+        "credentials": [
+            {"value": "ambassador", "type": "password", "temporary": False}
+        ],
+        "enabled": True,
+        "emailVerified": True,
+    },
 ]:
     create_user(KEYCLOAK_ADMIN, user_data)
 
@@ -270,3 +299,12 @@ for user_data in [
 assign_client_roles_to_user(
     KEYCLOAK_ADMIN, CLIENT_DEPOSIT_NAME, [DEPOSIT_API_ROLE_NAME], "test"
 )
+
+AMBASSADOR_ROLE_NAME = "swh.ambassador"
+
+# create SoftwareHeritage realm roles
+create_realm_roles(
+    KEYCLOAK_ADMIN, [AMBASSADOR_ROLE_NAME],
+)
+
+assign_realm_roles_to_user(KEYCLOAK_ADMIN, [AMBASSADOR_ROLE_NAME], "ambassador")
