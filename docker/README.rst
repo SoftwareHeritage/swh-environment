@@ -97,7 +97,7 @@ example, to inject the code from the https://0xacab.org gitlab forge::
 This task will scrape the forge’s project list and create subtasks to
 inject each git repository found there.
 
-This will take a bit af time to complete.
+This will take a bit of time to complete.
 
 To increase the speed at which git repositories are imported, you can
 spawn more ``swh-loader-git`` workers::
