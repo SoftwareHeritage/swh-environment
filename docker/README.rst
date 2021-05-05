@@ -155,7 +155,8 @@ other:
 -  swh-storage: Abstraction layer over the archive, allowing to access
    all stored source code artifacts as well as their metadata,
 
--  swh-web: the Software Heritage web user interface,
+-  swh-web: the Software Heritage web user interface (with a default "admin"
+   account with password "admin"),
 
 -  swh-scheduler: the API service as well as 2 utilities, the runner and
    the listener,
