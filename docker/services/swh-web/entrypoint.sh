@@ -2,19 +2,6 @@
 
 set -e
 
-create_admin_script="
-from django.contrib.auth import get_user_model;
-
-username = 'admin';
-password = 'admin';
-email = 'admin@swh-web.org';
-
-User = get_user_model();
-
-if not User.objects.filter(username = username).exists():
-    User.objects.create_superuser(username, email, password);
-"
-
 source /srv/softwareheritage/utils/pgsql.sh
 setup_pgsql
 
@@ -43,8 +30,12 @@ case "$1" in
         echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"
         django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
 
-        echo "Creating Django admin user"
-        echo "$create_admin_script" | python3 -m swh.web.manage shell
+        echo "Creating Django test users"
+        SWH_WEB_SRC_DIR=$(python3 -c "import os; from swh import web; print(os.path.dirname(web.__file__))")
+        for create_user_script in $SWH_WEB_SRC_DIR/tests/create_test_*
+        do
+            cat $create_user_script | python3 -m swh.web.manage shell
+        done
 
         echo "Start periodic save code now refresh statuses routine (in background)"
         (
