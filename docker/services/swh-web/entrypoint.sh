@@ -5,6 +5,15 @@ set -e
 source /srv/softwareheritage/utils/pgsql.sh
 setup_pgsql
 
+# when overriding swh-web sources only
+if [[ -d /src/swh-web ]] ; then
+    echo "Install and compile swh-web static assets"
+    pushd /src/swh-web
+    yarn install --frozen-lockfile
+    yarn build-dev
+    popd
+fi
+
 source /srv/softwareheritage/utils/pyutils.sh
 setup_pip
 
@@ -17,15 +26,6 @@ case "$1" in
         memcached&
 
         wait_pgsql
-
-        # when overriding swh-web sources only
-        if [[ -d /src/swh-web ]] ; then
-            echo "Install and compile swh-web static assets"
-            pushd /src/swh-web
-            yarn install --frozen-lockfile
-            yarn build-dev
-            popd
-        fi
 
         echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"
         django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
