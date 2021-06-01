@@ -10,8 +10,11 @@ if [[ -d /src/swh-web ]] ; then
     echo "Install and compile swh-web static assets"
     pushd /src/swh-web
     yarn install --frozen-lockfile
-    yarn build-dev
+    # execute webpack-dev-server in background
+    yarn start-dev&
     popd
+    # force the use of swh-web develomment settings
+    export DJANGO_SETTINGS_MODULE=swh.web.settings.development
 fi
 
 source /srv/softwareheritage/utils/pyutils.sh
@@ -49,11 +52,17 @@ case "$1" in
         disown
 
         echo "starting the swh-web server"
-        exec gunicorn --bind 0.0.0.0:5004 \
-             --threads 2 \
-             --workers 2 \
-             --timeout 3600 \
-             --access-logfile '-' \
-             --config 'python:swh.web.gunicorn_config' \
-             'django.core.wsgi:get_wsgi_application()'
+        if [[ -d /src/swh-web ]] ; then
+            # run django development server when overriding swh-web sources
+            exec django-admin runserver --nostatic --settings=${DJANGO_SETTINGS_MODULE} 0.0.0.0:5004
+        else
+            # run gunicorn workers as in production otherwise
+            exec gunicorn --bind 0.0.0.0:5004 \
+                --threads 2 \
+                --workers 2 \
+                --timeout 3600 \
+                --access-logfile '-' \
+                --config 'python:swh.web.gunicorn_config' \
+                'django.core.wsgi:get_wsgi_application()'
+        fi
 esac

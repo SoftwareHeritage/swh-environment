@@ -223,6 +223,7 @@ services:
     build: ./
     image: swh/stack
     ports:
+      - 3000:3000
       - 5004:5004
     depends_on:
       - swh-idx-storage
