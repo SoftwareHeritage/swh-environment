@@ -23,6 +23,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     nodejs \
     yarn && \
   apt-get install -y --no-install-recommends \
+    opam \
     r-base-core \
     r-cran-jsonlite && \
   apt-get clean && \
