@@ -137,7 +137,26 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
-    command: start-runner -p 10
+    command: start-runner --period 10
+    depends_on:
+      - swh-scheduler
+      - amqp
+    volumes:
+      - "./conf/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-runner-priority:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+      - ./env/scheduler-db.env
+      - ./env/scheduler.env
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+    entrypoint: /entrypoint.sh
+    command: start-runner --period 10 --with-priority --task-type load-git --task-type load-svn --task-type load-hg --task-type load-archive-files
     depends_on:
       - swh-scheduler
       - amqp
