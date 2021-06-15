@@ -67,3 +67,4 @@ throttling:
         - 0.0.0.0/0
 
 search: {}
+instance_name: archive-docker.softwareheritage.org

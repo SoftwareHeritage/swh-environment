@@ -40,3 +40,4 @@ production_db:
   name: swh-web
   user: postgres
   password: testpassword
+instance_name: archive-docker.softwareheritage.org

@@ -65,3 +65,4 @@ search: {}
 keycloak:
   server_url: http://keycloak:8080/keycloak/auth/
   realm_name: SoftwareHeritage
+instance_name: archive-docker.softwareheritage.org

@@ -70,3 +70,4 @@ throttling:
         default: 120/h
       exempted_networks:
         - 0.0.0.0/0
+instance_name: archive-docker.softwareheritage.org
