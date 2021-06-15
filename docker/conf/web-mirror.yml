@@ -23,7 +23,7 @@ vault:
 deposit:
   private_api_url: https://swh-deposit:5006/1/private/
   private_api_user: swhworker
-  private_api_password: ''
+  private_api_password: ""
 
 allowed_hosts:
   - "*"
@@ -31,6 +31,8 @@ allowed_hosts:
 debug: yes
 
 serve_assets: yes
+
+development_db: /tmp/swh/web.sqlite3
 
 production_db:
   host: swh-web-db

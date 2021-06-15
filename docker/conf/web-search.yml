@@ -33,6 +33,8 @@ debug: yes
 
 serve_assets: yes
 
+development_db: /tmp/swh/web.sqlite3
+
 production_db:
   host: swh-web-db
   port: 5432
