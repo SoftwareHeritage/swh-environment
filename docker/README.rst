@@ -695,7 +695,13 @@ Django-based authentication::
    ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.keycloak.yml up -d
    [...]
 
+User registration in Keycloak database is available by following the Register link
+in the page located at http://localhost:5080/oidc/login/.
 
+Please note that email verification is required to properly register an account.
+As we are in a testing environment, we use a MailHog instance as a fake SMTP server.
+All emails sent by Keycloak can be easily read from the MailHog Web UI located
+at http://localhost:8025/.
 
 Using Sentry
 ------------

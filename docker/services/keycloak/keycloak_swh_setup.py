@@ -104,6 +104,14 @@ KEYCLOAK_ADMIN.create_realm(
         "loginTheme": "swh",
         "accountTheme": "swh",
         "adminTheme": "swh",
+        "registrationAllowed": True,
+        "verifyEmail": True,
+        "smtpServer": {
+            "port": "1025",
+            "host": "mailhog",
+            "from": "keycloak-swh@docker",
+            "fromDisplayName": "Keycloak SWH @ docker",
+        },
     },
     skip_exists=True,
 )
