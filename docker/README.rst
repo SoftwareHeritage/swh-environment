@@ -207,6 +207,8 @@ To run the same command from within a container::
    loader@61704103668c: OK
    [...]
 
+.. _docker-manage-tasks:
+
 Managing tasks
 --------------
 
@@ -232,6 +234,8 @@ only executed once, whereas ``recurring`` are regularly executed. The
 scheduling configuration of these recurring tasks can be set via the
 fields ``current_interval`` and ``priority`` (can be ‘high’, ‘normal’ or
 ‘low’) of the task database entity.
+
+.. _docker-schedule-lister-task:
 
 Inserting a new lister task
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
