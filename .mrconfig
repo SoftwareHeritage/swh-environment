@@ -55,6 +55,10 @@ fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-core.git' 'swh-loader-core'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
+[swh-loader-cvs]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-cvs.git' 'swh-loader-cvs'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
 [swh-loader-git]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-git.git' 'swh-loader-git'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
