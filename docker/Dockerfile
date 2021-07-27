@@ -15,19 +15,25 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libpq-dev \
     libsvn-dev \
     libsystemd-dev \
+    gcc \
     memcached \
+    openjdk-11-jre \
+    pkg-config \
+    pv \
     postgresql-client-12 \
     wait-for-it \
     ngrep \
     rsync \
     nodejs \
-    yarn && \
+    yarn \
+    zstd && \
   apt-get install -y --no-install-recommends \
     opam \
     r-base-core \
     r-cran-jsonlite && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
+
 
 RUN useradd -md /srv/softwareheritage -s /bin/bash swh
 USER swh

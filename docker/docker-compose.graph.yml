@@ -1,0 +1,23 @@
+version: "2.1"
+
+services:
+  swh-graph:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    ports:
+        - 5009:5009
+    environment:
+      SWH_CONFIG_FILENAME: /graph.yml
+    depends_on:
+      kafka:
+        condition: service_healthy
+    env_file:
+      - ./env/common_python.env
+    volumes:
+      - "./conf/graph.yml:/graph.yml:ro"
+      - "./services/swh-graph/entrypoint.sh:/entrypoint.sh:ro"
+      - "../swh-graph:/src/swh-graph"
+      - "../swh-dataset:/src/swh-dataset"
+
+

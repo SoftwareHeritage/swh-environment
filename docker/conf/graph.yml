@@ -1,0 +1,7 @@
+journal:
+  brokers:
+    - kafka
+  prefix: swh.journal.objects
+
+graph:
+  path: /srv/softwareheritage/graph/compressed/graph

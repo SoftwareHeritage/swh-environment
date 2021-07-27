@@ -20,13 +20,17 @@ services:
       - "9092:9092"
     env_file: ./env/kafka.env
     environment:
-      KAFKA_CREATE_TOPICS: swh.journal.objects.content:1:1,
-        swh.journal.objects.origin:1:1,
-        swh.journal.objects.origin_visit:1:1,
-        swh.journal.objects.origin_visit_status:1:1,
-        swh.journal.objects.revision:1:1,
-        swh.journal.objects.release:1:1,
-        swh.journal.indexed.origin_intrinsic_metadata:1:1
+      KAFKA_BROKER_ID: 1
+      KAFKA_CREATE_TOPICS: swh.journal.objects.content:16:1,
+        swh.journal.objects.directory:16:1,
+        swh.journal.objects.origin:16:1,
+        swh.journal.objects.origin_visit:16:1,
+        swh.journal.objects.origin_visit_status:16:1,
+        swh.journal.objects.revision:16:1,
+        swh.journal.objects.release:16:1,
+        swh.journal.objects.skipped_content:16:1,
+        swh.journal.objects.snapshot:16:1,
+        swh.journal.indexed.origin_intrinsic_metadata:16:1
     depends_on:
       - zookeeper
     healthcheck:
