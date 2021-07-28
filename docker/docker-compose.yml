@@ -9,13 +9,15 @@ services:
   zookeeper:
     image: wurstmeister/zookeeper
     restart: always
+    ports:
+      - "5081:2181"
     environment:
         ZOO_LOG4J_PROP: WARN,CONSOLE
 
   kafka:
     image: wurstmeister/kafka
     ports:
-      - "5092:9092"
+      - "9092:9092"
     env_file: ./env/kafka.env
     environment:
       KAFKA_CREATE_TOPICS: swh.journal.objects.content:1:1,
