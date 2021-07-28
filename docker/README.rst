@@ -558,6 +558,8 @@ So now you can easily:
 
      (swh) ~/swh-environment$ swh scheduler task respawn 1
 
+.. _docker-persistence:
+
 Data persistence for a development setting
 ------------------------------------------
 
@@ -695,6 +697,38 @@ can test with::
    ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.counters.yml up -d
    [...]
 
+
+Efficient graph traversals
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+:ref:`swh-graph <swh-graph>` is a work-in-progress alternative to swh-storage
+to perform large graph traversals/queries on the merkle DAG.
+
+For example, it can be used by the vault, as it needs to query all objects
+in the sub-DAG of a given node.
+
+You can use it with::
+
+   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.graph.yml up -d
+
+On the first start, it will run some precomputation based on all objects already
+in your local SWH instance; so it may take a long time if you loaded many
+repositories. (Expect 5 to 10s per repository.)
+
+It **does not update automatically** when you load new repositories.
+You need to restart it every time you want to update it.
+
+You can :ref:`mount a docker volume <docker-persistence>` on
+:file:`/srv/softwareheritage/graph` to avoid recomputing this graph
+on every start.
+Then, you need to explicitly request recomputing the graph before restarts
+if you want to update it::
+
+   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.graph.yml run swh-graph update
+   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.graph.yml stop swh-graph
+   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.graph.yml up swh-graph -d
+
+
 Keycloak
 ^^^^^^^^
 
@@ -712,6 +746,7 @@ Please note that email verification is required to properly register an account.
 As we are in a testing environment, we use a MailHog instance as a fake SMTP server.
 All emails sent by Keycloak can be easily read from the MailHog Web UI located
 at http://localhost:8025/.
+
 
 Using Sentry
 ------------
