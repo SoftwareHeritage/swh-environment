@@ -94,8 +94,14 @@ example, to inject the code from the https://0xacab.org gitlab forge::
      Keyword args:
        url=https://0xacab.org/api/v4
 
-This task will scrape the forge’s project list and create subtasks to
-inject each git repository found there.
+This task will scrape the forge’s project list and register origins to the scheduler.
+This takes at most a couple of minutes.
+
+Then, you must tell the scheduler to create loading tasks for these origins.
+For example, to create tasks for 100 of these origins::
+
+   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
+       swh scheduler origin schedule-next git 100
 
 This will take a bit of time to complete.
 
