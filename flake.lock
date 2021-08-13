@@ -35,7 +35,24 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
+        "swh-core": "swh-core",
         "swh-model": "swh-model"
+      }
+    },
+    "swh-core": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1627654342,
+        "narHash": "sha256-w/xykfVzfEbn4LdnnPZ2dVkncQ7t/sopTVgAlKq187w=",
+        "owner": "SoftwareHeritage",
+        "repo": "swh-core",
+        "rev": "3337e79642e01f28abff732fa91a3a8c2faf6e6a",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SoftwareHeritage",
+        "repo": "swh-core",
+        "type": "github"
       }
     },
     "swh-model": {
