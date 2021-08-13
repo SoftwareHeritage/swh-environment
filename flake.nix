@@ -4,11 +4,11 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     swh-core = {
-      url = "github:SoftwareHeritage/swh-core";
+      url = "git+https://forge.softwareheritage.org/source/swh-core.git";
       flake = false;
     };
     swh-model = {
-      url = "github:SoftwareHeritage/swh-model";
+      url = "git+https://forge.softwareheritage.org/source/swh-model.git";
       flake = false;
     };
   };

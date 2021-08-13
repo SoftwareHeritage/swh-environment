@@ -44,15 +44,15 @@
       "locked": {
         "lastModified": 1627654342,
         "narHash": "sha256-w/xykfVzfEbn4LdnnPZ2dVkncQ7t/sopTVgAlKq187w=",
-        "owner": "SoftwareHeritage",
-        "repo": "swh-core",
+        "ref": "master",
         "rev": "3337e79642e01f28abff732fa91a3a8c2faf6e6a",
-        "type": "github"
+        "revCount": 449,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-core.git"
       },
       "original": {
-        "owner": "SoftwareHeritage",
-        "repo": "swh-core",
-        "type": "github"
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-core.git"
       }
     },
     "swh-model": {
@@ -60,15 +60,15 @@
       "locked": {
         "lastModified": 1627388608,
         "narHash": "sha256-vQngTc2WiQoGSi0yAM72QLbdKCS97H3QWynOeemN/CM=",
-        "owner": "SoftwareHeritage",
-        "repo": "swh-model",
+        "ref": "master",
         "rev": "a32652fce034f535811272024bb9ec51b1bf8726",
-        "type": "github"
+        "revCount": 487,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-model.git"
       },
       "original": {
-        "owner": "SoftwareHeritage",
-        "repo": "swh-model",
-        "type": "github"
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-model.git"
       }
     }
   },
