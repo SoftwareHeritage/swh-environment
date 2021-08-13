@@ -39,6 +39,35 @@
               };
             };
 
+            aiohttp-utils = pkgs.python3Packages.buildPythonPackage rec {
+              pname = "aiohttp_utils";
+              version = "3.1.1";
+
+              src = pkgs.python3Packages.fetchPypi {
+                inherit pname version;
+                sha256 = "sha256-CPLE3BWj/Rk6qQSiH0/zZfW64LE6Z2Tz59BaO7gC3BQ=";
+              };
+
+              buildInputs = with pkgs.python3Packages; [
+                Mako
+                pytest
+                tox
+                webtest-aiohttp
+              ];
+
+              propagatedBuildInputs = with pkgs.python3Packages; [
+                aiohttp
+                gunicorn
+                python_mimeparse
+              ];
+
+              meta = with pkgs.lib; {
+                homepage = "https://github.com/sloria/aiohttp-utils";
+                description = "Handy utilities for building aiohttp.web applications";
+                license = licenses.mit;
+              };
+            };
+
             swh-model = pkgs.python3Packages.buildPythonPackage rec {
               pname = "swh.model";
               version = "2.8.0";
