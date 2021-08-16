@@ -15,7 +15,7 @@ elif [ "$STORAGE_BACKEND" = "cassandra" ]; then
     echo Creating keyspace
     cat << EOF | python3
 from swh.storage.cassandra import create_keyspace
-create_keyspace(['cassandra-seed'], 'swh')
+create_keyspace(['${CASSANDRA_SEED}'], 'swh')
 EOF
 
 fi
