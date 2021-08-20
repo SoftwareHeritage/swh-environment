@@ -7,6 +7,10 @@
       url = "git+https://forge.softwareheritage.org/source/swh-core.git";
       flake = false;
     };
+    swh-indexer = {
+      url = "git+https://forge.softwareheritage.org/source/swh-indexer.git";
+      flake = false;
+    };
     swh-journal = {
       url = "git+https://forge.softwareheritage.org/source/swh-journal.git";
       flake = false;
@@ -39,6 +43,7 @@
 
           packages = {
             swh-core = import ./nix/swh-core.nix { inherit self pkgs system; };
+            swh-indexer = import ./nix/swh-indexer.nix { inherit self pkgs system; };
             swh-journal = import ./nix/swh-journal.nix { inherit self pkgs system; };
             swh-model = import ./nix/swh-model.nix { inherit self pkgs system; };
             swh-objstorage = import ./nix/swh-objstorage.nix { inherit self pkgs system; };

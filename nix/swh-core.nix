@@ -52,6 +52,12 @@ pkgs.python3Packages.buildPythonPackage rec {
     requests
 
     self.packages.${system}.aiohttp-utils
+
+
+    # TODO: should be only needed for tests, figure out if there's a way to not
+    #       put it in propagated inputs (putting it in `checkInputs` doesn't
+    #       make it available for building `swh-storage` for example)
+    self.packages.${system}.pytest-postgresql
   ];
 
   # HACK: flakes don't include the `.git/` folder as part of the source, so

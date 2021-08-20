@@ -36,6 +36,7 @@
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "swh-core": "swh-core",
+        "swh-indexer": "swh-indexer",
         "swh-journal": "swh-journal",
         "swh-model": "swh-model",
         "swh-objstorage": "swh-objstorage",
@@ -57,6 +58,22 @@
       "original": {
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-core.git"
+      }
+    },
+    "swh-indexer": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1623250041,
+        "narHash": "sha256-zeKKykcI90hrTPqdVCJ253rzsz+d36MdmgnZhF2PrV8=",
+        "ref": "master",
+        "rev": "40a773c722c75e3fc795cba5c8b7712a302968b1",
+        "revCount": 794,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-indexer.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-indexer.git"
       }
     },
     "swh-journal": {
