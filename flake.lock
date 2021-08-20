@@ -37,7 +37,8 @@
         "nixpkgs": "nixpkgs",
         "swh-core": "swh-core",
         "swh-model": "swh-model",
-        "swh-objstorage": "swh-objstorage"
+        "swh-objstorage": "swh-objstorage",
+        "swh-storage": "swh-storage"
       }
     },
     "swh-core": {
@@ -86,6 +87,22 @@
       "original": {
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-objstorage.git"
+      }
+    },
+    "swh-storage": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1628254769,
+        "narHash": "sha256-J1SNtNm09TclRYOITK3w0BgDTtGYNar5VVWCZGAxwK0=",
+        "ref": "master",
+        "rev": "9f00eb9dba1d8c1b0146671cba3ed782d3eeb0c0",
+        "revCount": 1924,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-storage.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-storage.git"
       }
     }
   },
