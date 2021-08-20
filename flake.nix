@@ -11,6 +11,10 @@
       url = "git+https://forge.softwareheritage.org/source/swh-model.git";
       flake = false;
     };
+    swh-objstorage = {
+      url = "git+https://forge.softwareheritage.org/source/swh-objstorage.git";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }:
@@ -24,6 +28,7 @@
           packages = {
             swh-core = import ./nix/swh-core.nix { inherit self pkgs system; };
             swh-model = import ./nix/swh-model.nix { inherit self pkgs system; };
+            swh-objstorage = import ./nix/swh-objstorage.nix { inherit self pkgs system; };
           } // (
             ###
             # TODO: third party packages below, upstream to nixpkgs?
