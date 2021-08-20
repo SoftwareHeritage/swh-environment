@@ -36,6 +36,7 @@
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "swh-core": "swh-core",
+        "swh-journal": "swh-journal",
         "swh-model": "swh-model",
         "swh-objstorage": "swh-objstorage",
         "swh-scheduler": "swh-scheduler",
@@ -56,6 +57,22 @@
       "original": {
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-core.git"
+      }
+    },
+    "swh-journal": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1624006029,
+        "narHash": "sha256-VstRPK6WjUJTofBE0Ht4QMhY46mnvBRhz4HMgYQlFZM=",
+        "ref": "master",
+        "rev": "a06bab98b11582419e7d85357feb6ffe665083b0",
+        "revCount": 395,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-journal.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-journal.git"
       }
     },
     "swh-model": {
