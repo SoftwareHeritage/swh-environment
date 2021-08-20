@@ -5,10 +5,15 @@ pkgs.python3Packages.buildPythonPackage rec {
 
   src = self.inputs.swh-storage;
 
+  # NOTE: tests are just a whole mess, need more investigation
   doCheck = false;
+  checkPhase = "tox";
+  checkInputs = with pkgs.python3Packages; [
+    tox
 
-  buildInputs = with pkgs.python3Packages; [
-    self.packages.${system}.pytest-postgresql
+    black
+    flake8
+    mypy
   ];
 
   propagatedBuildInputs = with pkgs.python3Packages; [
