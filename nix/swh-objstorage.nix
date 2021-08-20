@@ -5,7 +5,14 @@ pkgs.python3Packages.buildPythonPackage rec {
 
   src = self.inputs.swh-objstorage;
 
+  # NOTE: libcloud checking is disabled in nixpkgs because it requires a
+  #       certificate file; same problem here
   doCheck = false;
+  checkInputs = with pkgs.python3Packages; [
+    pytestCheckHook
+
+    libcloud
+  ];
 
   propagatedBuildInputs = with pkgs.python3Packages; [
     # requirements.txt
