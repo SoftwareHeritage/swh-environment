@@ -38,6 +38,7 @@
         "swh-core": "swh-core",
         "swh-model": "swh-model",
         "swh-objstorage": "swh-objstorage",
+        "swh-scheduler": "swh-scheduler",
         "swh-storage": "swh-storage"
       }
     },
@@ -87,6 +88,22 @@
       "original": {
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-objstorage.git"
+      }
+    },
+    "swh-scheduler": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1629278425,
+        "narHash": "sha256-6nbTz9F9xy6PTZauApuG+X2m8uspK+EeaGs4rof4zS0=",
+        "ref": "master",
+        "rev": "28ae1d86aad7572c41634156715293c20df3272c",
+        "revCount": 668,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-scheduler.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-scheduler.git"
       }
     },
     "swh-storage": {

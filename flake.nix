@@ -15,6 +15,10 @@
       url = "git+https://forge.softwareheritage.org/source/swh-objstorage.git";
       flake = false;
     };
+    swh-scheduler = {
+      url = "git+https://forge.softwareheritage.org/source/swh-scheduler.git";
+      flake = false;
+    };
     swh-storage = {
       url = "git+https://forge.softwareheritage.org/source/swh-storage.git";
       flake = false;
@@ -33,6 +37,7 @@
             swh-core = import ./nix/swh-core.nix { inherit self pkgs system; };
             swh-model = import ./nix/swh-model.nix { inherit self pkgs system; };
             swh-objstorage = import ./nix/swh-objstorage.nix { inherit self pkgs system; };
+            swh-scheduler = import ./nix/swh-scheduler.nix { inherit self pkgs system; };
             swh-storage = import ./nix/swh-storage.nix { inherit self pkgs system; };
           } // (
             ###
