@@ -18,28 +18,29 @@ def test_vault_directory(scheduler_host, git_origin):
     visit = apiget(f"origin/{quote_plus(git_origin)}/visit/latest")
     snapshot = apiget(f'snapshot/{visit["snapshot"]}')
     rev_id = snapshot["branches"]["refs/heads/master"]["target"]
+    rev_swhid = f'swh:1:rev:{rev_id}'
     revision = apiget(f"revision/{rev_id}")
     dir_id = revision["directory"]
+    dir_swhid = f'swh:1:dir:{dir_id}'
 
     # now cook it
-    cook = apiget(f"vault/directory/{dir_id}/", "POST")
-    assert cook["obj_type"] == "directory"
-    assert cook["obj_id"] == dir_id
-    assert cook["fetch_url"].endswith(f"vault/directory/{dir_id}/raw/")
+    cook = apiget(f"vault/flat/{dir_swhid}/", "POST")
+    assert cook["swhid"] == dir_swhid
+    assert cook["fetch_url"].endswith(f"vault/flat/{dir_swhid}/raw/")
 
     # while it's cooking, get the directory tree from the archive
     directory = getdirectory(dir_id)
 
     # retrieve the cooked tar file
-    resp = pollapi(f"vault/directory/{dir_id}/raw")
+    resp = pollapi(f"vault/flat/{dir_swhid}/raw")
     tarf = tarfile.open(fileobj=io.BytesIO(resp.content))
 
     # and check the tarfile seems ok wrt. 'directory'
-    assert tarf.getnames()[0] == dir_id
+    assert tarf.getnames()[0] == dir_swhid
     tarfiles = {t.name: t for t in tarf.getmembers()}
 
     for fname, fdesc in directory:
-        tfinfo = tarfiles.get(join(dir_id, fname))
+        tfinfo = tarfiles.get(join(dir_swhid, fname))
         assert tfinfo, f"Missing path {fname} in retrieved tarfile"
         if fdesc["type"] == "file":
             if tfinfo.issym():
@@ -61,8 +62,7 @@ def test_vault_directory(scheduler_host, git_origin):
 
     # check that if we ask a second time this directory, it returns the same
     # and does not cook it again
-    recook = apiget(f"vault/directory/{dir_id}/", "POST")
-    assert recook["obj_type"] == "directory"
-    assert recook["obj_id"] == dir_id
+    recook = apiget(f"vault/flat/{dir_swhid}/", "POST")
+    assert recook["swhid"] == dir_swhid
     assert recook["id"] == cook["id"]
     assert recook["status"] == "done"  # no need to wait for this to be true
