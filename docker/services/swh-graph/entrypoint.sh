@@ -12,7 +12,7 @@ update_graph() {
   rm -rf $DATADIR/*  # cleanup results from previous runs
   mkdir $DATADIR/g/
   echo "Exporting edges and nodes"
-  swh dataset -C $SWH_CONFIG_FILENAME graph export $DATADIR/g --processes=4
+  swh dataset -C $SWH_CONFIG_FILENAME graph export $DATADIR/g --processes=8 --formats=edges
   echo "Sorting edges and nodes"
   swh dataset graph sort $DATADIR/g/edges
   echo "Compressing graph"
