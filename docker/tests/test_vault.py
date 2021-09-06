@@ -18,10 +18,9 @@ def test_vault_directory(scheduler_host, git_origin):
     visit = apiget(f"origin/{quote_plus(git_origin)}/visit/latest")
     snapshot = apiget(f'snapshot/{visit["snapshot"]}')
     rev_id = snapshot["branches"]["refs/heads/master"]["target"]
-    rev_swhid = f'swh:1:rev:{rev_id}'
     revision = apiget(f"revision/{rev_id}")
     dir_id = revision["directory"]
-    dir_swhid = f'swh:1:dir:{dir_id}'
+    dir_swhid = f"swh:1:dir:{dir_id}"
 
     # now cook it
     cook = apiget(f"vault/flat/{dir_swhid}/", "POST")
