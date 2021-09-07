@@ -47,17 +47,17 @@
     "swh-core": {
       "flake": false,
       "locked": {
-        "lastModified": 1627654342,
-        "narHash": "sha256-w/xykfVzfEbn4LdnnPZ2dVkncQ7t/sopTVgAlKq187w=",
+        "lastModified": 1630311612,
+        "narHash": "sha256-WWzZqu8oaxqMxDjyB326kpPjMjWLl3P7GSi8g+JAjOI=",
         "ref": "master",
-        "rev": "3337e79642e01f28abff732fa91a3a8c2faf6e6a",
-        "revCount": 449,
+        "rev": "5c81a6c2040cc9b294879fbcd189f9f34c850e65",
+        "revCount": 452,
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-core.git"
+        "url": "https://forge.softwareheritage.org/source/swh-core.git?tag=v0.14.5"
       },
       "original": {
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-core.git"
+        "url": "https://forge.softwareheritage.org/source/swh-core.git?tag=v0.14.5"
       }
     },
     "swh-indexer": {
@@ -69,11 +69,11 @@
         "rev": "40a773c722c75e3fc795cba5c8b7712a302968b1",
         "revCount": 794,
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-indexer.git"
+        "url": "https://forge.softwareheritage.org/source/swh-indexer.git?tag=v0.8.0"
       },
       "original": {
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-indexer.git"
+        "url": "https://forge.softwareheritage.org/source/swh-indexer.git?tag=v0.8.0"
       }
     },
     "swh-journal": {
@@ -85,11 +85,11 @@
         "rev": "a06bab98b11582419e7d85357feb6ffe665083b0",
         "revCount": 395,
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-journal.git"
+        "url": "https://forge.softwareheritage.org/source/swh-journal.git?tag=v0.8.0"
       },
       "original": {
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-journal.git"
+        "url": "https://forge.softwareheritage.org/source/swh-journal.git?tag=v0.8.0"
       }
     },
     "swh-model": {
@@ -101,11 +101,11 @@
         "rev": "a32652fce034f535811272024bb9ec51b1bf8726",
         "revCount": 487,
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-model.git"
+        "url": "https://forge.softwareheritage.org/source/swh-model.git?tag=v2.8.0"
       },
       "original": {
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-model.git"
+        "url": "https://forge.softwareheritage.org/source/swh-model.git?tag=v2.8.0"
       }
     },
     "swh-objstorage": {
@@ -117,37 +117,37 @@
         "rev": "37dcacf162d29ad1f5c7015a923e6b46e120ca86",
         "revCount": 434,
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-objstorage.git"
+        "url": "https://forge.softwareheritage.org/source/swh-objstorage.git?tag=v0.2.3"
       },
       "original": {
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-objstorage.git"
+        "url": "https://forge.softwareheritage.org/source/swh-objstorage.git?tag=v0.2.3"
       }
     },
     "swh-scheduler": {
       "flake": false,
       "locked": {
-        "lastModified": 1629278425,
-        "narHash": "sha256-6nbTz9F9xy6PTZauApuG+X2m8uspK+EeaGs4rof4zS0=",
+        "lastModified": 1630574136,
+        "narHash": "sha256-NEJWnYLTcsqqko/r4/hc0C56jxc3RL+5yda8eq0byZ4=",
         "ref": "master",
-        "rev": "28ae1d86aad7572c41634156715293c20df3272c",
-        "revCount": 668,
+        "rev": "ecc14007aa258e7322e755c919021b6e0f5cf438",
+        "revCount": 675,
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-scheduler.git"
+        "url": "https://forge.softwareheritage.org/source/swh-scheduler.git?tag=v0.18.0"
       },
       "original": {
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-scheduler.git"
+        "url": "https://forge.softwareheritage.org/source/swh-scheduler.git?tag=v0.18.0"
       }
     },
     "swh-storage": {
       "flake": false,
       "locked": {
-        "lastModified": 1628254769,
-        "narHash": "sha256-J1SNtNm09TclRYOITK3w0BgDTtGYNar5VVWCZGAxwK0=",
+        "lastModified": 1630673775,
+        "narHash": "sha256-3SH/IZAIuixvGl7e1z55PnJiAdOJw+vm14MvoJ+s1pc=",
         "ref": "master",
-        "rev": "9f00eb9dba1d8c1b0146671cba3ed782d3eeb0c0",
-        "revCount": 1924,
+        "rev": "834a49d06768020281c2847f2a2bebdb30824cdc",
+        "revCount": 1934,
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-storage.git"
       },

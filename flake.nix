@@ -4,31 +4,31 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     swh-core = {
-      url = "git+https://forge.softwareheritage.org/source/swh-core.git";
+      url = "git+https://forge.softwareheritage.org/source/swh-core.git?tag=v0.14.5";
       flake = false;
     };
     swh-indexer = {
-      url = "git+https://forge.softwareheritage.org/source/swh-indexer.git";
+      url = "git+https://forge.softwareheritage.org/source/swh-indexer.git?tag=v0.8.0";
       flake = false;
     };
     swh-journal = {
-      url = "git+https://forge.softwareheritage.org/source/swh-journal.git";
+      url = "git+https://forge.softwareheritage.org/source/swh-journal.git?tag=v0.8.0";
       flake = false;
     };
     swh-model = {
-      url = "git+https://forge.softwareheritage.org/source/swh-model.git";
+      url = "git+https://forge.softwareheritage.org/source/swh-model.git?tag=v2.8.0";
       flake = false;
     };
     swh-objstorage = {
-      url = "git+https://forge.softwareheritage.org/source/swh-objstorage.git";
+      url = "git+https://forge.softwareheritage.org/source/swh-objstorage.git?tag=v0.2.3";
       flake = false;
     };
     swh-scheduler = {
-      url = "git+https://forge.softwareheritage.org/source/swh-scheduler.git";
+      url = "git+https://forge.softwareheritage.org/source/swh-scheduler.git?tag=v0.18.0";
       flake = false;
     };
     swh-storage = {
-      url = "git+https://forge.softwareheritage.org/source/swh-storage.git";
+      url = "git+https://forge.softwareheritage.org/source/swh-storage.git?tag=v0.36.0";
       flake = false;
     };
   };

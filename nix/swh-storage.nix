@@ -1,7 +1,7 @@
 { pkgs, self, system }:
 pkgs.python3Packages.buildPythonPackage rec {
   pname = "swh.storage";
-  version = "0.35.1";
+  version = "0.36.0";
 
   src = self.inputs.swh-storage;
 

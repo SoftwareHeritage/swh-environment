@@ -1,7 +1,7 @@
 { pkgs, self, system }:
 pkgs.python3Packages.buildPythonPackage rec {
   pname = "swh.core";
-  version = "0.14.4";
+  version = "0.14.5";
 
   src = self.inputs.swh-core;
 
