@@ -36,6 +36,7 @@
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
         "swh-core": "swh-core",
+        "swh-counters": "swh-counters",
         "swh-indexer": "swh-indexer",
         "swh-journal": "swh-journal",
         "swh-model": "swh-model",
@@ -58,6 +59,22 @@
       "original": {
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-core.git?tag=v0.14.5"
+      }
+    },
+    "swh-counters": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1624375412,
+        "narHash": "sha256-08kg+G8NxhMdQkFMHYJzYVZg7sahTqD+9hQ3p0NAAwg=",
+        "ref": "master",
+        "rev": "cd595e71aef44f93972013fb13bf1f77312283ea",
+        "revCount": 25,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-counters.git?tag=v0.8.0"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-counters.git?tag=v0.8.0"
       }
     },
     "swh-indexer": {
@@ -149,11 +166,11 @@
         "rev": "834a49d06768020281c2847f2a2bebdb30824cdc",
         "revCount": 1934,
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-storage.git"
+        "url": "https://forge.softwareheritage.org/source/swh-storage.git?tag=v0.36.0"
       },
       "original": {
         "type": "git",
-        "url": "https://forge.softwareheritage.org/source/swh-storage.git"
+        "url": "https://forge.softwareheritage.org/source/swh-storage.git?tag=v0.36.0"
       }
     }
   },

@@ -1,9 +1,9 @@
 { pkgs, self, system }:
 pkgs.python3Packages.buildPythonPackage rec {
-  pname = "swh.storage";
+  pname = "swh.counters";
   version = "0.36.0";
 
-  src = self.inputs.swh-storage;
+  src = self.inputs.swh-counters;
 
   # NOTE: tests are just a whole mess, need more investigation
   doCheck = false;
@@ -18,22 +18,12 @@ pkgs.python3Packages.buildPythonPackage rec {
 
   propagatedBuildInputs = with pkgs.python3Packages; [
     # requirements.txt
-    aiohttp
-    cassandra-driver
-    click
-    deprecated
     flask
-    iso8601
-    mypy-extensions
-    psycopg2
-    tenacity
-    typing-extensions
+    redis
 
     # requirements-swh.txt
     self.packages.${system}.swh-core
-    self.packages.${system}.swh-counters
-    self.packages.${system}.swh-model
-    self.packages.${system}.swh-objstorage
+    self.packages.${system}.swh-journal
   ];
 
   # HACK: flakes don't include the `.git/` folder as part of the source, so
@@ -46,7 +36,7 @@ pkgs.python3Packages.buildPythonPackage rec {
               '';
 
   meta = with pkgs.lib; {
-    homepage = "https://forge.softwareheritage.org/source/swh-storage/";
+    homepage = "https://forge.softwareheritage.org/source/swh-counters/";
     license = licenses.gpl3Only;
   };
 }
