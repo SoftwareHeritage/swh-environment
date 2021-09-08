@@ -246,7 +246,7 @@ for GROUP in GROUPS:
 create_client_roles(
     KEYCLOAK_ADMIN,
     CLIENT_WEBAPP_NAME,
-    ["swh.web.api.throttling_exempted", "swh.web.api.graph"],
+    ["swh.web.api.throttling_exempted", "swh.web.api.graph", "swh.vault.git_bare.ui"],
 )
 
 DEPOSIT_API_ROLE_NAME = "swh.deposit.api"
