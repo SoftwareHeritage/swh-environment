@@ -1,6 +1,11 @@
 search:
   cls: remote
   url: http://swh-search:5010/
+
+storage:
+  cls: remote
+  url: http://swh-storage:5002/
+
 journal:
   brokers:
     - kafka
@@ -8,4 +13,3 @@ journal:
   prefix: swh.journal.indexed
   object_types:
     - origin_intrinsic_metadata
-
