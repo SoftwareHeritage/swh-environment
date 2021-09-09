@@ -16,7 +16,7 @@ vault:
   url: http://swh-vault:5005/
 
 deposit:
-  private_api_url: https://swh-deposit:5006/1/private/
+  private_api_url: http://swh-deposit:5006/1/private/
   private_api_user: swhworker
   private_api_password: ""
 
