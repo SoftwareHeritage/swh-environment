@@ -213,6 +213,22 @@ To run the same command from within a container::
    loader@61704103668c: OK
    [...]
 
+
+To consume ``kafka`` topics from the host, for example to run the `swh
+dataset graph export` command, a configuration file could be::
+
+  ~/swh-environment/docker$ cat dataset_config.yml
+  journal:
+    brokers:
+      - 127.0.0.1:5092
+
+  ~/swh-environment/docker$ swh dataset -C dataset_config.yml graph export output
+  Exporting release:
+  - Partition offsets: 100%|███████████████████████████████| 16/16 [00:00<00:00, 1863.62it/s]
+  - Export (release): 100%|████████████████| 3650/3650 [00:08<00:00, 437.89it/s, workers=1/1]
+  [...]
+
+
 .. _docker-manage-tasks:
 
 Managing tasks
