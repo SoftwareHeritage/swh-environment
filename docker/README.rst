@@ -53,7 +53,7 @@ fine with::
    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    docker_amqp_1                                    docker-entrypoint.sh rabbi ...   Up      15671/tcp, 0.0.0.0:5018->15672/tcp, 25672/tcp, 4369/tcp, 5671/tcp, 5672/tcp
    docker_flower_1                                  flower --broker=amqp://gue ...   Up      0.0.0.0:5555->5555/tcp
-   docker_kafka_1                                   start-kafka.sh                   Up      0.0.0.0:9092->9092/tcp
+   docker_kafka_1                                   start-kafka.sh                   Up      0.0.0.0:5092->5092/tcp
    docker_swh-deposit-db_1                          docker-entrypoint.sh postgres    Up      5432/tcp
    docker_swh-deposit_1                             /entrypoint.sh                   Up      0.0.0.0:5006->5006/tcp
    [...]
