@@ -95,6 +95,12 @@ services:
       - "./conf/grafana/provisioning:/etc/grafana/provisioning:ro"
       - "./conf/grafana/dashboards:/var/lib/grafana/dashboards"
 
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
   nginx:
     image: nginx
     volumes:

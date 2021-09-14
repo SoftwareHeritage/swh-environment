@@ -11,3 +11,6 @@ cache:
   cls: pathslicing
   root: /srv/softwareheritage/vault
   slicing: 0:5
+smtp:
+  port: 1025
+  host: mailhog
