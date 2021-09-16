@@ -627,7 +627,10 @@ mechanism for the main storage.
 
 This can be used like::
 
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.storage-mirror.yml up -d
+   ~/swh-environment/docker$ docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.storage-mirror.yml \
+        up -d
    [...]
 
 Compared to the original compose file, this will:
@@ -658,16 +661,16 @@ end-object] to the kafka topics.
 
 ::
 
-   (swh)$ docker-compose \
-                -f docker-compose.yml \
-                -f docker-compose.storage-mirror.yml \
-                -f docker-compose.storage-mirror.override.yml \
-                run \
-                swh-journal-backfiller \
-                snapshot \
-                --start-object 000000 \
-                --end-object 000001 \
-                --dry-run
+   ~/swh-environment/docker$ docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.storage-mirror.yml \
+        -f docker-compose.storage-mirror.override.yml \
+        run \
+        swh-journal-backfiller \
+        snapshot \
+        --start-object 000000 \
+        --end-object 000001 \
+        --dry-run
 
 Cassandra
 ^^^^^^^^^
@@ -677,7 +680,10 @@ instead of PostgreSQL.
 
 This can be used like::
 
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.cassandra.yml up -d
+   ~/swh-environment/docker$ docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.cassandra.yml \
+        up -d
    [...]
 
 
@@ -693,7 +699,10 @@ search bar. They are both based on PostgreSQL and rather inefficient
 Instead, you can enable swh-search, which is based on ElasticSearch
 and much more efficient, like this::
 
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.search.yml up -d
+   ~/swh-environment/docker$ docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.search.yml \
+        up -d
    [...]
 
 Efficient counters
@@ -710,7 +719,10 @@ or inaccurate.
 So we have an alternative based on Redis' HyperLogLog feature, which you
 can test with::
 
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.counters.yml up -d
+   ~/swh-environment/docker$ docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.counters.yml \
+        up -d
    [...]
 
 
@@ -725,7 +737,9 @@ in the sub-DAG of a given node.
 
 You can use it with::
 
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.graph.yml up -d
+   ~/swh-environment/docker$ docker-compose \
+       -f docker-compose.yml \
+       -f docker-compose.graph.yml up -d
 
 On the first start, it will run some precomputation based on all objects already
 in your local SWH instance; so it may take a long time if you loaded many
@@ -740,9 +754,18 @@ on every start.
 Then, you need to explicitly request recomputing the graph before restarts
 if you want to update it::
 
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.graph.yml run swh-graph update
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.graph.yml stop swh-graph
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.graph.yml up swh-graph -d
+   ~/swh-environment/docker$ docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.graph.yml \
+        run swh-graph update
+   ~/swh-environment/docker$ docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.graph.yml \
+        stop swh-graph
+   ~/swh-environment/docker$ docker-compose \
+        -f docker-compose.yml \
+        -f docker-compose.graph.yml \
+        up -d swh-graph
 
 
 Keycloak
