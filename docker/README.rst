@@ -787,6 +787,50 @@ All emails sent by Keycloak can be easily read from the MailHog Web UI located
 at http://localhost:8025/.
 
 
+Kafka
+^^^^^
+
+Consuming topics from the host
+""""""""""""""""""""""""""""""
+
+As mentioned above, it is possible to consume topics from the kafka server available
+in the docker-compose environment from the host using `127.0.0.1:5092` as broker URL.
+
+Resetting offsets
+"""""""""""""""""
+
+It is also possible to reset a consumer group offset using the following command::
+
+  ~swh-environment/docker$ docker-compose \
+       run kafka kafka-consumer-groups.sh \
+           --bootstrap-server kafka:9092 \
+           --group <group> \
+           --all-topics \
+           --reset-offsets --to-earliest --execute
+  [...]
+
+You can use `--topic <topic>` instead of `--all-topics` to specify a topic.
+
+Getting information on consumers
+""""""""""""""""""""""""""""""""
+
+You can get information on consumer groups::
+
+  ~swh-environment/docker$ docker-compose \
+       run kafka kafka-consumer-groups.sh \
+           --bootstrap-server kafka:9092 \
+           --describe --members --all-groups
+  [...]
+
+Or the stored offsets for all (or a given) groups::
+
+  ~swh-environment/docker$ docker-compose \
+       run kafka kafka-consumer-groups.sh \
+           --bootstrap-server kafka:9092 \
+           --describe --offsets --all-groups
+  [...]
+
+
 Using Sentry
 ------------
 
