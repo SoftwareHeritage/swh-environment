@@ -11,6 +11,10 @@
       url = "git+https://forge.softwareheritage.org/source/swh-counters.git?tag=v0.8.0";
       flake = false;
     };
+    swh-graph = {
+      url = "git+https://forge.softwareheritage.org/source/swh-graph.git?tag=v0.5.0";
+      flake = false;
+    };
     swh-indexer = {
       url = "git+https://forge.softwareheritage.org/source/swh-indexer.git?tag=v0.8.0";
       flake = false;
@@ -48,6 +52,7 @@
           packages = {
             swh-core = import ./nix/swh-core.nix { inherit self pkgs system; };
             swh-counters = import ./nix/swh-counters.nix { inherit self pkgs system; };
+            swh-graph = import ./nix/swh-graph.nix { inherit self pkgs system; };
             swh-indexer = import ./nix/swh-indexer.nix { inherit self pkgs system; };
             swh-journal = import ./nix/swh-journal.nix { inherit self pkgs system; };
             swh-model = import ./nix/swh-model.nix { inherit self pkgs system; };

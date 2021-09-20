@@ -37,6 +37,7 @@
         "nixpkgs": "nixpkgs",
         "swh-core": "swh-core",
         "swh-counters": "swh-counters",
+        "swh-graph": "swh-graph",
         "swh-indexer": "swh-indexer",
         "swh-journal": "swh-journal",
         "swh-model": "swh-model",
@@ -75,6 +76,22 @@
       "original": {
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-counters.git?tag=v0.8.0"
+      }
+    },
+    "swh-graph": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1630427409,
+        "narHash": "sha256-Hrdbv9wj9B8taS4ypQBuygchjqiAy9DfWR2+n0KEUNs=",
+        "ref": "master",
+        "rev": "2045e2c14672f4381e2f31d5a52518e8df862ec9",
+        "revCount": 534,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-graph.git?tag=v0.5.0"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-graph.git?tag=v0.5.0"
       }
     },
     "swh-indexer": {
