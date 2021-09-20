@@ -39,6 +39,10 @@
       url = "git+https://forge.softwareheritage.org/source/swh-storage.git?tag=v0.36.0";
       flake = false;
     };
+    swh-vault = {
+      url = "git+https://forge.softwareheritage.org/source/swh-vault.git?tag=v1.2.0";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }:
@@ -59,6 +63,7 @@
             swh-objstorage = import ./nix/swh-objstorage.nix { inherit self pkgs system; };
             swh-scheduler = import ./nix/swh-scheduler.nix { inherit self pkgs system; };
             swh-storage = import ./nix/swh-storage.nix { inherit self pkgs system; };
+            swh-vault = import ./nix/swh-vault.nix { inherit self pkgs system; };
           } // (
             ###
             # TODO: third party packages below, upstream to nixpkgs?

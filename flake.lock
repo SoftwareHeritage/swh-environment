@@ -43,7 +43,8 @@
         "swh-model": "swh-model",
         "swh-objstorage": "swh-objstorage",
         "swh-scheduler": "swh-scheduler",
-        "swh-storage": "swh-storage"
+        "swh-storage": "swh-storage",
+        "swh-vault": "swh-vault"
       }
     },
     "swh-core": {
@@ -188,6 +189,22 @@
       "original": {
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-storage.git?tag=v0.36.0"
+      }
+    },
+    "swh-vault": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1631892721,
+        "narHash": "sha256-S/yW322DuCj3DXtIXhVhmmzohqtuAQgeHWTbbw2l9Gg=",
+        "ref": "master",
+        "rev": "b36dd3b71909fa57d69efcbfa4ebb580f7bd764b",
+        "revCount": 348,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-vault.git?tag=v1.2.0"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-vault.git?tag=v1.2.0"
       }
     }
   },
