@@ -145,17 +145,19 @@ spec:
     spec:
       containers:
         - name: registry-ui
-          image: "docker.io/joxit/docker-registry-ui:static"
+          image: "docker.io/joxit/docker-registry-ui:2"
           imagePullPolicy: Always
           env:
             - name: REGISTRY_TITLE
               value: "Docker registry UI"
             - name: DELETE_IMAGES
               value: "true"
-            - name: REGISTRY_URL
-              value: "http://registry.default"
+            # - name: REGISTRY_URL
+            #   value: "http://registry.default"
             - name: PULL_URL
               value: "registry.default"
+            - name: NGINX_PROXY_PASS_URL
+              value: http://registry.default
           ports:
             - name: http
               containerPort: 80
