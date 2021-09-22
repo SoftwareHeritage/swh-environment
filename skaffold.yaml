@@ -1,7 +1,8 @@
-apiVersion: skaffold/v2beta13
+apiVersion: skaffold/v2beta23
 kind: Config
 metadata:
   name: swh-environment
+
 build:
   local:
     useBuildkit: true
@@ -80,37 +81,79 @@ build:
     requires:
       - image: swh/stack-base
         alias: BASE
-deploy:
-  kubectl:
-    manifests:
-    - kubernetes/01-journal.yml
-    - kubernetes/02-monitoring.yml
-    - kubernetes/05-storage-db.yml
-    - kubernetes/10-objstorage.yml
-    - kubernetes/11-storage.yml
-    - kubernetes/15-scheduler-db.yml
-    - kubernetes/16-rabbitmq.yml
-    - kubernetes/20-scheduler.yml
-    - kubernetes/21-scheduler-runner.yml
-    - kubernetes/22-scheduler-listener.yml
-    - kubernetes/23-scheduler-journal-client.yml
-    - kubernetes/29-web-db.yml
-    - kubernetes/30-webapp.yml
-    - kubernetes/40-loaders.yml
-    - kubernetes/41-deposit-loaders.yml
-    - kubernetes/45-listers.yml
-    - kubernetes/50-elasticsearch.yml
-    - kubernetes/55-search.yml
-    - kubernetes/56-search-journal-client.yml
-    - kubernetes/60-redis.yml
-    - kubernetes/61-counters.yml
-    - kubernetes/62-counters-journal-client.yml
-    - kubernetes/70-idx-storage-db.yml
-    - kubernetes/71-idx-storage.yml
-    - kubernetes/72-indexers.yml
-    - kubernetes/73-indexer-journal-client.yml
-    - kubernetes/80-vault-db.yml
-    - kubernetes/81-vault.yml
-    - kubernetes/82-cookers.yml
-    - kubernetes/90-deposit-db.yml
-    - kubernetes/91-deposit.yml
+
+profiles:
+- name: default
+  activation:
+    - command: dev
+  deploy:
+    kubectl:
+      manifests:
+      - kubernetes/01-journal.yml
+      - kubernetes/02-monitoring.yml
+      - kubernetes/05-storage-db.yml
+      - kubernetes/10-objstorage.yml
+      - kubernetes/11-storage.yml
+      - kubernetes/15-scheduler-db.yml
+      - kubernetes/16-rabbitmq.yml
+      - kubernetes/20-scheduler.yml
+      - kubernetes/21-scheduler-runner.yml
+      - kubernetes/22-scheduler-listener.yml
+      - kubernetes/23-scheduler-journal-client.yml
+      - kubernetes/29-web-db.yml
+      - kubernetes/30-webapp.yml
+      - kubernetes/40-loaders.yml
+      - kubernetes/41-deposit-loaders.yml
+      - kubernetes/45-listers.yml
+      - kubernetes/70-idx-storage-db.yml
+      - kubernetes/71-idx-storage.yml
+      - kubernetes/72-indexers.yml
+      - kubernetes/73-indexer-journal-client.yml
+      - kubernetes/80-vault-db.yml
+      - kubernetes/81-vault.yml
+      - kubernetes/82-cookers.yml
+      - kubernetes/90-deposit-db.yml
+      - kubernetes/91-deposit.yml
+      # Disabled in this default profile
+      # - kubernetes/50-elasticsearch.yml
+      # - kubernetes/55-search.yml
+      # - kubernetes/56-search-journal-client.yml
+      # - kubernetes/60-redis.yml
+      # - kubernetes/61-counters.yml
+      # - kubernetes/62-counters-journal-client.yml
+
+# all containers
+# deploy:
+#   kubectl:
+#     manifests:
+#     - kubernetes/01-journal.yml
+#     - kubernetes/02-monitoring.yml
+#     - kubernetes/05-storage-db.yml
+#     - kubernetes/10-objstorage.yml
+#     - kubernetes/11-storage.yml
+#     - kubernetes/15-scheduler-db.yml
+#     - kubernetes/16-rabbitmq.yml
+#     - kubernetes/20-scheduler.yml
+#     - kubernetes/21-scheduler-runner.yml
+#     - kubernetes/22-scheduler-listener.yml
+#     - kubernetes/23-scheduler-journal-client.yml
+#     - kubernetes/29-web-db.yml
+#     - kubernetes/30-webapp.yml
+#     - kubernetes/40-loaders.yml
+#     - kubernetes/41-deposit-loaders.yml
+#     - kubernetes/45-listers.yml
+#     - kubernetes/50-elasticsearch.yml
+#     - kubernetes/55-search.yml
+#     - kubernetes/56-search-journal-client.yml
+#     - kubernetes/60-redis.yml
+#     - kubernetes/61-counters.yml
+#     - kubernetes/62-counters-journal-client.yml
+#     - kubernetes/70-idx-storage-db.yml
+#     - kubernetes/71-idx-storage.yml
+#     - kubernetes/72-indexers.yml
+#     - kubernetes/73-indexer-journal-client.yml
+#     - kubernetes/80-vault-db.yml
+#     - kubernetes/81-vault.yml
+#     - kubernetes/82-cookers.yml
+#     - kubernetes/90-deposit-db.yml
+#     - kubernetes/91-deposit.yml
