@@ -13,8 +13,6 @@ if [[ -d /src/swh-web ]] ; then
     # execute webpack-dev-server in background
     yarn start-dev&
     popd
-    # force the use of swh-web develomment settings
-    export DJANGO_SETTINGS_MODULE=swh.web.settings.development
 fi
 
 source /srv/softwareheritage/utils/pyutils.sh
