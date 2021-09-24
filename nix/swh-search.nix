@@ -14,9 +14,7 @@ pkgs.python3Packages.buildPythonPackage rec {
     elasticsearch
     typing-extensions
 
-
-    # FIXME: python bindings to tree-sitter needs packaging
-    # tree_sitter
+    self.packages.${system}.py-tree-sitter
 
     # requirements-swh.txt
     self.packages.${system}.swh-core
@@ -30,7 +28,7 @@ pkgs.python3Packages.buildPythonPackage rec {
   #       provide it explicitely.
   prePatch = ''
                 substituteInPlace setup.py \
-                  --replace 'setup_requires=["setuptools-scm"],' "" \
+                  --replace 'setup_requires=["setuptools-scm", "tree-sitter==0.19.0"],' "" \
                   --replace "use_scm_version=True" 'version="${version}"'
               '';
 

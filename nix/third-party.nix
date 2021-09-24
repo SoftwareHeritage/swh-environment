@@ -122,4 +122,22 @@
       license = licenses.mit;
     };
   };
+
+  py-tree-sitter = pkgs.python3Packages.buildPythonPackage rec {
+    pname = "tree_sitter";
+    version = "0.19.0";
+
+    src = pkgs.python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-hhr885+Vf911+LkxJLxAPy86vouB8QTAWxp0nm3TNJk=";
+    };
+
+    meta = with pkgs.lib; {
+      homepage = "https://github.com/tree-sitter/py-tree-sitter";
+      description = ''
+        Python bindings to the tree-sitter library
+      '';
+      license = licenses.mit;
+    };
+  };
 }
