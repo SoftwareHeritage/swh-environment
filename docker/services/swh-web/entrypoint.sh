@@ -23,9 +23,6 @@ case "$1" in
         exec bash -i
         ;;
      *)
-        echo "Starting memcached"
-        memcached&
-
         wait_pgsql
 
         echo "Migrating db using ${DJANGO_SETTINGS_MODULE}"

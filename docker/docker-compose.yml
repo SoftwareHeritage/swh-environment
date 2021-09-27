@@ -101,6 +101,10 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  memcache:
+    image: memcached
+    restart: unless-stopped
+
   nginx:
     image: nginx
     volumes:
@@ -277,6 +281,7 @@ services:
       - swh-scheduler
       - swh-storage
       - swh-web-db
+      - memcache
     env_file:
       - ./env/common_python.env
       - ./env/01-web-db.env

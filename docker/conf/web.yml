@@ -34,7 +34,7 @@ production_db:
   name: postgresql:///?service=swh-web
 
 throttling:
-  cache_uri: 127.0.0.1:11211
+  cache_uri: memcache:11211
   scopes:
     swh_api:
       limiter_rate:

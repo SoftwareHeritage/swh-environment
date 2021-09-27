@@ -16,7 +16,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     libsvn-dev \
     libsystemd-dev \
     gcc \
-    memcached \
     openjdk-11-jre \
     pkg-config \
     pv \
