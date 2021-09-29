@@ -28,4 +28,5 @@ celery:
     - swh.lister.packagist.tasks.PackagistListerTask
     - swh.lister.phabricator.tasks.FullPhabricatorLister
     - swh.lister.phabricator.tasks.IncrementalPhabricatorLister
+    - swh.lister.opam.tasks.OpamListerTask
     - swh.lister.pypi.tasks.PyPIListerTask

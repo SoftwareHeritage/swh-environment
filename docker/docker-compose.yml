@@ -428,6 +428,26 @@ services:
       - "./conf/loader-deposit.yml:/loader-deposit.yml:ro"
       - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
 
+  swh-loader-opam:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+      - ./env/workers.env
+    user: swh
+    environment:
+      SWH_WORKER_INSTANCE: loader-opam
+      SWH_CONFIG_FILENAME: /loader-opam.yml
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - swh-storage
+      - swh-scheduler
+      - swh-deposit
+      - amqp
+    volumes:
+      - "./conf/loader-opam.yml:/loader-opam.yml:ro"
+      - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
+
   # Indexer Celery workers
 
   swh-indexer:
