@@ -295,6 +295,25 @@ services:
       - "./conf/web.yml:/web.yml:ro"
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
 
+  swh-web-cron:
+    build: ./
+    image: swh/stack
+    depends_on:
+      - swh-web
+    env_file:
+      - ./env/common_python.env
+      - ./env/01-web-db.env
+      - ./env/02-web-db.env
+    environment:
+      VERBOSITY: 2
+      DJANGO_SETTINGS_MODULE: swh.web.settings.production
+      SWH_CONFIG_FILENAME: /web.yml
+    entrypoint: /entrypoint.sh
+    command: cron
+    volumes:
+      - "./conf/web.yml:/web.yml:ro"
+      - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
+
   swh-deposit-db:
     image: postgres:12
     env_file:

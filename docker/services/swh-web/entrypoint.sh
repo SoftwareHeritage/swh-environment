@@ -22,6 +22,16 @@ case "$1" in
     "shell")
         exec bash -i
         ;;
+    "cron")
+        echo "Start periodic save code now refresh statuses routine (in background)"
+        exec sh -c 'trap exit TERM INT; while :; do
+        (date && django-admin refresh_savecodenow_statuses \
+                  --settings=${DJANGO_SETTINGS_MODULE} 2>&1)
+        sleep 15 &
+        wait ${!}
+        done'
+        ;;
+
      *)
         wait_pgsql
 
@@ -34,17 +44,6 @@ case "$1" in
         do
             cat $create_user_script | python3 -m swh.web.manage shell
         done
-
-        echo "Start periodic save code now refresh statuses routine (in background)"
-        (
-            while true
-            do
-                (date && django-admin refresh_savecodenow_statuses \
-                    --settings=${DJANGO_SETTINGS_MODULE} 2>&1) >> /tmp/refresh-statuses.log
-                sleep 15
-            done
-        ) &
-        disown
 
         echo "starting the swh-web server"
         if [[ -d /src/swh-web ]] ; then
