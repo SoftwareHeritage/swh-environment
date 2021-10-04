@@ -188,7 +188,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
-    command: start-runner --period 10 --with-priority --task-type load-git --task-type load-svn --task-type load-hg --task-type load-archive-files
+    command: start-runner --period 10 --with-priority
     depends_on:
       - swh-scheduler
       - amqp
