@@ -83,6 +83,10 @@ fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-objstorage-replayer.git' 'swh-objstorage-replayer'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
+[swh-perfecthash]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-perfecthash.git' 'swh-perfecthash'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
 [swh-py-template]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-py-template.git' 'swh-py-template'
 fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
