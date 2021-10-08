@@ -203,7 +203,8 @@ host or from a docker container will not use the same urls to access
 services. For example, to use the ``celery`` utility from the host, you
 may type::
 
-   ~/swh-environment/docker$ CELERY_BROKER_URL=amqp://:5072// celery status
+   ~/swh-environment/docker$ celery --broker amqp://:5072// \
+       --app swh.scheduler.celery_backend.config.app status
    loader@61704103668c: OK
    [...]
 
@@ -454,7 +455,8 @@ virtualenvwrapper)::
 
    ~$ workon swh
    (swh) ~/swh-environment$ export SWH_SCHEDULER_URL=http://127.0.0.1:5008/
-   (swh) ~/swh-environment$ export CELERY_BROKER_URL=amqp://127.0.0.1:5072/
+   (swh) ~/swh-environment$ export BROKER_URL=amqp://127.0.0.1:5072/
+   (swh) ~/swh-environment$ export APP=swh.scheduler.celery_backend.config.app
 
 Now we can use the ``celery`` command directly to control the celery
 system running in the docker environment::
@@ -500,7 +502,8 @@ When you use virtualenvwrapper, you can add postactivation commands::
 
    eval "$(_SWH_COMPLETE=$autocomplete_cmd swh)"
    export SWH_SCHEDULER_URL=http://127.0.0.1:5008/
-   export CELERY_BROKER_URL=amqp://127.0.0.1:5072/
+   export BROKER_URL=amqp://127.0.0.1:5072/
+   export APP=swh.scheduler.celery_backend.config.app
    export COMPOSE_FILE=~/swh-environment/docker/docker-compose.yml:~/swh-environment/docker/docker-compose.override.yml
    alias doco=docker-compose
 
@@ -511,16 +514,16 @@ This postactivate script does:
 -  install a shell completion handler for the swh-scheduler command,
 -  preset a bunch of environment variables
 
-   -  ``SWH_SCHEDULER_URL`` so that you can just run ``swh scheduler``
-      against the scheduler API instance running in docker, without
-      having to specify the endpoint URL,
+   - ``SWH_SCHEDULER_URL`` so that you can just run ``swh scheduler`` against
+     the scheduler API instance running in docker, without having to specify
+     the endpoint URL,
 
-   -  ``CELERY_BROKER`` so you can execute the ``celery`` tool (without
-      cli options) against the rabbitmq server running in the docker
-      environment,
+   - ``BROKER_URL`` and ``APP`` so you can execute the ``celery`` tool (without
+     cli options) against the rabbitmq server running in the docker environment
+     (see the `documentation of the celery command
+     <https://docs.celeryproject.org/en/latest/reference/cli.html>`_),
 
-   -  ``COMPOSE_FILE`` so you can run ``docker-compose`` from
-      everywhere,
+   - ``COMPOSE_FILE`` so you can run ``docker-compose`` from everywhere,
 
 -  create an alias ``doco`` for ``docker-compose`` because this is way
    too long to type,
