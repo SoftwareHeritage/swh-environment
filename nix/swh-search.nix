@@ -23,6 +23,15 @@ pkgs.python3Packages.buildPythonPackage rec {
     self.packages.${system}.swh-model
   ];
 
+  nativeBuildInputs = with pkgs; [
+    tree-sitter
+    nodejs
+
+    (writeShellScriptBin "yarn" ''
+       echo noop
+     '')
+  ];
+
   # HACK: flakes don't include the `.git/` folder as part of the source, so
   #       setuptools fails because it can't identify the version this way, so we
   #       provide it explicitely.
