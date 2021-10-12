@@ -3,6 +3,10 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
 
+    swh-auth = {
+      url = "git+https://forge.softwareheritage.org/source/swh-auth.git?tag=v0.6.1";
+      flake = false;
+    };
     swh-core = {
       url = "git+https://forge.softwareheritage.org/source/swh-core.git?tag=v0.14.5";
       flake = false;
@@ -47,6 +51,10 @@
       url = "git+https://forge.softwareheritage.org/source/swh-vault.git?tag=v1.2.0";
       flake = false;
     };
+    swh-web = {
+      url = "git+https://forge.softwareheritage.org/source/swh-web.git?tag=v0.0.332";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }:
@@ -58,6 +66,7 @@
           defaultPackage = self.packages.${system}.swh-core;
 
           packages = {
+            swh-auth = import ./nix/swh-auth.nix { inherit self pkgs system; };
             swh-core = import ./nix/swh-core.nix { inherit self pkgs system; };
             swh-counters = import ./nix/swh-counters.nix { inherit self pkgs system; };
             swh-graph = import ./nix/swh-graph.nix { inherit self pkgs system; };
@@ -69,6 +78,7 @@
             swh-search = import ./nix/swh-search.nix { inherit self pkgs system; };
             swh-storage = import ./nix/swh-storage.nix { inherit self pkgs system; };
             swh-vault = import ./nix/swh-vault.nix { inherit self pkgs system; };
+            swh-web = import ./nix/swh-web.nix { inherit self pkgs system; };
           } // (
             ###
             # TODO: third party packages below, upstream to nixpkgs?

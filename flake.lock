@@ -35,6 +35,7 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "nixpkgs": "nixpkgs",
+        "swh-auth": "swh-auth",
         "swh-core": "swh-core",
         "swh-counters": "swh-counters",
         "swh-graph": "swh-graph",
@@ -45,7 +46,24 @@
         "swh-scheduler": "swh-scheduler",
         "swh-search": "swh-search",
         "swh-storage": "swh-storage",
-        "swh-vault": "swh-vault"
+        "swh-vault": "swh-vault",
+        "swh-web": "swh-web"
+      }
+    },
+    "swh-auth": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1629724252,
+        "narHash": "sha256-b0bmfbovNGSe+UmD6jg94LMHX6Ge1v+2rZeuGAGeYvg=",
+        "ref": "master",
+        "rev": "508b476db7c5283f6dcbb44e248109b07e39e66e",
+        "revCount": 55,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-auth.git?tag=v0.6.1"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-auth.git?tag=v0.6.1"
       }
     },
     "swh-core": {
@@ -222,6 +240,22 @@
       "original": {
         "type": "git",
         "url": "https://forge.softwareheritage.org/source/swh-vault.git?tag=v1.2.0"
+      }
+    },
+    "swh-web": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1633958366,
+        "narHash": "sha256-lXk6X1L8iS8m+RNPNi/0PkfsIqLhFSbVreTmr/ddLRo=",
+        "ref": "master",
+        "rev": "d7c16735a46d0ea78f0fa48b16f66dc30bab006d",
+        "revCount": 2475,
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-web.git?tag=v0.0.332"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://forge.softwareheritage.org/source/swh-web.git?tag=v0.0.332"
       }
     }
   },

@@ -140,4 +140,124 @@
       license = licenses.mit;
     };
   };
+
+  django-js-reverse = pkgs.python3Packages.buildPythonPackage rec {
+    pname = "django-js-reverse";
+    version = "0.9.1";
+
+    src = pkgs.python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-KjktFp9E4wuIPDDfz9kXoUFnzo/hlsmdI4WzHJDXeqA=";
+    };
+
+    propagatedBuildInputs = with pkgs.python3Packages; [
+      django
+    ];
+
+    doCheck = false;
+
+    meta = with pkgs.lib; {
+      homepage = "https://github.com/ierror/django-js-reverse";
+      description = ''
+        Javascript url handling for Django that doesn't hurt.
+      '';
+      license = licenses.mit;
+    };
+  };
+
+  pybadges = pkgs.python3Packages.buildPythonPackage rec {
+    pname = "pybadges";
+    version = "2.2.1";
+
+    src = pkgs.python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-T27cfk4STK7Cl18Uraq/72gcjv8L5vN0qMIakY51RY8=";
+    };
+
+    doCheck = false;
+
+    propagatedBuildInputs = with pkgs.python3Packages; [
+      requests
+
+      # NOTE: unfortunately has a hard dependency on jinja2 < 3.0
+      self.packages.${system}.jinja2
+    ];
+
+    meta = with pkgs.lib; {
+      homepage = "https://github.com/google/pybadges";
+      description = ''
+        A Python library for creating Github-style badges
+      '';
+      license = licenses.asl20;
+    };
+  };
+
+  jinja2 = pkgs.python3Packages.buildPythonPackage rec {
+    pname = "Jinja2";
+    version = "2.11.3";
+
+    src = pkgs.python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-ptWEM94K6AA0fKsfowQ867q+i6qdKeZo8cdoy4ejM8Y=";
+    };
+
+    propagatedBuildInputs = with pkgs.python3Packages; [
+      markupsafe
+    ];
+  };
+
+  python-memcached = pkgs.python3Packages.buildPythonPackage rec {
+    pname = "python-memcached";
+    version = "1.59";
+
+    src = pkgs.python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-ouKGN74T7gvxqLaEPnSQ+UVv0/Kky2BHFzPHtdVVfk8=";
+    };
+
+    propagatedBuildInputs = with pkgs.python3Packages; [
+      six
+    ];
+
+    meta = with pkgs.lib; {
+      homepage = "https://github.com/linsomniac/python-memcached";
+      description = ''
+        A python memcached client library.
+      '';
+      license = licenses.psfl;
+    };
+  };
+
+  python-keycloak = pkgs.python3Packages.buildPythonPackage rec {
+    pname = "python-keycloak";
+    version = "0.26.1";
+
+    src = pkgs.python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-PNZ5LhiIf2U8O/BVcnqBBZYAuM4C6XVJLWtC9jykUGQ=";
+    };
+
+    doCheck = false;
+
+    propagatedBuildInputs = with pkgs.python3Packages; [
+      python-jose
+      requests
+    ];
+  };
+
+  psycopg28 = pkgs.python3Packages.buildPythonPackage rec {
+    pname = "psycopg2";
+    version = "2.8.6";
+
+    src = pkgs.python3Packages.fetchPypi {
+      inherit pname version;
+      sha256 = "sha256-+yP2xxEHw3/WZ8tOo2Pd65NrNIu9ZEknjrksGJaZ9UM=";
+    };
+
+    doCheck = false;
+
+    nativeBuildInputs = with pkgs; [
+      postgresql
+    ];
+  };
 }
