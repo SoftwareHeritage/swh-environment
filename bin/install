@@ -3,12 +3,14 @@
 # Usage: bin/install [PIP_INSTALL_OPTION..]
 
 PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy"
+PIP_FLAGS="--disable-pip-version-check"
+PIP="python3 -m pip $PIP_FLAGS"
 
-python3 -m pip install --upgrade pip "$@"
+# python3 -m pip install --upgrade pip "$@"
 
-python3 -m pip install $PREREQUISITES "$@"
+$PIP install $PREREQUISITES "$@"
 
 bin/pip-swh-packages --with-testing | \
     while read pkg_spec ; do
-        python3 -m pip install $pkg_spec "$@"
+        $PIP install $pkg_spec "$@"
     done
