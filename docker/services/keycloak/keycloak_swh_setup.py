@@ -39,9 +39,7 @@ def assign_realm_roles_to_user(keycloak_admin, realm_roles, username):
     for realm_role in realm_roles:
         roles.append(keycloak_admin.get_realm_role(realm_role))
     user_id = keycloak_admin.get_user_id(username)
-    # due to a design bug in python-keycloak API, client_id parameter must
-    # be provided while it is not used
-    keycloak_admin.assign_realm_roles(user_id, client_id="", roles=roles)
+    keycloak_admin.assign_realm_roles(user_id, roles=roles)
 
 
 def assign_client_roles_to_user(keycloak_admin, client_name, client_roles, username):
@@ -243,10 +241,21 @@ for GROUP in GROUPS:
         break
 
 # create webapp client roles
+
+WEB_API_THROTTLING_EXEMPTED_ROLE_NAME = "swh.web.api.throttling_exempted"
+WEB_API_GRAPH_ROLE_NAME = "swh.web.api.graph"
+VAULT_GIT_BARE_UI_ROLE_NAME = "swh.vault.git_bare.ui"
+WEB_ADMIN_LIST_DEPOSITS_ROLE_NAME = "swh.web.admin.list_deposits"
+
 create_client_roles(
     KEYCLOAK_ADMIN,
     CLIENT_WEBAPP_NAME,
-    ["swh.web.api.throttling_exempted", "swh.web.api.graph", "swh.vault.git_bare.ui"],
+    [
+        WEB_API_THROTTLING_EXEMPTED_ROLE_NAME,
+        WEB_API_GRAPH_ROLE_NAME,
+        VAULT_GIT_BARE_UI_ROLE_NAME,
+        WEB_ADMIN_LIST_DEPOSITS_ROLE_NAME,
+    ],
 )
 
 DEPOSIT_API_ROLE_NAME = "swh.deposit.api"
@@ -306,6 +315,9 @@ for user_data in [
 
 assign_client_roles_to_user(
     KEYCLOAK_ADMIN, CLIENT_DEPOSIT_NAME, [DEPOSIT_API_ROLE_NAME], "test"
+)
+assign_client_roles_to_user(
+    KEYCLOAK_ADMIN, CLIENT_WEBAPP_NAME, [WEB_ADMIN_LIST_DEPOSITS_ROLE_NAME], "test"
 )
 
 AMBASSADOR_ROLE_NAME = "swh.ambassador"
