@@ -39,7 +39,9 @@ USER swh
 
 RUN python3 -m venv /srv/softwareheritage/venv
 ENV PATH="/srv/softwareheritage/venv/bin:${PATH}"
-RUN pip install --upgrade pip setuptools wheel
+# Avoid 21.3 release which is preventing override to work
+# https://github.com/pypa/pip/issues/10573
+RUN pip install --upgrade 'pip!=21.3' setuptools wheel
 RUN pip install gunicorn httpie
 
 RUN pip install \
