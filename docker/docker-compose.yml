@@ -196,6 +196,26 @@ services:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
 
+  swh-scheduler-schedule-recurrent:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+      - ./env/scheduler-db.env
+      - ./env/scheduler.env
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      LOGLEVEL: INFO
+    entrypoint: /entrypoint.sh
+    command: schedule-recurrent
+    depends_on:
+      - swh-scheduler
+      - amqp
+    volumes:
+      - "./conf/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
+
   # Graph storage
 
   swh-storage-db:
