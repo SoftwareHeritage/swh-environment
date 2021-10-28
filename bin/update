@@ -23,6 +23,8 @@ fi
 git pull
 mr -j 4 update
 
+mr run pre-commit install
+
 if [ "$1" = "-i" -o "$1" = "--install" ] ; then
     ./bin/install
 fi
