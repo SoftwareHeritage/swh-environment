@@ -23,6 +23,7 @@ celery:
     - swh.loader.package.archive.tasks.LoadArchive
     - swh.loader.package.cran.tasks.LoadCRAN
     - swh.loader.package.debian.tasks.LoadDebian
+    - swh.loader.package.nixguix.tasks.LoadNixguix
     - swh.loader.package.npm.tasks.LoadNpm
     - swh.loader.package.pypi.tasks.LoadPyPI
     - swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
