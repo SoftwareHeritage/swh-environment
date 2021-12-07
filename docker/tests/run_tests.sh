@@ -28,7 +28,7 @@ if test -t 1; then
   RED='\033[0;31m'
   NC='\033[0m'
 else
-  DOCO_OPTIONS='--no-ansi'
+  DOCO_OPTIONS='--ansi never'
 fi
 
 # Remove previously dumped service logs file if any
