@@ -23,6 +23,8 @@ case "$1" in
         exec bash -i
         ;;
     "cron")
+        wait-for-it swh-web:5004 -s --timeout=0
+
         echo "Start periodic save code now refresh statuses routine (in background)"
         exec sh -c 'trap exit TERM INT; while :; do
         (date && django-admin refresh_savecodenow_statuses \
