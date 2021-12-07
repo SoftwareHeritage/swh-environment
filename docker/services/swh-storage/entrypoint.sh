@@ -40,9 +40,11 @@ case "$1" in
       echo Starting the swh-storage API server
       exec gunicorn --bind 0.0.0.0:5002 \
            --reload \
+           --access-logfile /dev/stdout \
+           --access-logformat "%(t)s %(r)s %(s)s %(b)s %(M)s" \
            --threads 4 \
            --workers 2 \
-           --log-level DEBUG \
+           --log-level INFO \
            --timeout 3600 \
            --config 'python:swh.core.api.gunicorn_config' \
            'swh.storage.api.server:make_app_from_configfile()'
