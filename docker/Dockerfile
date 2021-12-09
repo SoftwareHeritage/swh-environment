@@ -12,6 +12,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y \
     libapr1-dev \
     libaprutil1-dev \
+    libcmph-dev \
     libpq-dev \
     libsvn-dev \
     libsystemd-dev \
