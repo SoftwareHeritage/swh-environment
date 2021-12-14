@@ -389,14 +389,12 @@ Using docker setup development and integration testing
 
 If you hack the code of one or more archive components with a virtual
 env based setup as described in the
-[[https://docs.softwareheritage.org/devel/developer-setup.html|developer
-setup guide]], you may want to test your modifications in a working
+`developer setup guide <https://docs.softwareheritage.org/devel/developer-setup.html>`__, you may want to test your modifications in a working
 Software Heritage instance. The simplest way to achieve this is to use
 this docker-based environment.
 
 If you haven’t followed the
-[[https://docs.softwareheritage.org/devel/developer-setup.html|developer
-setup guide]], you must clone the the [swh-environment] repo in your
+`developer setup guide <https://docs.softwareheritage.org/devel/developer-setup.html>`__, you must clone the the [swh-environment] repo in your
 ``swh-environment`` directory::
 
    ~/swh-environment$ git clone https://forge.softwareheritage.org/source/swh-environment.git .
@@ -406,8 +404,7 @@ be cloned directly in the ``~/swh-environment`` directory, not in a sub
 directory. Also note that if you haven’t done it yet and you want to
 hack the source code of one or more Software Heritage packages, you
 really should read the
-[[https://docs.softwareheritage.org/devel/developer-setup.html|developer
-setup guide]].
+`developer setup guide <https://docs.softwareheritage.org/devel/developer-setup.html>`__.
 
 From there, we will checkout or update all the swh packages::
 
