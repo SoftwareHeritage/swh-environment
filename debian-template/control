@@ -1,0 +1,16 @@
+Source: @DASHED_PKG_NAME@
+Maintainer: Software Heritage developers <swh-devel@inria.fr>
+Section: python
+Priority: optional
+Build-Depends:
+# The above dependencies are automatically generated. Add extra dependencies below:
+@EXTRA_BUILD_DEPENDS@
+Rules-Requires-Root: no
+Standards-Version: 4.6.0
+Homepage: https://forge.softwareheritage.org/source/@DASHED_PKG_NAME@
+
+Package: python3-@DOTTED_PKG_NAME@
+Architecture: @PKG_ARCHITECTURE@
+Depends: ${misc:Depends}, ${python3:Depends},
+@EXTRA_BINARY_DEPENDS@
+Description: @PKG_DESCRIPTION@

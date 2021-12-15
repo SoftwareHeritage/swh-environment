@@ -1,0 +1,31 @@
+#!/usr/bin/perl
+
+use strict;
+use v5.26;
+
+use File::Basename;
+
+open( my $control, "<", "debian/control" ) or die $!;
+
+my $dir = dirname $0;
+open( my $deps, "-|", "$dir/debpkg-get-dependencies" ) or die $!;
+
+my $in_build_depends = 0;
+
+while (<$control>) {
+    if ( $in_build_depends && /^[^ ]/ ) {
+        $in_build_depends = 0;
+    }
+
+    print unless $in_build_depends;
+
+    if (/^Build-Depends:/) {
+        $in_build_depends = 1;
+        while (<$deps>) {
+            chomp;
+            print " $_,\n";
+        }
+    }
+}
+
+0;

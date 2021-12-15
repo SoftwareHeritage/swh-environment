@@ -7,48 +7,70 @@ set -o pipefail
 package=$(basename $(pwd))
 module=${package//-/.}
 
-if [ $# -ne 0 ]; then
-  last_debian_rev=$1
-else
-  last_debian_rev=master
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <initial_upstream_tag> <extra build depends>"
+  exit 1
 fi
 
-git branch -D pristine-tar debian/upstream debian/unstable-swh debian/stretch-swh || true
+initial_upstream_tag=$1
 
-for tag in `git tag -l debian/*`; do
-  git tag -d $tag
+shift
+
+read -p "This script will remove local changes and delete debian branches without confirmation. Use it on a clean checkout. Proceed? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+    exit 1
+fi
+
+build_depends=()
+extra_build_depends=("$@")
+extra_binary_depends=()
+pkg_architecture=all
+
+# Clean up existing debian branches and tags
+
+git branch -D pristine-tar debian/upstream debian/unstable-swh || true
+
+for tag in $(git tag -l debian/*); do
+  git tag -d "$tag"
 done
 
-for tag in `git tag -l --sort=v:refname v\*`; do
-  ver=${tag/v/}
-  firstver=${firstver:-${ver}}
-  if [ -f ../packages/${package}_${ver}.orig.tar.gz ]; then
-     continue
-  fi
+# create sdist for the initial tag
 
-  git checkout $tag
-  if [ -d swh ]; then
-    git clean -dfx swh
-  fi
-  if [ -f yarn.lock ]; then
-    (yarn install --frozen-lockfile && yarn build) || true
-  fi
-  find . -maxdepth 1 -type d -name '*.egg-info' -exec rm -r '{}' \+
-  python3 setup.py egg_info
-  pname=$(awk '/^Name:/{print $2}' *.egg-info/PKG-INFO)
-  pver=$(awk '/^Version:/{print $2}' *.egg-info/PKG-INFO)
-  python3 setup.py sdist -d ../packages
-  mv ../packages/${pname}-${pver}.tar.gz ../packages/${package}_${ver}.orig.tar.gz
-done
+firstver=${initial_upstream_tag/v/}
+git checkout $initial_upstream_tag
 
-upstream_tag=$(git describe --abbrev=0)
-ver=${upstream_tag/v/}
+if [ -d swh ]; then
+  git clean -dfx swh
+fi
+if [ -f yarn.lock ]; then
+  (yarn install --frozen-lockfile && yarn build) || true
+fi
 
-author_name=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggername)%(else)%(authorname)%(end)" "${upstream_tag}")
-author_email=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggeremail)%(else)%(authoremail)%(end)" "${upstream_tag}")
+destdir=$(mktemp -d)
+
+find . -maxdepth 1 -type d -name '*.egg-info' -exec rm -r '{}' \+
+python3 setup.py egg_info
+pname=${module}
+pver=$(grep-dctrl -n -s Version -FName $module 2>/dev/null < *.egg-info/PKG-INFO || true)
+python3 setup.py sdist -d $destdir
+python3 setup.py bdist_wheel -d $destdir
+mv ${destdir}/${pname}-${pver}.tar.gz ${destdir}/${package}_${firstver}.orig.tar.gz
+
+# Check if package is going to be architecture-dependent
+wheels=(${destdir}/${pname}-${pver}*.whl)
+if [[ "${wheels[0]}" = *$(uname -m)* ]]; then
+  pkg_architecture=any
+  extra_build_depends+=('python3-all-dev')
+  extra_binary_depends+=('${shlibs:Depends}')
+fi
+
+author_name=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggername)%(else)%(authorname)%(end)" "${initial_upstream_tag}")
+author_email=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggeremail)%(else)%(authoremail)%(end)" "${initial_upstream_tag}")
 # Strip <>
 author_email=${author_email:1:-1}
-author_date=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggerdate:iso)%(else)%(authordate:iso)%(end)" "${upstream_tag}")
+author_date=$(git tag -l --format="%(if)%(*objecttype)%(then)%(taggerdate:iso)%(else)%(authordate:iso)%(end)" "${initial_upstream_tag}")
 
 export DEBEMAIL="${author_email}"
 export DEBFULLNAME="${author_name}"
@@ -59,33 +81,47 @@ export GIT_COMMITTER_NAME="${author_name}"
 export GIT_COMMITTER_EMAIL="${author_email}"
 export GIT_COMMITTER_DATE="${author_date}"
 
-git checkout $upstream_tag
+git checkout $initial_upstream_tag
 git clean -dfx
 git checkout -b debian/upstream
 
 git ls-tree --name-only HEAD | xargs rm -r
-tar -x --strip-components 1 -f ../packages/${package}_${firstver}.orig.tar.gz
+tar -x --strip-components 1 -f ${destdir}/${package}_${firstver}.orig.tar.gz
 git add .
 git commit --no-verify -m "Import upstream version ${firstver}"
 git tag debian/upstream/${firstver}
 
 git checkout --orphan pristine-tar
-pristine-tar commit ../packages/${package}_${firstver}.orig.tar.gz
+pristine-tar commit ${destdir}/${package}_${firstver}.orig.tar.gz
 
 git checkout debian/upstream
 git checkout -b debian/unstable-swh
-git checkout ${last_debian_rev} -- debian
-cat > debian/gbp.conf << EOF
-[DEFAULT]
-upstream-branch=debian/upstream
-upstream-tag=debian/upstream/%(version)s
-upstream-vcs-tag=v%(version)s
-debian-branch=debian/unstable-swh
-pristine-tar=True
-EOF
+cp -r $(dirname $0)/../debian-template debian/
 
-rm debian/changelog
+summary=$(grep-dctrl -n -s Summary -FName ${module} 2>/dev/null < *.egg-info/PKG-INFO || true)
+summary_escaped="${summary//\//\\\/}"
+
+extra_build_depends_sub="$(printf "\\\\n %s," "${extra_build_depends[@]}")"
+extra_binary_depends_sub="$(printf "\\\\n %s," "${extra_binary_depends[@]}")"
+
+for file in debian/*; do
+  if [ -f "$file" ]; then
+    sed -i \
+      -e "s/@DOTTED_PKG_NAME@/$module/g" \
+      -e "s/@DASHED_PKG_NAME@/$package/g" \
+      -e "s/@YEAR@/$(date +%Y)/g" \
+      -e "s/@PKG_DESCRIPTION@/${summary_escaped}/g" \
+      -e "s/@EXTRA_BUILD_DEPENDS@/${extra_build_depends_sub:2}/" \
+      -e "s/@EXTRA_BINARY_DEPENDS@/${extra_binary_depends_sub:2}/" \
+      -e "s/@PKG_ARCHITECTURE@/${pkg_architecture}/g" \
+      "$file"
+  fi
+done
+
+#wrap-and-sort -an
+
 faketime "${author_date}" dch --create --package ${package} -v ${firstver}-1~swh1 'Initial release'
+
 
 git tag -l --format="%(contents:subject)%(if)%(contents:body)%(then)%0a%(contents:body)%(end)" "${upstream_tag}" | sed -E -e '/^$/d' -e 's/^ *(- *)?//' | while read line; do
   faketime "${author_date}" dch "${line}"
@@ -93,18 +129,9 @@ done
 
 faketime "${author_date}" dch -D unstable-swh --force-distribution ''
 
+$(dirname $0)/debpkg-update-automatic-dependencies | sponge debian/control
+
 git add debian
 git commit --no-verify -m "Updated debian directory for version ${firstver}"
 
-git checkout -b debian/buster-swh
-faketime "${author_date}" dch --bpo -D buster-swh --force-distribution ''
-git add debian/changelog
-sed -i s/unstable/buster/ debian/gbp.conf
-git add debian/gbp.conf
-git commit --no-verify -m "Updated debian buster backport directory for version ${firstver}"
-
-for tag in `git tag -l --sort=v:refname v\* | tail -n +2`; do
-  version=${tag/v/}
-  echo $tag: $version
-  ../bin/debpkg-bump-version $version ../packages/${package}_${version}.orig.tar.gz
-done
+rm -r ${destdir}
