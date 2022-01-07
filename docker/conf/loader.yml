@@ -9,7 +9,7 @@ storage:
         revision: 1000
     - cls: filter
     - cls: remote
-      url: http://swh-storage:5002/
+      url: http://nginx:5080/storage
 
 celery:
   task_broker: amqp://guest:guest@amqp//
