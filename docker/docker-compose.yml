@@ -421,10 +421,20 @@ services:
       - swh-scheduler
       - swh-scheduler-runner
       - amqp
+      - swh-lister-maven-nginx
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/lister.yml:/lister.yml:ro"
       - "./services/swh-listers-worker/entrypoint.sh:/entrypoint.sh:ro"
+
+  # Http server to host the maven extracted index for the maven lister
+
+  swh-lister-maven-nginx:
+    image: nginx
+    volumes:
+      - "./conf/maven_index/:/usr/share/nginx/html:ro"
+    ports:
+      - 8880:80
 
   # Loader + deposit checker Celery workers
 
