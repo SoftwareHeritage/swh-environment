@@ -23,6 +23,7 @@ celery:
     - swh.lister.gnu.tasks.GNUListerTask
     - swh.lister.npm.tasks.NpmIncrementalListerTask
     - swh.lister.npm.tasks.NpmListerTask
+    - swh.lister.maven.tasks.FullMavenLister
     - swh.lister.launchpad.tasks.IncrementalLaunchpadLister
     - swh.lister.launchpad.tasks.FullLaunchpadLister
     - swh.lister.packagist.tasks.PackagistListerTask
