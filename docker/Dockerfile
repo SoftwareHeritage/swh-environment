@@ -54,6 +54,7 @@ RUN pip install \
         swh-journal \
         swh-lister \
         swh-loader-core \
+        swh-loader-bzr \
         swh-loader-git \
         swh-loader-mercurial \
         swh-loader-svn \
