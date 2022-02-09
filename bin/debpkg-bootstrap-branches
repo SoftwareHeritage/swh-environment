@@ -30,7 +30,9 @@ pkg_architecture=all
 
 # Clean up existing debian branches and tags
 
-git branch -D pristine-tar debian/upstream debian/unstable-swh || true
+for branch in pristine-tar debian/upstream debian/unstable-swh; do
+    git branch -D $branch || true
+done
 
 for tag in $(git tag -l debian/*); do
   git tag -d "$tag"
