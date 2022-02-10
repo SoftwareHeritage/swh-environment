@@ -5,120 +5,180 @@ checkout = git clone 'https://forge.softwareheritage.org/source/snippets.git' 's
 
 [swh-auth]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-auth.git' 'swh-auth'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-core]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-core.git' 'swh-core'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-counters]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-counters.git' 'swh-counters'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-dataset]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-dataset.git' 'swh-dataset'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-deposit]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-deposit.git' 'swh-deposit'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-docs]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-docs.git' 'swh-docs'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-fuse]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-fuse.git' 'swh-fuse'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-graph]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-graph.git' 'swh-graph'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-icinga-plugins]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-icinga-plugins.git' 'swh-icinga-plugins'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-indexer]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-indexer.git' 'swh-indexer'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-journal]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-journal.git' 'swh-journal'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-lister]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-lister.git' 'swh-lister'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-core]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-core.git' 'swh-loader-core'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-bzr]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-bzr.git' 'swh-loader-bzr'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-cvs]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-cvs.git' 'swh-loader-cvs'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-git]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-git.git' 'swh-loader-git'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-mercurial]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-svn]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-svn.git' 'swh-loader-svn'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-model]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-model.git' 'swh-model'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-objstorage]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-objstorage.git' 'swh-objstorage'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-objstorage-replayer]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-objstorage-replayer.git' 'swh-objstorage-replayer'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-perfecthash]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-perfecthash.git' 'swh-perfecthash'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-py-template]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-py-template.git' 'swh-py-template'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-scanner]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-scanner.git' 'swh-scanner'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-scheduler]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-scheduler.git' 'swh-scheduler'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-search]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-search.git' 'swh-search'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-storage]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-storage.git' 'swh-storage'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-vault]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-vault.git' 'swh-vault'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-web]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-web.git' 'swh-web'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-web-client]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-web-client.git' 'swh-web-client'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
