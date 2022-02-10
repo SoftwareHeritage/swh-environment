@@ -1,24 +1,39 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.4.0
+    rev: v4.1.0
     hooks:
       - id: trailing-whitespace
       - id: check-json
       - id: check-yaml
 
   - repo: https://gitlab.com/pycqa/flake8
-    rev: 3.8.4
+    rev: 4.0.1
     hooks:
       - id: flake8
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v1.16.0
+    rev: v2.1.0
     hooks:
       - id: codespell
-        args: [-L cas, -L cmak ]
+        name: Check source code spelling
+        args: [-L cas, -L cmak]
+        stages: [commit]
+      - id: codespell
+        name: Check commit message spelling
+        stages: [commit-msg]
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: mypy
+        args: [swh]
+        pass_filenames: false
+        language: system
+        types: [python]
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.5.2
+    rev: 5.10.1
     hooks:
       - id: isort
 
