@@ -2,112 +2,249 @@ doc 0
   field 0
     name u
     type string
-    value al.aldi|sprova4j|0.1.0|sources|jar
+    value org.objectstyle|jetty-launcher|1.6|NA|jar
   field 1
     name m
     type string
-    value 1626111735737
+    value 1464097975349
   field 2
     name i
     type string
-    value jar|1626109619335|14316|2|2|0|jar
+    value jar|1369650861000|4486|1|1|0|jar
   field 10
     name n
     type string
-    value sprova4j
+    value jetty-launcher
   field 11
     name d
     type string
-    value Java client for Sprova Test Management
+    value A launcher that runs a Java web app from a simple "main" method. Primarily intended for Eclipse.
+  field 13
+    name 1
+    type string
+    value cebf04697a9c5b41435ff8022851a48237b899b5
+  field 14
+    name c
+    type string
+    value /org/objectstyle/jetty/Launcher
 doc 1
   field 0
     name u
     type string
-    value al.aldi|sprova4j|0.1.0|NA|pom
+    value org.objectstyle|jetty-launcher|1.6|sources|jar
   field 1
     name m
     type string
-    value 1626111735764
+    value 1464097975464
   field 2
     name i
     type string
-    value jar|1626109636636|-1|1|0|0|pom
+    value jar|1369650865000|2089|2|2|0|jar
   field 10
     name n
     type string
-    value sprova4j
+    value jetty-launcher
   field 11
     name d
     type string
-    value Java client for Sprova Test Management
+    value A launcher that runs a Java web app from a simple "main" method. Primarily intended for Eclipse.
+  field 13
+    name 1
+    type string
+    value 77aca3536ce0982ae4b6bcc0c0d8841994e470ec
 doc 2
   field 0
     name u
     type string
-    value al.aldi|sprova4j|0.1.1|sources|jar
+    value org.objectstyle|jetty-launcher|1.6|javadoc|jar
   field 1
     name m
     type string
-    value 1626111784883
+    value 1464097975471
   field 2
     name i
     type string
-    value jar|1626111425534|14510|2|2|0|jar
+    value jar|1369650867000|21172|2|2|0|jar
   field 10
     name n
     type string
-    value sprova4j
+    value jetty-launcher
   field 11
     name d
     type string
-    value Java client for Sprova Test Management
+    value A launcher that runs a Java web app from a simple "main" method. Primarily intended for Eclipse.
+  field 13
+    name 1
+    type string
+    value 2916776fa50af0431c76a712cdc1c4405e4a31ca
 doc 3
   field 0
     name u
     type string
-    value al.aldi|sprova4j|0.1.1|NA|pom
+    value org.objectstyle.japp|japp-maven-plugin|3.0|sources|jar
   field 1
     name m
     type string
-    value 1626111784915
+    value 1464097975631
   field 2
     name i
     type string
-    value jar|1626111437014|-1|1|0|0|pom
+    value jar|1385823448000|372227|2|2|0|jar
   field 10
     name n
     type string
-    value sprova4j
+    value JApp Maven Plugin
   field 11
     name d
     type string
-    value Java client for Sprova Test Management
+    value japp-maven-plugin is a plugin to assemble desktop Java applications for different platforms
+  field 13
+    name 1
+    type string
+    value 22bfaf112d3ae6def57beffe6ee0243ff7145d66
 doc 4
-  field 14
+  field 0
+    name u
+    type string
+    value org.objectstyle.japp|japp-maven-plugin|3.0|javadoc|jar
+  field 1
+    name m
+    type string
+    value 1464097975667
+  field 2
+    name i
+    type string
+    value jar|1385823446000|53170|2|2|0|jar
+  field 10
+    name n
+    type string
+    value JApp Maven Plugin
+  field 11
+    name d
+    type string
+    value japp-maven-plugin is a plugin to assemble desktop Java applications for different platforms
+  field 13
+    name 1
+    type string
+    value 17b00f51f4cef767dd7cf351cbe3f0565ed4c0ca
+doc 5
+  field 0
+    name u
+    type string
+    value org.apache.cactus|cactus|1.8.0|NA|pom
+  field 1
+    name m
+    type string
+    value 1318448511977
+  field 2
+    name i
+    type string
+    value pom|1207904477000|18547|0|0|1|pom
+  field 10
+    name n
+    type string
+    value Cactus Parent Project
+  field 13
+    name 1
+    type string
+    value 65cf7496ec42a0eecb4fd93f749310512ee3c8ab
+doc 8989379
+  field 0
+    name u
+    type string
+    value org.apache.atlas|apache-atlas|2.0.0|NA|pom
+  field 1
+    name m
+    type string
+    value 1558345184223
+  field 2
+    name i
+    type string
+    value pom|1557724659000|86893|0|0|1|pom
+  field 10
+    name n
+    type string
+    value apache-atlas
+  field 11
+    name d
+    type string
+    value Metadata Management and Data Governance Platform over Hadoop
+  field 13
+    name 1
+    type string
+    value 6aa3c6099c95e983a076f36e918a3d42dfd8f3fb
+doc 7
+  field 17
     name DESCRIPTOR
     type string
     value NexusIndex
-  field 15
+  field 18
     name IDXINFO
     type string
-    value 1.0|index
-doc 5
-  field 16
+    value 1.0|releases
+doc 8
+  field 0
+    name u
+    type string
+    value org.objectstyle.japp|japp-maven-plugin|3.0|NA|jar
+  field 1
+    name m
+    type string
+    value 1464097977744
+  field 2
+    name i
+    type string
+    value maven-plugin|1385823440000|384874|1|1|0|jar
+  field 10
+    name n
+    type string
+    value JApp Maven Plugin
+  field 11
+    name d
+    type string
+    value japp-maven-plugin is a plugin to assemble desktop Java applications for different platforms
+  field 13
+    name 1
+    type string
+    value 470fa919828030cd17f5fa2efd96ff4ce732863a
+  field 19
+    name px
+    type string
+    value japp
+  field 20
+    name gx
+    type string
+    value japp
+  field 14
+    name c
+    type string
+    value /org/objectstyle/japp/ArtifactMatchPattern\
+/org/objectstyle/japp/Flavor\
+/org/objectstyle/japp/JAppMojo\
+/org/objectstyle/japp/OS\
+/org/objectstyle/japp/worker/AbstractAntWorker\
+/org/objectstyle/japp/worker/JApp\
+/org/objectstyle/japp/worker/JAppJavaWorker\
+/org/objectstyle/japp/worker/JAppLegacyMacWorker\
+/org/objectstyle/japp/worker/JAppMacWorker\
+/org/objectstyle/japp/worker/JAppWindowsWorker
+doc 9
+  field 21
     name allGroups
     type string
     value allGroups
-  field 17
+  field 22
     name allGroupsList
     type string
-    value al.aldi
-doc 6
-  field 18
+    value org.objectstyle.japp|org.objectstyle
+doc 10
+  field 23
     name rootGroups
     type string
     value rootGroups
-  field 19
+  field 24
     name rootGroupsList
     type string
-    value al
+    value org
 END
-checksum 00000000003321211082
+checksum 00000000000918975528
