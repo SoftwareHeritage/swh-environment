@@ -15,6 +15,7 @@ celery:
   task_broker: amqp://guest:guest@amqp//
   task_queues:
     - swh.loader.bzr.tasks.LoadBazaar
+    - swh.loader.cvs.tasks.LoadCvsRepository
     - swh.loader.dir.tasks.LoadDirRepository
     - swh.loader.git.tasks.LoadDiskGitRepository
     - swh.loader.git.tasks.UncompressAndLoadDiskGitRepository
@@ -32,6 +33,7 @@ celery:
     - swh.loader.svn.tasks.LoadSvnRepository
     - swh.loader.svn.tasks.MountAndLoadSvnRepository
     - save_code_now:swh.loader.bzr.tasks.LoadBazaar
+    - save_code_now:swh.loader.cvs.tasks.LoadCvsRepository
     - save_code_now:swh.loader.git.tasks.UpdateGitRepository
     - save_code_now:swh.loader.mercurial.tasks.LoadArchiveMercurial
     - save_code_now:swh.loader.mercurial.tasks.LoadMercurial

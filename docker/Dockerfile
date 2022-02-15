@@ -70,6 +70,7 @@ RUN pip install \
   swh-lister \
   swh-loader-core \
   swh-loader-bzr \
+  swh-loader-cvs \
   swh-loader-git \
   swh-loader-mercurial \
   swh-loader-svn \
