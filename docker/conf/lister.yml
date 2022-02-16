@@ -31,3 +31,5 @@ celery:
     - swh.lister.phabricator.tasks.IncrementalPhabricatorLister
     - swh.lister.opam.tasks.OpamListerTask
     - swh.lister.pypi.tasks.PyPIListerTask
+    - swh.lister.sourceforge.tasks.FullSourceForgeLister
+    - swh.lister.sourceforge.tasks.IncrementalSourceForgeLister
