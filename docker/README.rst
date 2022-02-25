@@ -559,7 +559,7 @@ So now you can easily:
 -  Add a new task::
 
      (swh) ~/swh-environment$ swh scheduler task add load-hg \
-       origin_url=https://hg.logilab.org/master/cubicweb
+       url=https://www.mercurial-scm.org/repo/hello
      Created 1 tasks
      Task 1
         Next run: just now (2019-02-06 12:36:58+00:00)
@@ -568,7 +568,7 @@ So now you can easily:
         Policy: recurring
         Args:
         Keyword args:
-          origin_url: https://hg.logilab.org/master/cubicweb
+          url: https://www.mercurial-scm.org/repo/hello
 
 -  Respawn a task::
 
