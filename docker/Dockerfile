@@ -23,6 +23,9 @@ RUN . /etc/os-release && \
   > /etc/apt/sources.list.d/yarnpkg.list && \
   curl -fsSL ${YARN_GPG_KEY} | gpg --dearmor > ${YARN_KEYRING}
 
+# warning: the py:3.7 image comes with python3.9 installed from debian; do not
+# add debian python packages here, they would not be usable for the py37 based
+# environment used in this image.
 RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get update && apt-get upgrade -y && \
   apt-get install -y \
@@ -50,16 +53,16 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
-
 RUN useradd -md /srv/softwareheritage -s /bin/bash swh
 USER swh
 
 RUN python3 -m venv /srv/softwareheritage/venv
 ENV PATH="/srv/softwareheritage/venv/bin:${PATH}"
-# Avoid 21.3 release which is preventing override to work
-# https://github.com/pypa/pip/issues/10573
-RUN pip install --upgrade 'pip!=21.3' setuptools wheel
+
+RUN pip install --upgrade pip setuptools wheel
 RUN pip install gunicorn httpie
+# cython and configjob are required to install the breeze (bzr) package
+RUN pip install cython configobj
 
 RUN pip install \
   swh-core[db,http] \
