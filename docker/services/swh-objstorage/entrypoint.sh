@@ -13,7 +13,6 @@ if [ "$1" = 'shell' ] ; then
 else
     echo Starting the swh-objstorage API server
   exec gunicorn --bind 0.0.0.0:5003 \
-       --worker-class aiohttp.worker.GunicornWebWorker \
        --log-level DEBUG \
        --threads 4 \
        --workers 2 \
