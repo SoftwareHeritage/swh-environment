@@ -63,7 +63,7 @@ function finish {
     error_message "An error occurred when running test script ${SCRIPT_NAME}"
     dump_docker_logs
   fi
-  docker-compose $DOCO_OPTIONS down
+  docker-compose $DOCO_OPTIONS down -v
   rm -rf $WORKDIR
 }
 trap finish EXIT

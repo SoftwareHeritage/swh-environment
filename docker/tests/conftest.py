@@ -37,7 +37,7 @@ def docker_compose(request):
     subprocess.check_output(["docker-compose", "up", "-d"])
     yield
     # and strop it
-    subprocess.check_call(["docker-compose", "down"])
+    subprocess.check_call(["docker-compose", "down", "-v"])
 
 
 @pytest.fixture(scope="session")
