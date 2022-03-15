@@ -21,7 +21,7 @@ if ! [ -d "$TEMPLATE_DIR" ] ; then
     exit 2
 fi
 
-rsync -rv --exclude='**/.git/**' "$TEMPLATE_DIR/" "$repo_dir/"
+rsync -rv --links --exclude='**/.git/**' "$TEMPLATE_DIR/" "$repo_dir/"
 cd "$repo_dir"
 git add .
 git commit -m "import template from $TEMPLATE_DIR (init-py-repo)"
