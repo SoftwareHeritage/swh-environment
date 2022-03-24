@@ -2,6 +2,7 @@ scheduler:
   cls: local
   db: postgresql:///?service=swh-scheduler
 celery:
+  broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp/%2f
   broker_transport_options:
     max_retries: 1

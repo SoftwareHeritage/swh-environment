@@ -12,6 +12,7 @@ storage:
       url: http://nginx:5080/storage
 
 celery:
+  broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp//
   task_queues:
     - swh.loader.bzr.tasks.LoadBazaar

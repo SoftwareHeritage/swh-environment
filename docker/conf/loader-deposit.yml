@@ -13,6 +13,7 @@ storage:
       url: http://swh-storage:5002/
 
 celery:
+  broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp//
   task_queues:
     - swh.loader.package.deposit.tasks.LoadDeposit
@@ -24,4 +25,4 @@ deposit:
     username: test
     password: test
 
-url: 'http://swh-deposit:5006'
+url: "http://swh-deposit:5006"

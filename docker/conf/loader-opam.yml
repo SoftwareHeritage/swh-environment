@@ -12,6 +12,7 @@ storage:
       url: http://swh-storage:5002/
 
 celery:
+  broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp//
   task_queues:
     - swh.loader.package.opam.tasks.LoadOpam
