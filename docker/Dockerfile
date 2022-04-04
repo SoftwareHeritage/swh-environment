@@ -33,6 +33,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   libaprutil1-dev \
   libcmph-dev \
   libpq-dev \
+  librdkafka-dev \
   libsvn-dev \
   libsystemd-dev \
   gcc \
