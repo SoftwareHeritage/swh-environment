@@ -5,16 +5,6 @@ set -e
 source /srv/softwareheritage/utils/pgsql.sh
 setup_pgsql
 
-# when overriding swh-web sources only
-if [[ -d /src/swh-web ]] ; then
-    echo "Install and compile swh-web static assets"
-    pushd /src/swh-web
-    yarn install --frozen-lockfile
-    # execute webpack-dev-server in background
-    yarn start-dev&
-    popd
-fi
-
 source /srv/softwareheritage/utils/pyutils.sh
 setup_pip
 
