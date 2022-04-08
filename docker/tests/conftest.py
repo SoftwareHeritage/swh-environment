@@ -19,13 +19,20 @@ APIURL = "http://127.0.0.1:5080/api/1/"
 SAMPLE_METADATA = """\
 <?xml version="1.0" encoding="utf-8"?>
 <entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:codemeta="https://doi.org/10.5063/SCHEMA/CODEMETA-2.0">
+       xmlns:swh="https://www.softwareheritage.org/schema/2018/deposit"
+       xmlns:codemeta="https://doi.org/10.5063/SCHEMA/CODEMETA-2.0"
+       xmlns:schema="http://schema.org/">
   <title>Test Software</title>
   <client>swh</client>
   <external_identifier>test-software</external_identifier>
   <codemeta:author>
     <codemeta:name>No One</codemeta:name>
   </codemeta:author>
+  <swh:deposit>
+    <swh:metadata-provenance>
+        <schema:url>some-metadata-provenance-url</schema:url>
+    </swh:metadata-provenance>
+  </swh:deposit>
 </entry>
 """
 
