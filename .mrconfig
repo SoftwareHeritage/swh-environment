@@ -105,6 +105,12 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
+[swh-loader-metadata]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-metadata.git' 'swh-loader-metadata'
+fixups =
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
+
 [swh-loader-svn]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-svn.git' 'swh-loader-svn'
 fixups =
