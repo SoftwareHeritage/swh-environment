@@ -77,6 +77,7 @@ RUN pip install \
   swh-loader-cvs \
   swh-loader-git \
   swh-loader-mercurial \
+  swh-loader-metadata \
   swh-loader-svn \
   swh-storage \
   swh-objstorage \
