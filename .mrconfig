@@ -51,6 +51,10 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
+[swh-graphql]
+checkout = git clone 'https://forge.softwareheritage.org/source/swh-graphql.git' 'swh-graphql'
+fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+
 [swh-icinga-plugins]
 checkout = git clone 'https://forge.softwareheritage.org/source/swh-icinga-plugins.git' 'swh-icinga-plugins'
 fixups =

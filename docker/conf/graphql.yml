@@ -1,0 +1,5 @@
+storage:
+  cls: remote
+  url: http://swh-storage:5002
+
+debug: yes

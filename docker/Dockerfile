@@ -69,6 +69,7 @@ RUN pip install \
   swh-core[db,http] \
   swh-counters \
   swh-deposit[server] \
+  swh-graphql \
   swh-indexer \
   swh-journal \
   swh-lister \
