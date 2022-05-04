@@ -30,13 +30,13 @@ test/%:
 	make -C $* test
 
 docs/%:
-	make -C $*/docs
+	if test -e $*/docs/Makefile; then make -C $*/docs; fi
 docs-assets/%:
-	make -C $*/docs assets
+	if test -e $*/docs/Makefile; then make -C $*/docs assets; fi
 docs-apidoc/%:
-	make -C $*/docs apidoc
+	if test -e $*/docs/Makefile; then make -C $*/docs apidoc; fi
 docs-clean/%:
-	make -C $*/docs clean
+	if test -e $*/docs/Makefile; then make -C $*/docs clean; fi
 
 .PHONY: update clean
 update:
