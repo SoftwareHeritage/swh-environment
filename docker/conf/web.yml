@@ -64,3 +64,10 @@ throttling:
 
 search: {}
 instance_name: archive-docker.softwareheritage.org
+
+counters:
+  cls: remote
+  url: http://swh-counters:5011/
+counters_backend: swh-counters
+history_counters_url: http://swh-counters:5011/counters_history/history.json
+
