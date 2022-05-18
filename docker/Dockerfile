@@ -4,7 +4,7 @@ ARG PGDG_REPO=http://apt.postgresql.org/pub/repos/apt
 ARG PGDG_GPG_KEY=https://www.postgresql.org/media/keys/ACCC4CF8.asc
 ARG PGDG_KEYRING=/usr/share/keyrings/pgdg-archive-keyring.gpg
 
-ARG NODE_REPO=https://deb.nodesource.com/node_12.x
+ARG NODE_REPO=https://deb.nodesource.com/node_14.x
 ARG NODE_GPG_KEY=https://deb.nodesource.com/gpgkey/nodesource.gpg.key
 ARG NODE_KEYRING=/usr/share/keyrings/nodejs-archive-keyring.gpg
 
