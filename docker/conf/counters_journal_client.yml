@@ -8,6 +8,12 @@ journal:
   group_id: swh.counters.journal_client
   object_types:
     - content
+    - directory
     - origin
-    - revision
+    - origin_visit
+    - origin_visit_status
     - release
+    - revision
+    - skipped_content
+    - snapshot
+    
