@@ -18,7 +18,7 @@ case "$1" in
 
         wait_pgsql
 
-        echo Starting swh-indexer worker
+        echo Starting swh-indexer Celery-based worker
         exec python -m celery \
              --app=swh.scheduler.celery_backend.config.app \
              worker \

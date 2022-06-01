@@ -497,9 +497,9 @@ services:
       - "./conf/loader-opam.yml:/loader-opam.yml:ro"
       - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
 
-  # Indexer Celery workers
+  # Indexer workers
 
-  swh-indexer:
+  swh-indexer-worker-celery:
     image: swh/stack
     build: ./
     user: swh
@@ -521,27 +521,36 @@ services:
       - amqp
     volumes:
       - "./conf/indexer.yml:/indexer.yml:ro"
-      - "./services/swh-indexer-worker/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-indexer-worker-celery/entrypoint.sh:/entrypoint.sh:ro"
 
-  # Journal related
-
-  swh-indexer-journal-client:
+  swh-indexer-worker-journal:
     image: swh/stack
     build: ./
-    entrypoint: /entrypoint.sh
+    user: swh
     env_file:
       - ./env/common_python.env
+      - ./env/indexers-db.env
+      - ./env/indexers.env
+      - ./env/workers.env
+    environment:
+      SWH_WORKER_INSTANCE: indexer
+      SWH_CONFIG_FILENAME: /indexer.yml
+      CONCURRENCY: 4
+    entrypoint: /entrypoint.sh
     depends_on:
       kafka:
         condition: service_healthy
       swh-storage:
         condition: service_started
-      swh-scheduler:
+      swh-idx-storage:
         condition: service_started
-
+      swh-objstorage:
+        condition: service_started
     volumes:
-      - "./conf/indexer_journal_client.yml:/etc/softwareheritage/indexer/journal_client.yml:ro"
-      - "./services/swh-indexer-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/indexer.yml:/indexer.yml:ro"
+      - "./services/swh-indexer-worker-journal/entrypoint.sh:/entrypoint.sh:ro"
+
+  # Journal related
 
   swh-scheduler-journal-client:
     image: swh/stack

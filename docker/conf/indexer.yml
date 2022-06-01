@@ -27,6 +27,13 @@ celery:
     - swh.indexer.tasks.RecomputeChecksums
     - swh.indexer.tasks.RevisionMetadata
 
+journal:
+  brokers:
+    - kafka
+  group_id: swh.indexer.journal_client
+  prefix: swh.journal.objects
+max_messages: 50
+
 tools:
   name: swh-metadata-detector
   version: 0.0.2
