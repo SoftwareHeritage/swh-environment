@@ -1,5 +1,5 @@
 indexer_storage:
-  cls: local
+  cls: postgresql
   db: postgresql:///?service=swh-indexers
   journal_writer:
     cls: kafka
