@@ -136,6 +136,8 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/scheduler-db.env
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
   swh-scheduler:
     image: swh/stack
@@ -239,6 +241,8 @@ services:
     image: postgres:12
     env_file:
       - ./env/storage-db.env
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
   swh-storage:
     image: swh/stack
@@ -282,6 +286,8 @@ services:
     image: postgres:12
     env_file:
       - ./env/indexers-db.env
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
   swh-idx-storage:
     image: swh/stack
@@ -306,6 +312,8 @@ services:
     image: postgres:12
     env_file:
       - ./env/01-web-db.env
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
   swh-web:
     build: ./
@@ -355,6 +363,8 @@ services:
     image: postgres:12
     env_file:
       - ./env/deposit-db.env
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
   swh-deposit:
     image: swh/stack
@@ -381,6 +391,8 @@ services:
     image: postgres:12
     env_file:
       - ./env/vault-db.env
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
   swh-vault:
     image: swh/stack
