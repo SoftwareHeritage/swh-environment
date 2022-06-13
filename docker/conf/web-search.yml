@@ -1,7 +1,7 @@
 storage:
   cls: remote
   url: http://swh-storage:5002/
-  timeout: 1
+  timeout: 5
 
 indexer_storage:
   cls: remote
@@ -20,13 +20,6 @@ deposit:
   private_api_user: swhworker
   private_api_password: ""
 
-search:
-  cls: remote
-  url: http://swh-search:5010/
-
-search_config:
-  metadata_backend: swh-search
-
 allowed_hosts:
   - "*"
 
@@ -37,11 +30,7 @@ serve_assets: yes
 development_db: /tmp/swh/web.sqlite3
 
 production_db:
-  host: swh-web-db
-  port: 5432
-  name: swh-web
-  user: postgres
-  password: testpassword
+  name: postgresql:///?service=swh-web
 
 throttling:
   cache_uri: memcache:11211
@@ -72,3 +61,16 @@ throttling:
       exempted_networks:
         - 0.0.0.0/0
 instance_name: archive-docker.softwareheritage.org
+
+search:
+  cls: remote
+  url: http://swh-search:5010/
+
+search_config:
+  metadata_backend: swh-search
+
+counters:
+  cls: remote
+  url: http://swh-counters:5011/
+counters_backend: swh-counters
+history_counters_url: http://swh-counters:5011/counters_history/history.json

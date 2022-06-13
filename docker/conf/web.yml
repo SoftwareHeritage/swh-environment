@@ -13,8 +13,7 @@ scheduler:
 
 vault:
   cls: remote
-  args:
-    url: http://swh-vault:5005/
+  url: http://swh-vault:5005/
 
 deposit:
   private_api_url: http://swh-deposit:5006/1/private/
@@ -62,12 +61,12 @@ throttling:
       exempted_networks:
         - 0.0.0.0/0
 
-search: {}
 instance_name: archive-docker.softwareheritage.org
+
+search: {}
 
 counters:
   cls: remote
   url: http://swh-counters:5011/
 counters_backend: swh-counters
 history_counters_url: http://swh-counters:5011/counters_history/history.json
-
