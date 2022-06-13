@@ -1,13 +1,13 @@
 storage:
-  cls: local
+  cls: postgresql
   db: postgresql:///?service=swh-storage
   objstorage:
     cls: remote
     url: http://nginx:5080/objstorage
   journal_writer:
     cls: kafka
-    args:
-      brokers:
-        - kafka
-      prefix: swh.journal.objects
-      client_id: swh.storage.master
+    brokers:
+      - kafka
+    prefix: swh.journal.objects
+    client_id: swh.storage.master
+    anonymize: true
