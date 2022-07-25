@@ -24,6 +24,11 @@ case "$1" in
     "shell")
       exec bash -i
       ;;
+    "swh")
+        shift
+        echo "Running swh command $@"
+        exec swh $@
+        ;;
     *)
       if [ "$STORAGE_BACKEND" = "postgresql" ]; then
           wait_pgsql ${POSTGRES_DB}
