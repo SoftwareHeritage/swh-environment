@@ -37,6 +37,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   libsvn-dev \
   libsystemd-dev \
   gcc \
+  iputils-ping \
   openjdk-11-jre \
   pkg-config \
   pv \
