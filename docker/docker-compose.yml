@@ -21,16 +21,20 @@ services:
     env_file: ./env/kafka.env
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_CREATE_TOPICS: swh.journal.objects.content:16:1,
-        swh.journal.objects.directory:16:1,
-        swh.journal.objects.origin:16:1,
-        swh.journal.objects.origin_visit:16:1,
-        swh.journal.objects.origin_visit_status:16:1,
-        swh.journal.objects.revision:16:1,
-        swh.journal.objects.release:16:1,
-        swh.journal.objects.skipped_content:16:1,
-        swh.journal.objects.snapshot:16:1,
-        swh.journal.indexed.origin_intrinsic_metadata:16:1
+      KAFKA_CREATE_TOPICS: swh.journal.objects.content:16:1:compact,
+        swh.journal.objects.directory:16:1:compact,
+        swh.journal.objects.extid:16:1:compact,
+        swh.journal.objects.origin:16:1:compact,
+        swh.journal.objects.origin_visit:16:1:compact,
+        swh.journal.objects.origin_visit_status:16:1:compact,
+        swh.journal.objects.raw_extrinsic_metadata:16:1:compact,
+        swh.journal.objects.release:16:1:compact,
+        swh.journal.objects_privileged.release:16:1:compact,
+        swh.journal.objects.revision:16:1:compact,
+        swh.journal.objects_privileged.revision:16:1:compact,
+        swh.journal.objects.skipped_content:16:1:compact,
+        swh.journal.objects.snapshot:16:1:compact,
+        swh.journal.indexed.origin_intrinsic_metadata:16:1:compact
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://127.0.0.1:5092
       KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:5092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
@@ -38,7 +42,7 @@ services:
     depends_on:
       - zookeeper
     healthcheck:
-      test: "[ `JMX_PORT= kafka-topics.sh --list --zookeeper zookeeper:2181 | wc -l` -ge 6 ]"
+      test: "[ `JMX_PORT= kafka-topics.sh --list --zookeeper zookeeper:2181 | wc -l` -ge `echo $$KAFKA_CREATE_TOPICS | tr ',' '\n' | wc -l` ]"
       interval: 10s
       timeout: 5s
       retries: 10
