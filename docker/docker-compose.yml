@@ -46,6 +46,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    volumes:
+      - kafka-data:/kafka
 
   cmak:
     # Note: CMAK does not work out of the box, you need to run this first:
@@ -247,6 +249,7 @@ services:
       - ./env/storage-db.env
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
+      - storage-data:/var/lib/postgresql
 
   swh-storage:
     image: swh/stack
@@ -283,6 +286,7 @@ services:
     volumes:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
       - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
+      - objstorage-data:/srv/softwareheritage
 
   # Indexer storage
 
@@ -641,3 +645,6 @@ services:
 
 volumes:
   redis-data:
+  storage-data:
+  objstorage-data:
+  kafka-data:
