@@ -36,7 +36,13 @@ SAMPLE_METADATA = """\
 """
 
 HOST = testinfra.get_host("local://")
-COMPOSE_CMD = "docker-compose"
+try:
+    HOST.check_output("docker compose version")
+    COMPOSE_CMD = "docker compose"
+except AssertionError:
+    print("Fall back to old docker-compose command")
+    COMPOSE_CMD = "docker-compose"
+
 # wait-for-it timout
 WFI_TIMEOUT = 60
 
