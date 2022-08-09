@@ -27,8 +27,7 @@ repos:
       - id: mypy
         name: mypy
         entry: mypy
-        args: [swh]
-        pass_filenames: false
+        pass_filenames: true
         language: system
         types: [python]
 
