@@ -59,20 +59,24 @@ def compose_cmd(docker_host):
 def docker_compose(request, docker_host, compose_cmd):
     # start the whole cluster
     docker_host.check_output(f"{compose_cmd} up -d")
-    yield
-    # and stop it
+
+    # small hack: add a helper func to docker_host; so it's not necessary to
+    # use all 3 docker_compose, docker_host and compose_cmd fixtures everywhere
+    docker_host.check_compose_output = lambda command: docker_host.check_output(
+        f"{compose_cmd} {command}"
+    )
+    yield docker_host
+
+    # and stop the cluster
     docker_host.check_output(f"{compose_cmd} down -v")
 
 
 @pytest.fixture(scope="session")
-def scheduler_host(request, docker_host, docker_compose, compose_cmd):
+def scheduler_host(request, docker_compose):
     # run a container in which test commands are executed
-    docker_id = (
-        docker_host.check_output(
-            f"{compose_cmd} run -d swh-scheduler shell sleep 1h"
-        )
-        .strip()
-    )
+    docker_id = docker_compose.check_compose_output(
+        "run -d swh-scheduler shell sleep 1h"
+    ).strip()
     scheduler_host = testinfra.get_host("docker://" + docker_id)
     scheduler_host.check_output(f"wait-for-it swh-scheduler:5008 -t {WFI_TIMEOUT}")
     scheduler_host.check_output(f"wait-for-it swh-storage:5002 -t {WFI_TIMEOUT}")
@@ -81,19 +85,16 @@ def scheduler_host(request, docker_host, docker_compose, compose_cmd):
     yield scheduler_host
 
     # at the end of the test suite, destroy the container
-    docker_host.check_output(f"docker rm -f {docker_id}")
+    docker_compose.check_output(f"docker rm -f {docker_id}")
 
 
 # scope='session' so we use the same container for all the tests;
 @pytest.fixture(scope="session")
-def deposit_host(request, docker_host, docker_compose, compose_cmd):
+def deposit_host(request, docker_compose):
     # run a container in which test commands are executed
-    docker_id = (
-        docker_host.check_output(
-            f"{compose_cmd} run -d swh-deposit shell sleep 1h"
-        )
-        .strip()
-    )
+    docker_id = docker_compose.check_compose_output(
+        "run -d swh-deposit shell sleep 1h"
+    ).strip()
     deposit_host = testinfra.get_host("docker://" + docker_id)
     deposit_host.check_output("echo 'print(\"Hello World!\")\n' > /tmp/hello.py")
     deposit_host.check_output("tar -C /tmp -czf /tmp/archive.tgz /tmp/hello.py")
@@ -103,7 +104,7 @@ def deposit_host(request, docker_host, docker_compose, compose_cmd):
     yield deposit_host
 
     # at the end of the test suite, destroy the container
-    docker_host.check_output(f"docker rm -f {docker_id}")
+    docker_compose.check_output(f"docker rm -f {docker_id}")
 
 
 @pytest.fixture(scope="session")
@@ -112,7 +113,7 @@ def git_url():
 
 
 @pytest.fixture(scope="session")
-def git_origin(docker_host, scheduler_host, git_url, compose_cmd):
+def git_origin(docker_compose, scheduler_host, git_url):
     task = scheduler_host.check_output(f"swh scheduler task add load-git url={git_url}")
     taskid = re.search(r"^Task (?P<id>\d+)$", task, flags=re.MULTILINE).group("id")
     assert int(taskid) > 0
@@ -128,9 +129,7 @@ def git_origin(docker_host, scheduler_host, git_url, compose_cmd):
                 time.sleep(1)
                 continue
             if "[failed]" in status:
-                loader_logs = docker_host.check_output(
-                    f"{compose_cmd} logs swh-loader"
-                )
+                loader_logs = docker_compose.check_compose_output("logs swh-loader")
                 assert False, (
                     "Loading execution failed\n"
                     f"status: {status}\n"
