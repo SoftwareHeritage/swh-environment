@@ -43,7 +43,7 @@ def docker_compose(request):
     # start the whole cluster
     subprocess.check_output(["docker-compose", "up", "-d"])
     yield
-    # and strop it
+    # and stop it
     subprocess.check_call(["docker-compose", "down", "-v"])
 
 
