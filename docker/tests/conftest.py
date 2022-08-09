@@ -36,6 +36,9 @@ SAMPLE_METADATA = """\
 </entry>
 """
 
+# wait-for-it timout
+WFI_TIMEOUT = 60
+
 
 # scope='session' so we use the same container for all the tests;
 @pytest.fixture(scope="session")
@@ -48,15 +51,7 @@ def docker_compose(request):
 
 
 @pytest.fixture(scope="session")
-def wfi_timeout():
-    """
-    wait-for-it timeout in seconds
-    """
-    return 60
-
-
-@pytest.fixture(scope="session")
-def scheduler_host(request, docker_compose, wfi_timeout):
+def scheduler_host(request, docker_compose):
     # run a container in which test commands are executed
     docker_id = (
         subprocess.check_output(
@@ -66,8 +61,8 @@ def scheduler_host(request, docker_compose, wfi_timeout):
         .strip()
     )
     scheduler_host = testinfra.get_host("docker://" + docker_id)
-    scheduler_host.check_output(f"wait-for-it swh-scheduler:5008 -t {wfi_timeout}")
-    scheduler_host.check_output(f"wait-for-it swh-storage:5002 -t {wfi_timeout}")
+    scheduler_host.check_output(f"wait-for-it swh-scheduler:5008 -t {WFI_TIMEOUT}")
+    scheduler_host.check_output(f"wait-for-it swh-storage:5002 -t {WFI_TIMEOUT}")
 
     # return a testinfra connection to the container
     yield scheduler_host
@@ -78,7 +73,7 @@ def scheduler_host(request, docker_compose, wfi_timeout):
 
 # scope='session' so we use the same container for all the tests;
 @pytest.fixture(scope="session")
-def deposit_host(request, docker_compose, wfi_timeout):
+def deposit_host(request, docker_compose):
     # run a container in which test commands are executed
     docker_id = (
         subprocess.check_output(
@@ -91,7 +86,7 @@ def deposit_host(request, docker_compose, wfi_timeout):
     deposit_host.check_output("echo 'print(\"Hello World!\")\n' > /tmp/hello.py")
     deposit_host.check_output("tar -C /tmp -czf /tmp/archive.tgz /tmp/hello.py")
     deposit_host.check_output(f"echo '{SAMPLE_METADATA}' > /tmp/metadata.xml")
-    deposit_host.check_output(f"wait-for-it swh-deposit:5006 -t {wfi_timeout}")
+    deposit_host.check_output(f"wait-for-it swh-deposit:5006 -t {WFI_TIMEOUT}")
     # return a testinfra connection to the container
     yield deposit_host
 
