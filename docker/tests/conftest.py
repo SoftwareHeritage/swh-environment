@@ -35,34 +35,41 @@ SAMPLE_METADATA = """\
 </entry>
 """
 
-HOST = testinfra.get_host("local://")
-try:
-    HOST.check_output("docker compose version")
-    COMPOSE_CMD = "docker compose"
-except AssertionError:
-    print("Fall back to old docker-compose command")
-    COMPOSE_CMD = "docker-compose"
-
 # wait-for-it timout
 WFI_TIMEOUT = 60
 
 
+@pytest.fixture(scope="session")
+def docker_host():
+    return testinfra.get_host("local://")
+
+
+@pytest.fixture(scope="session")
+def compose_cmd(docker_host):
+    try:
+        docker_host.check_output("docker compose version")
+        return "docker compose"
+    except AssertionError:
+        print("Fall back to old docker-compose command")
+        return "docker-compose"
+
+
 # scope='session' so we use the same container for all the tests;
 @pytest.fixture(scope="session")
-def docker_compose(request):
+def docker_compose(request, docker_host, compose_cmd):
     # start the whole cluster
-    HOST.check_output(f"{COMPOSE_CMD} up -d")
+    docker_host.check_output(f"{compose_cmd} up -d")
     yield
     # and stop it
-    HOST.check_output(f"{COMPOSE_CMD} down -v")
+    docker_host.check_output(f"{compose_cmd} down -v")
 
 
 @pytest.fixture(scope="session")
-def scheduler_host(request, docker_compose):
+def scheduler_host(request, docker_host, docker_compose, compose_cmd):
     # run a container in which test commands are executed
     docker_id = (
-        HOST.check_output(
-            f"{COMPOSE_CMD} run -d swh-scheduler shell sleep 1h"
+        docker_host.check_output(
+            f"{compose_cmd} run -d swh-scheduler shell sleep 1h"
         )
         .strip()
     )
@@ -74,16 +81,16 @@ def scheduler_host(request, docker_compose):
     yield scheduler_host
 
     # at the end of the test suite, destroy the container
-    HOST.check_output(f"docker rm -f {docker_id}")
+    docker_host.check_output(f"docker rm -f {docker_id}")
 
 
 # scope='session' so we use the same container for all the tests;
 @pytest.fixture(scope="session")
-def deposit_host(request, docker_compose):
+def deposit_host(request, docker_host, docker_compose, compose_cmd):
     # run a container in which test commands are executed
     docker_id = (
-        HOST.check_output(
-            f"{COMPOSE_CMD} run -d swh-deposit shell sleep 1h"
+        docker_host.check_output(
+            f"{compose_cmd} run -d swh-deposit shell sleep 1h"
         )
         .strip()
     )
@@ -96,7 +103,7 @@ def deposit_host(request, docker_compose):
     yield deposit_host
 
     # at the end of the test suite, destroy the container
-    HOST.check_output(f"docker rm -f {docker_id}")
+    docker_host.check_output(f"docker rm -f {docker_id}")
 
 
 @pytest.fixture(scope="session")
@@ -105,7 +112,7 @@ def git_url():
 
 
 @pytest.fixture(scope="session")
-def git_origin(scheduler_host, git_url):
+def git_origin(docker_host, scheduler_host, git_url, compose_cmd):
     task = scheduler_host.check_output(f"swh scheduler task add load-git url={git_url}")
     taskid = re.search(r"^Task (?P<id>\d+)$", task, flags=re.MULTILINE).group("id")
     assert int(taskid) > 0
@@ -121,8 +128,8 @@ def git_origin(scheduler_host, git_url):
                 time.sleep(1)
                 continue
             if "[failed]" in status:
-                loader_logs = HOST.check_output(
-                    f"{COMPOSE_CMD} logs swh-loader"
+                loader_logs = docker_host.check_output(
+                    f"{compose_cmd} logs swh-loader"
                 )
                 assert False, (
                     "Loading execution failed\n"
