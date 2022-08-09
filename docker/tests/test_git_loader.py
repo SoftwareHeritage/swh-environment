@@ -5,6 +5,9 @@
 
 from urllib.parse import quote_plus
 
+from dulwich import porcelain
+from dulwich.repo import MemoryRepo
+
 from .conftest import apiget
 
 
@@ -12,8 +15,8 @@ def test_git_loader(scheduler_host, git_origin):
     url = git_origin
 
     print(f"Retrieve references available at {url}")
-    gitrefs = scheduler_host.check_output(f"git ls-remote {url}")
-    gitrefs = [x.split() for x in gitrefs.splitlines()]
+    repo = MemoryRepo()
+    gitrefs = porcelain.fetch(repo, url).refs
 
     print(f"Look for origin {url}")
     # use quote_plus to prevent urljoin from messing with the 'http://' part of
@@ -30,22 +33,24 @@ def test_git_loader(scheduler_host, git_origin):
     print(f'snapshot has {len(snapshot["branches"])} branches')
     branches = snapshot["branches"]
 
-    # check every branch reported by git ls-remote is present in the snapshot
-    for rev, branch_name in gitrefs:
+    # check every fetched branch is present in the snapshot
+    for branch_name, rev in gitrefs.items():
         # for tags, only check for final revision id
-        if branch_name.startswith("refs/tags/") and not branch_name.endswith("^{}"):
+        if branch_name.startswith(b"refs/tags/") and not branch_name.endswith(b"^{}"):
             continue
-        rev_desc = apiget(f"revision/{rev}")
+        rev_desc = apiget(f"revision/{rev.decode()}")
         assert rev_desc["type"] == "git"
 
     tag_revision = {}
     tag_release = {}
-    for rev, tag in gitrefs:
-        if tag.startswith("refs/tags/"):
-            if tag.endswith("^{}"):
-                tag_revision[tag[:-3]] = rev
+    for tag, rev in gitrefs.items():
+        if tag.startswith(b"refs/tags/"):
+            tag_str = tag.decode()
+            rev_str = rev.decode()
+            if tag.endswith(b"^{}"):
+                tag_revision[tag_str[:-3]] = rev_str
             else:
-                tag_release[tag] = rev
+                tag_release[tag_str] = rev_str
 
     for tag, revision in tag_revision.items():
         # check that every release tag listed in the snapshot is known by the
@@ -59,3 +64,16 @@ def test_git_loader(scheduler_host, git_origin):
         tag_desc = branches[tag]
         assert tag_desc["target_type"] == "release"
         assert tag_desc["target"] == release_id
+
+    print("Check every git object stored in the repository has been loaded")
+    for sha1 in repo.object_store:
+        obj = repo.get_object(sha1)
+        sha1_str = sha1.decode()
+        if obj.type_name == b"blob":
+            apiget(f"content/sha1_git:{sha1_str}")
+        elif obj.type_name == b"commit":
+            apiget(f"revision/{sha1_str}")
+        elif obj.type_name == b"tree":
+            apiget(f"directory/{sha1_str}")
+        elif obj.type_name == b"tag":
+            apiget(f"release/{sha1_str}")
