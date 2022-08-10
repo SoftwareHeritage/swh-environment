@@ -8,6 +8,7 @@ import re
 import time
 from typing import Generator, Mapping, Tuple
 from urllib.parse import urljoin
+from uuid import uuid4 as uuid
 
 import pytest
 import requests
@@ -46,12 +47,13 @@ def docker_host():
 
 @pytest.fixture(scope="session")
 def compose_cmd(docker_host):
+    project_name = f"swh_test_{uuid()}"
     try:
         docker_host.check_output("docker compose version")
-        return "docker compose"
+        return f"docker compose -p {project_name}"
     except AssertionError:
         print("Fall back to old docker-compose command")
-        return "docker-compose"
+        return f"docker-compose -p {project_name}"
 
 
 # scope='session' so we use the same container for all the tests;
