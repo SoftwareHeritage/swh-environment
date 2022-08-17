@@ -6,7 +6,16 @@ PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy"
 PIP_FLAGS="--disable-pip-version-check"
 PIP="python3 -m pip $PIP_FLAGS"
 
-# python3 -m pip install --upgrade pip "$@"
+# pip 21.3 added support to editable installs for projects that have a
+# pyproject.toml and use a build backend that supports PEP 660, but mypy
+# does not detect yet such editable installs and following errors are
+# reported when type checking swh modules :
+#
+#  Cannot find implementation or library stub for module named swh....
+#
+# TODO: Remove that version pin once mypy supports PEP 660 editable
+#       installs, see https://github.com/python/mypy/issues/12313
+$PIP install "pip<21.3"
 
 $PIP install $PREREQUISITES "$@"
 
