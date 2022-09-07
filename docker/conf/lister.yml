@@ -6,11 +6,15 @@ celery:
   broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp//
   task_queues:
+    - swh.lister.arch.tasks.ArchListerTask
+    - swh.lister.aur.tasks.AurListerTask
     - swh.lister.bitbucket.tasks.FullBitBucketRelister
     - swh.lister.bitbucket.tasks.IncrementalBitBucketLister
     - swh.lister.bitbucket.tasks.RangeBitBucketLister
+    - swh.lister.bower.tasks.BowerListerTask
     - swh.lister.cgit.tasks.CGitListerTask
     - swh.lister.cran.tasks.CRANListerTask
+    - swh.lister.crates.tasks.CratesListerTask
     - swh.lister.debian.tasks.DebianListerTask
     - swh.lister.gitea.tasks.FullGiteaRelister
     - swh.lister.gitea.tasks.IncrementalGiteaLister
@@ -22,12 +26,15 @@ celery:
     - swh.lister.gitlab.tasks.IncrementalGitLabLister
     - swh.lister.gitlab.tasks.RangeGitLabLister
     - swh.lister.gnu.tasks.GNUListerTask
+    - swh.lister.gogs.tasks.FullGogsRelister
+    - swh.lister.golang.tasks.FullGolangLister
     - swh.lister.npm.tasks.NpmIncrementalListerTask
     - swh.lister.npm.tasks.NpmListerTask
     - swh.lister.maven.tasks.FullMavenLister
     - swh.lister.launchpad.tasks.IncrementalLaunchpadLister
     - swh.lister.launchpad.tasks.FullLaunchpadLister
     - swh.lister.packagist.tasks.PackagistListerTask
+    - swh.lister.pubdev.tasks.PubDevListerTask
     - swh.lister.phabricator.tasks.FullPhabricatorLister
     - swh.lister.phabricator.tasks.IncrementalPhabricatorLister
     - swh.lister.opam.tasks.OpamListerTask
