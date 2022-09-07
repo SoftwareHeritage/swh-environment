@@ -19,7 +19,4 @@ $PIP install "pip<21.3"
 
 $PIP install $PREREQUISITES "$@"
 
-bin/pip-swh-packages --with-testing | \
-    while read pkg_spec ; do
-        $PIP install $pkg_spec "$@"
-    done
+$PIP install $(bin/pip-swh-packages --with-testing) "$@"
