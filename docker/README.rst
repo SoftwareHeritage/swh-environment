@@ -5,146 +5,17 @@ Docker environment
 instance on development machines. The end goal is to smooth the
 contributors/developers workflow. Focus on coding, not configuring!
 
-.. warning::
-   Running a Software Heritage instance on your machine can
-   consume quite a bit of resources: if you play a bit too hard (e.g., if
-   you try to list all GitHub repositories with the corresponding lister),
-   you may fill your hard drive, and consume a lot of CPU, memory and
-   network bandwidth.
-
 Dependencies
 ------------
 
-This uses docker with docker-compose, so ensure you have a working
-docker environment and docker-compose is installed.
+This uses Docker with `Compose`_, so ensure you have a working
+Docker environment and that the `docker compose plugin is installed <https://docs.docker.com/compose/install/>`_.
 
 We recommend using the latest version of docker, so please read
 https://docs.docker.com/install/linux/docker-ce/debian/ for more details
-on how to install docker on your machine.
+on how to install Docker on your machine.
 
-On a debian system, docker-compose can be installed from Debian
-repositories::
-
-   ~$ sudo apt install docker-compose
-
-Quick start
------------
-
-First, change to the docker dir if you aren’t there yet::
-
-   ~$ cd swh-environment/docker
-
-Then, start containers::
-
-   ~/swh-environment/docker$ docker-compose up -d
-   [...]
-   Creating docker_amqp_1               ... done
-   Creating docker_zookeeper_1          ... done
-   Creating docker_kafka_1              ... done
-   Creating docker_flower_1             ... done
-   Creating docker_swh-scheduler-db_1   ... done
-   [...]
-
-This will build docker images and run them. Check everything is running
-fine with::
-
-   ~/swh-environment/docker$ docker-compose ps
-                            Name                                       Command               State                                      Ports
-   -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   docker_amqp_1                                    docker-entrypoint.sh rabbi ...   Up      15671/tcp, 0.0.0.0:5018->15672/tcp, 25672/tcp, 4369/tcp, 5671/tcp, 5672/tcp
-   docker_flower_1                                  flower --broker=amqp://gue ...   Up      0.0.0.0:5555->5555/tcp
-   docker_kafka_1                                   start-kafka.sh                   Up      0.0.0.0:5092->5092/tcp
-   docker_swh-deposit-db_1                          docker-entrypoint.sh postgres    Up      5432/tcp
-   docker_swh-deposit_1                             /entrypoint.sh                   Up      0.0.0.0:5006->5006/tcp
-   [...]
-
-The startup of some containers may fail the first time for
-dependency-related problems. If some containers failed to start, just
-run the ``docker-compose up -d`` command again.
-
-If a container really refuses to start properly, you can check why using
-the ``docker-compose logs`` command. For example::
-
-   ~/swh-environment/docker$ docker-compose logs swh-lister
-   Attaching to docker_swh-lister_1
-   [...]
-   swh-lister_1                      | Processing /src/swh-scheduler
-   swh-lister_1                      | Could not install packages due to an EnvironmentError: [('/src/swh-scheduler/.hypothesis/unicodedata/8.0.0/charmap.json.gz', '/tmp/pip-req-build-pm7nsax3/.hypothesis/unicodedata/8.0.0/charmap.json.gz', "[Errno 13] Permission denied: '/src/swh-scheduler/.hypothesis/unicodedata/8.0.0/charmap.json.gz'")]
-   swh-lister_1                      |
-
-Once all containers are running, you can use the web interface by
-opening http://localhost:5080/ in your web browser.
-
-At this point, the archive is empty and needs to be filled with some
-content. To do so, you can create tasks that will scrape a forge. For
-example, to inject the code from the https://0xacab.org gitlab forge::
-
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
-       swh scheduler task add list-gitlab-full \
-         -p oneshot url=https://0xacab.org/api/v4
-
-   Created 1 tasks
-
-   Task 1
-     Next run: just now (2018-12-19 14:58:49+00:00)
-     Interval: 90 days, 0:00:00
-     Type: list-gitlab-full
-     Policy: oneshot
-     Args:
-     Keyword args:
-       url=https://0xacab.org/api/v4
-
-This task will scrape the forge’s project list and register origins to the scheduler.
-This takes at most a couple of minutes.
-
-Then, you must tell the scheduler to create loading tasks for these origins.
-For example, to create tasks for 100 of these origins::
-
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
-       swh scheduler origin schedule-next git 100
-
-This will take a bit of time to complete.
-
-To increase the speed at which git repositories are imported, you can
-spawn more ``swh-loader-git`` workers::
-
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
-       celery status
-   listers@50ac2185c6c9: OK
-   loader@b164f9055637: OK
-   indexer@33bc6067a5b8: OK
-   vault@c9fef1bbfdc1: OK
-
-   4 nodes online.
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
-       celery control pool_grow 3 -d loader@b164f9055637
-   -> loader@b164f9055637: OK
-           pool will grow
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
-       celery inspect -d loader@b164f9055637 stats | grep prefetch_count
-          "prefetch_count": 4
-
-Now there are 4 workers ingesting git repositories. You can also
-increase the number of ``swh-loader-git`` containers::
-
-   ~/swh-environment/docker$ docker-compose up -d --scale swh-loader=4
-   [...]
-   Creating docker_swh-loader_2        ... done
-   Creating docker_swh-loader_3        ... done
-   Creating docker_swh-loader_4        ... done
-
-Updating the docker image
--------------------------
-
-All containers started by ``docker-compose`` are bound to a docker image
-named ``swh/stack`` including all the software components of Software
-Heritage. When new versions of these components are released, the docker
-image will not be automatically updated. In order to update all Software
-Heritage components to their latest version, the docker image needs to
-be explicitly rebuilt by issuing the following command from within the
-``docker`` directory::
-
-   ~/swh-environment/docker$ docker build --no-cache -t swh/stack .
+.. _Compose: https://docs.docker.com/compose/
 
 Details
 -------
@@ -210,7 +81,7 @@ may type::
 
 To run the same command from within a container::
 
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler celery status
+   ~/swh-environment/docker$ docker compose exec swh-scheduler celery status
    loader@61704103668c: OK
    [...]
 
@@ -276,7 +147,7 @@ repository and keep it up to date.
 For example, to add a (one shot) task that will list git repos on the
 0xacab.org gitlab instance, one can do (from this git repository)::
 
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
+   ~/swh-environment/docker$ docker compose exec swh-scheduler \
        swh scheduler task add list-gitlab-full \
          -p oneshot url=https://0xacab.org/api/v4
 
@@ -294,7 +165,7 @@ For example, to add a (one shot) task that will list git repos on the
 This will insert a new task in the scheduler. To list existing tasks for
 a given task type::
 
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
+   ~/swh-environment/docker$ docker compose exec swh-scheduler \
      swh scheduler task list-pending list-gitlab-full
 
    Found 1 list-gitlab-full tasks
@@ -310,7 +181,7 @@ a given task type::
 
 To list all existing task types::
 
-   ~/swh-environment/docker$ docker-compose exec swh-scheduler \
+   ~/swh-environment/docker$ docker compose exec swh-scheduler \
      swh scheduler task-type list
 
    Known task types:
@@ -371,7 +242,7 @@ If you cannot see any task being executed, check the logs of the
 debian lister task not being properly registered on the
 swh-scheduler-runner service)::
 
-   ~/swh-environment/docker$ docker-compose logs --tail=10 swh-scheduler-runner
+   ~/swh-environment/docker$ docker compose logs --tail=10 swh-scheduler-runner
    Attaching to docker_swh-scheduler-runner_1
    swh-scheduler-runner_1    |     "__main__", mod_spec)
    swh-scheduler-runner_1    |   File "/usr/local/lib/python3.7/runpy.py", line 85, in _run_code
@@ -415,7 +286,8 @@ Install a swh package from sources in a container
 
 It is possible to run a docker container with some swh packages
 installed from sources instead of using the latest published packages
-from pypi. To do this you must write a docker-compose override file
+from pypi. To do this you must write a
+`Docker Compose override file <https://docs.docker.com/compose/extends>`_
 (``docker-compose.override.yml``). An example is given in the
 ``docker-compose.override.yml.example`` file:
 
@@ -429,7 +301,7 @@ from pypi. To do this you must write a docker-compose override file
          - "$HOME/swh-environment/swh-objstorage:/src/swh-objstorage"
 
 The file named ``docker-compose.override.yml`` will automatically be
-loaded by ``docker-compose``.
+loaded by Docker Compose.
 
 This example shows the simplest case of the ``swh-objstorage`` package:
 you just have to mount it in the container in ``/src`` and the
@@ -502,7 +374,7 @@ When you use virtualenvwrapper, you can add postactivation commands::
    export BROKER_URL=amqp://127.0.0.1:5072/
    export APP=swh.scheduler.celery_backend.config.app
    export COMPOSE_FILE=~/swh-environment/docker/docker-compose.yml:~/swh-environment/docker/docker-compose.override.yml
-   alias doco=docker-compose
+   alias doco="docker compose"
 
    EOF
 
@@ -520,9 +392,9 @@ This postactivate script does:
      (see the `documentation of the celery command
      <https://docs.celeryproject.org/en/latest/reference/cli.html>`_),
 
-   - ``COMPOSE_FILE`` so you can run ``docker-compose`` from everywhere,
+   - ``COMPOSE_FILE`` so you can run ``docker compose`` from everywhere,
 
--  create an alias ``doco`` for ``docker-compose`` because this is way
+-  create an alias ``doco`` for ``docker compose`` because this is way
    too long to type,
 
 So now you can easily:
@@ -583,7 +455,7 @@ The default ``docker-compose.yml`` configuration is not geared towards
 data persistence, but application testing.
 
 Volumes defined in associated images are anonymous and may get either
-unused or removed on the next ``docker-compose up``.
+unused or removed on the next ``docker compose up``.
 
 One way to make sure these volumes persist is to use named volumes. The
 volumes may be defined as follows in a ``docker-compose.override.yml``.
@@ -604,7 +476,7 @@ on destination path.
      swh_storage_data:
      swh_objstorage_data:
 
-This way, ``docker-compose down`` without the ``-v`` flag will not
+This way, ``docker compose down`` without the ``-v`` flag will not
 remove those volumes and data will persist.
 
 
@@ -627,7 +499,7 @@ mechanism for the main storage.
 
 This can be used like::
 
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
         -f docker-compose.yml \
         -f docker-compose.storage-mirror.yml \
         up -d
@@ -661,7 +533,7 @@ end-object] to the kafka topics.
 
 ::
 
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
         -f docker-compose.yml \
         -f docker-compose.storage-mirror.yml \
         -f docker-compose.storage-mirror.override.yml \
@@ -680,7 +552,7 @@ instead of PostgreSQL.
 
 This can be used like::
 
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
         -f docker-compose.yml \
         -f docker-compose.cassandra.yml \
         up -d
@@ -699,7 +571,7 @@ search bar. They are both based on PostgreSQL and rather inefficient
 Instead, you can enable swh-search, which is based on ElasticSearch
 and much more efficient, like this::
 
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
         -f docker-compose.yml \
         -f docker-compose.search.yml \
         up -d
@@ -719,7 +591,7 @@ or inaccurate.
 So we have an alternative based on Redis' HyperLogLog feature, which you
 can test with::
 
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
         -f docker-compose.yml \
         -f docker-compose.counters.yml \
         up -d
@@ -737,7 +609,7 @@ in the sub-DAG of a given node.
 
 You can use it with::
 
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
        -f docker-compose.yml \
        -f docker-compose.graph.yml up -d
 
@@ -754,15 +626,15 @@ on every start.
 Then, you need to explicitly request recomputing the graph before restarts
 if you want to update it::
 
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
         -f docker-compose.yml \
         -f docker-compose.graph.yml \
         run swh-graph update
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
         -f docker-compose.yml \
         -f docker-compose.graph.yml \
         stop swh-graph
-   ~/swh-environment/docker$ docker-compose \
+   ~/swh-environment/docker$ docker compose \
         -f docker-compose.yml \
         -f docker-compose.graph.yml \
         up -d swh-graph
@@ -775,7 +647,7 @@ If you really want to hack on swh-web's authentication features,
 you will need to enable Keycloak as well, instead of the default
 Django-based authentication::
 
-   ~/swh-environment/docker$ docker-compose -f docker-compose.yml -f docker-compose.keycloak.yml up -d
+   ~/swh-environment/docker$ docker compose -f docker-compose.yml -f docker-compose.keycloak.yml up -d
    [...]
 
 User registration in Keycloak database is available by following the Register link
@@ -794,14 +666,14 @@ Consuming topics from the host
 """"""""""""""""""""""""""""""
 
 As mentioned above, it is possible to consume topics from the kafka server available
-in the docker-compose environment from the host using `127.0.0.1:5092` as broker URL.
+in the Docker Compose environment from the host using `127.0.0.1:5092` as broker URL.
 
 Resetting offsets
 """""""""""""""""
 
 It is also possible to reset a consumer group offset using the following command::
 
-  ~swh-environment/docker$ docker-compose \
+  ~swh-environment/docker$ docker compose \
        run kafka kafka-consumer-groups.sh \
            --bootstrap-server kafka:9092 \
            --group <group> \
@@ -816,7 +688,7 @@ Getting information on consumers
 
 You can get information on consumer groups::
 
-  ~swh-environment/docker$ docker-compose \
+  ~swh-environment/docker$ docker compose \
        run kafka kafka-consumer-groups.sh \
            --bootstrap-server kafka:9092 \
            --describe --members --all-groups
@@ -824,7 +696,7 @@ You can get information on consumer groups::
 
 Or the stored offsets for all (or a given) groups::
 
-  ~swh-environment/docker$ docker-compose \
+  ~swh-environment/docker$ docker compose \
        run kafka kafka-consumer-groups.sh \
            --bootstrap-server kafka:9092 \
            --describe --offsets --all-groups
@@ -857,7 +729,7 @@ are not persistent. So removing the containers will delete the volumes!
 
 Also note that for the ``swh-objstorage``, since the volume can be
 pretty big, the remove operation can be quite long (several minutes is
-not uncommon), which may mess a bit with the ``docker-compose`` command.
+not uncommon), which may mess a bit with the ``docker compose`` command.
 
 If you have an error message like:
 
