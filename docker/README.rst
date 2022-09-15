@@ -5,6 +5,13 @@ Docker environment
 instance on development machines. The end goal is to smooth the
 contributors/developers workflow. Focus on coding, not configuring!
 
+.. warning::
+   Running a Software Heritage instance on your machine can
+   consume quite a bit of resources: if you play a bit too hard (e.g., if
+   you try to list all GitHub repositories with the corresponding lister),
+   you may fill your hard drive, and consume a lot of CPU, memory and
+   network bandwidth.
+
 Dependencies
 ------------
 
