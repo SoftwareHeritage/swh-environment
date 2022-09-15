@@ -11,14 +11,17 @@ case "$1" in
       ;;
     *)
       echo Starting the swh-search API server
-      wait-for-it elasticsearch:9200 -s --timeout=0
-      echo "Waiting for ElasticSearch cluster to be up"
-      cat << EOF | python3
+      if grep -q elasticsearch $SWH_CONFIG_FILENAME;
+      then
+        wait-for-it elasticsearch:9200 -s --timeout=0
+        echo "Waiting for ElasticSearch cluster to be up"
+        cat << EOF | python3
 import elasticsearch
 es = elasticsearch.Elasticsearch(['elasticsearch:9200'])
 es.cluster.health(wait_for_status='yellow')
 EOF
-      echo "ElasticSearch cluster is up"
+        echo "ElasticSearch cluster is up"
+      fi
       swh search -C $SWH_CONFIG_FILENAME initialize
       exec gunicorn --bind 0.0.0.0:5010 \
            --reload \

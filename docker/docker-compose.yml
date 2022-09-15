@@ -348,6 +348,7 @@ services:
       - swh-scheduler
       - swh-storage
       - swh-web-db
+      - swh-search
       - memcache
     env_file:
       - ./env/common_python.env
@@ -656,6 +657,48 @@ services:
     volumes:
       - "./conf/counters_journal_client.yml:/etc/softwareheritage/counters/journal_client.yml:ro"
       - "./services/swh-counters-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+
+  # Search related
+
+  swh-search:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    ports:
+      - 5010:5010
+    environment:
+      SWH_CONFIG_FILENAME: /search.yml
+    env_file:
+      - ./env/common_python.env
+    volumes:
+      - "./conf/search-memory.yml:/search.yml:ro"
+      - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-search-journal-client-objects:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    depends_on:
+      kafka:
+        condition: service_healthy
+      swh-search:
+        condition: service_started
+    volumes:
+      - "./conf/search_journal_client_objects.yml:/etc/softwareheritage/search/journal_client.yml:ro"
+      - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-search-journal-client-indexed:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    depends_on:
+      kafka:
+        condition: service_healthy
+      swh-search:
+        condition: service_started
+    volumes:
+      - "./conf/search_journal_client_indexed.yml:/etc/softwareheritage/search/journal_client.yml:ro"
+      - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
 
 volumes:
   redis-data:

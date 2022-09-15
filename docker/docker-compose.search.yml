@@ -14,54 +14,10 @@ services:
       - elasticsearch-data:/usr/share/elasticsearch/data
 
   swh-search:
-    image: swh/stack
-    build: ./
-    entrypoint: /entrypoint.sh
-    ports:
-      - 5010:5010
     depends_on:
       - elasticsearch
-    environment:
-      SWH_CONFIG_FILENAME: /search.yml
-    env_file:
-      - ./env/common_python.env
     volumes:
       - "./conf/search.yml:/search.yml:ro"
-      - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
-
-  swh-search-journal-client-objects:
-    image: swh/stack
-    build: ./
-    entrypoint: /entrypoint.sh
-    depends_on:
-      kafka:
-        condition: service_healthy
-      swh-search:
-        condition: service_started
-    volumes:
-      - "./conf/search_journal_client_objects.yml:/etc/softwareheritage/search/journal_client.yml:ro"
-      - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
-
-  swh-search-journal-client-indexed:
-    image: swh/stack
-    build: ./
-    entrypoint: /entrypoint.sh
-    depends_on:
-      kafka:
-        condition: service_healthy
-      swh-search:
-        condition: service_started
-    volumes:
-      - "./conf/search_journal_client_indexed.yml:/etc/softwareheritage/search/journal_client.yml:ro"
-      - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
-
-  swh-web:
-    depends_on:
-      - swh-search
-    environment:
-      SWH_CONFIG_FILENAME: /web-search.yml
-    volumes:
-      - "./conf/web-search.yml:/web-search.yml:ro"
 
 volumes:
   elasticsearch-data:

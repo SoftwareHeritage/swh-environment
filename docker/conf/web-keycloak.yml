@@ -60,7 +60,12 @@ throttling:
       limiter_rate:
         default: 120/h
 
-search: {}
+search:
+  cls: remote
+  url: http://swh-search:5010/
+
+search_config:
+  metadata_backend: swh-search
 
 keycloak:
   server_url: http://keycloak:8080/keycloak/auth/

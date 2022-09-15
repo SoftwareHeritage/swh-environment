@@ -66,5 +66,11 @@ throttling:
       exempted_networks:
         - 0.0.0.0/0
 
-search: {}
+search:
+  cls: remote
+  url: http://swh-search:5010/
+
+search_config:
+  metadata_backend: swh-search
+
 instance_name: archive-docker.softwareheritage.org
