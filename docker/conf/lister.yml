@@ -13,9 +13,12 @@ celery:
     - swh.lister.bitbucket.tasks.RangeBitBucketLister
     - swh.lister.bower.tasks.BowerListerTask
     - swh.lister.cgit.tasks.CGitListerTask
+    - swh.lister.conda.tasks.CondaListerTask
+    - swh.lister.cpan.tasks.CpanListerTask
     - swh.lister.cran.tasks.CRANListerTask
     - swh.lister.crates.tasks.CratesListerTask
     - swh.lister.debian.tasks.DebianListerTask
+    - swh.lister.fedora.tasks.FullFedoraRelister
     - swh.lister.gitea.tasks.FullGiteaRelister
     - swh.lister.gitea.tasks.IncrementalGiteaLister
     - swh.lister.gitea.tasks.RangeGiteaLister
@@ -28,16 +31,20 @@ celery:
     - swh.lister.gnu.tasks.GNUListerTask
     - swh.lister.gogs.tasks.FullGogsRelister
     - swh.lister.golang.tasks.FullGolangLister
-    - swh.lister.npm.tasks.NpmIncrementalListerTask
-    - swh.lister.npm.tasks.NpmListerTask
-    - swh.lister.maven.tasks.FullMavenLister
+    - swh.lister.hackage.tasks.HackageListerTask
     - swh.lister.launchpad.tasks.IncrementalLaunchpadLister
     - swh.lister.launchpad.tasks.FullLaunchpadLister
+    - swh.lister.maven.tasks.FullMavenLister
+    - swh.lister.npm.tasks.NpmIncrementalListerTask
+    - swh.lister.npm.tasks.NpmListerTask
+    - swh.lister.nuget.tasks.NugetListerTask
+    - swh.lister.opam.tasks.OpamListerTask
     - swh.lister.packagist.tasks.PackagistListerTask
-    - swh.lister.pubdev.tasks.PubDevListerTask
     - swh.lister.phabricator.tasks.FullPhabricatorLister
     - swh.lister.phabricator.tasks.IncrementalPhabricatorLister
-    - swh.lister.opam.tasks.OpamListerTask
+    - swh.lister.pubdev.tasks.PubDevListerTask
+    - swh.lister.puppet.tasks.PuppetListerTask
     - swh.lister.pypi.tasks.PyPIListerTask
+    - swh.lister.rubygems.tasks.RubyGemsListerTask
     - swh.lister.sourceforge.tasks.FullSourceForgeLister
     - swh.lister.sourceforge.tasks.IncrementalSourceForgeLister

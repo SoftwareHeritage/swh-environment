@@ -26,15 +26,20 @@ celery:
     - swh.loader.package.arch.tasks.LoadArch
     - swh.loader.package.archive.tasks.LoadArchive
     - swh.loader.package.aur.tasks.LoadAur
+    - swh.loader.package.cpan.tasks.LoadCpan
     - swh.loader.package.cran.tasks.LoadCRAN
     - swh.loader.package.crates.tasks.LoadCrates
     - swh.loader.package.debian.tasks.LoadDebian
     - swh.loader.package.golang.tasks.LoadGolang
+    - swh.loader.package.hackage.tasks.LoadHackage
     - swh.loader.package.maven.tasks.LoadMaven
     - swh.loader.package.nixguix.tasks.LoadNixguix
     - swh.loader.package.npm.tasks.LoadNpm
+    - swh.loader.package.opam.tasks.LoadOpam
     - swh.loader.package.pubdev.tasks.LoadPubDev
+    - swh.loader.package.puppet.tasks.LoadPuppet
     - swh.loader.package.pypi.tasks.LoadPyPI
+    - swh.loader.package.rubygems.tasks.LoadRubyGems
     - swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
     - swh.loader.svn.tasks.LoadSvnRepository
     - swh.loader.svn.tasks.MountAndLoadSvnRepository
