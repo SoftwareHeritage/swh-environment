@@ -55,6 +55,10 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
+# install nix binaries that can be used by swh directory loader
+RUN curl -L https://nixos.org/nix/install -o /tmp/nix_install
+RUN sh /tmp/nix_install --daemon --no-channel-add --daemon-user-count 1
+
 RUN useradd -md /srv/softwareheritage -s /bin/bash swh
 USER swh
 
