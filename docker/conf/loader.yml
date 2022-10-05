@@ -16,6 +16,8 @@ celery:
   task_broker: amqp://guest:guest@amqp//
   task_queues:
     - swh.loader.bzr.tasks.LoadBazaar
+    - swh.loader.core.tasks.LoadContent
+    - swh.loader.core.tasks.LoadDirectory
     - swh.loader.cvs.tasks.LoadCvsRepository
     - swh.loader.dir.tasks.LoadDirRepository
     - swh.loader.git.tasks.LoadDiskGitRepository

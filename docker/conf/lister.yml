@@ -35,6 +35,7 @@ celery:
     - swh.lister.launchpad.tasks.IncrementalLaunchpadLister
     - swh.lister.launchpad.tasks.FullLaunchpadLister
     - swh.lister.maven.tasks.FullMavenLister
+    - swh.lister.nixguix.tasks.NixGuixListerTask
     - swh.lister.npm.tasks.NpmIncrementalListerTask
     - swh.lister.npm.tasks.NpmListerTask
     - swh.lister.nuget.tasks.NugetListerTask
