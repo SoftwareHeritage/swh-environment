@@ -16,6 +16,7 @@ case "$1" in
            --reload \
            --threads 4 \
            --workers 2 \
+           --worker-class uvicorn.workers.UvicornWorker \
            --log-level DEBUG \
            --timeout 3600 \
            --config 'python:swh.core.api.gunicorn_config' \

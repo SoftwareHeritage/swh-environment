@@ -2,4 +2,8 @@ storage:
   cls: remote
   url: http://swh-storage:5002
 
+search:
+  cls: remote
+  url: http://swh-search:5010/
+
 debug: yes
