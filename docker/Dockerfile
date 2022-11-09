@@ -51,7 +51,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get install -y --no-install-recommends \
   opam \
   r-base-core \
-  r-cran-jsonlite && \
+  r-cran-jsonlite \
+  rpm2cpio \
+  cpio && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 

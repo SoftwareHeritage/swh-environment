@@ -41,6 +41,7 @@ celery:
     - swh.loader.package.pubdev.tasks.LoadPubDev
     - swh.loader.package.puppet.tasks.LoadPuppet
     - swh.loader.package.pypi.tasks.LoadPyPI
+    - swh.loader.package.rpm.tasks.LoadRpm
     - swh.loader.package.rubygems.tasks.LoadRubyGems
     - swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
     - swh.loader.svn.tasks.LoadSvnRepository
