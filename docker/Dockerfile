@@ -1,3 +1,7 @@
+ARG REGISTRY=container-registry.softwareheritage.org/infra/swh-apps/
+ARG RSVNDUMP=/usr/local/bin/rsvndump
+FROM ${REGISTRY}rsvndump-base:latest AS rsvndump_image
+
 FROM python:3.7
 
 ARG PGDG_REPO=http://apt.postgresql.org/pub/repos/apt
@@ -60,6 +64,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 # install nix binaries that can be used by swh directory loader
 RUN curl -L https://nixos.org/nix/install -o /tmp/nix_install
 RUN sh /tmp/nix_install --daemon --no-channel-add --daemon-user-count 1
+
+# Install rsvndump (svn loader related)
+COPY --from=rsvndump_image /usr/local/bin/rsvndump /usr/local/bin/rsvndump
 
 RUN useradd -md /srv/softwareheritage -s /bin/bash swh
 USER swh
