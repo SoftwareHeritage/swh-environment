@@ -69,6 +69,9 @@ def docker_compose(request, docker_host, compose_cmd):
     )
     yield docker_host
 
+    logs = docker_host.run(f"{compose_cmd} logs")
+    print(logs.stdout)
+    print(logs.stderr)
     # and stop the cluster
     docker_host.check_output(f"{compose_cmd} down -v")
 
