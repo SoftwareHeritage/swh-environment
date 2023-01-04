@@ -14,7 +14,7 @@ import pytest
 import requests
 import testinfra
 
-APIURL = "http://127.0.0.1:5080/api/1/"
+APIURL = "http://127.0.0.1:5004/api/1/"
 
 SAMPLE_METADATA = """\
 <?xml version="1.0" encoding="utf-8"?>
@@ -36,7 +36,7 @@ SAMPLE_METADATA = """\
 </entry>
 """
 
-# wait-for-it timout
+# wait-for-it timeout
 WFI_TIMEOUT = 60
 
 
