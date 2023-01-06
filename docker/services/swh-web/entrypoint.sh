@@ -9,7 +9,9 @@ setup_pgsql
 if [[ -d /src/swh-web ]] ; then
     echo "Install and compile swh-web static assets"
     pushd /src/swh-web
-    yarn install --frozen-lockfile
+    if ! yarn install --frozen-lockfile; then
+        echo "warning: Could not rebuild swh-web static assets"
+    fi
     # execute webpack-dev-server in background
     yarn start-dev&
     popd
