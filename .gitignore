@@ -7,3 +7,4 @@ snippets/
 .tox
 docker/*.override.yml
 docker/tests/*.logs
+*~

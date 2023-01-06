@@ -243,6 +243,30 @@ services:
       - "./conf/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
+  # Winery object storage
+
+  swh-winery-db:
+    image: postgres:13
+    env_file:
+      - ./env/common_python.env
+      - ./env/winery-db.env
+
+  swh-winery:
+    build: ./
+    image: swh/stack
+    ports:
+      - 5012:5012
+    depends_on:
+      - swh-winery-db
+    env_file:
+      - ./env/common_python.env
+    environment:
+      SWH_CONFIG_FILENAME: /winery.yml
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/winery.yml:/winery.yml:ro"
+      - "./services/swh-winery/entrypoint.sh:/entrypoint.sh:ro"
+
   # Object storage
 
   swh-objstorage:
