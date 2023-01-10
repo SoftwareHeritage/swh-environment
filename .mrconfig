@@ -1,198 +1,235 @@
 # keep the list sorted alphabetically by local repo name
 
 [snippets]
-checkout = git clone 'https://forge.softwareheritage.org/source/snippets.git' 'snippets'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/snippets.git' 'snippets'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/snippets.git
 
 [swh-auth]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-auth.git' 'swh-auth'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-auth.git' 'swh-auth'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-auth.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-core]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-core.git' 'swh-core'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-core.git' 'swh-core'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-core.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-counters]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-counters.git' 'swh-counters'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-counters.git' 'swh-counters'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-counters.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-dataset]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-dataset.git' 'swh-dataset'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-dataset.git' 'swh-dataset'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-dataset.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-deposit]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-deposit.git' 'swh-deposit'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-deposit.git' 'swh-deposit'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-deposit.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-docs]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-docs.git' 'swh-docs'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-docs.git' 'swh-docs'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-docs.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-fuse]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-fuse.git' 'swh-fuse'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-fuse.git' 'swh-fuse'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-fuse.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-graph]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-graph.git' 'swh-graph'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-graph.git' 'swh-graph'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-graph.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-graphql]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-graphql.git' 'swh-graphql'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-graphql.git' 'swh-graphql'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-graphql.git
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
 [swh-icinga-plugins]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-icinga-plugins.git' 'swh-icinga-plugins'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-icinga-plugins.git' 'swh-icinga-plugins'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-icinga-plugins.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-indexer]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-indexer.git' 'swh-indexer'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-indexer.git' 'swh-indexer'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-indexer.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-journal]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-journal.git' 'swh-journal'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-journal.git' 'swh-journal'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-journal.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-lister]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-lister.git' 'swh-lister'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-lister.git' 'swh-lister'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-lister.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-core]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-core.git' 'swh-loader-core'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-loader-core.git' 'swh-loader-core'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-loader-core.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-bzr]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-bzr.git' 'swh-loader-bzr'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-loader-bzr.git' 'swh-loader-bzr'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-loader-bzr.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-cvs]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-cvs.git' 'swh-loader-cvs'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-loader-cvs.git' 'swh-loader-cvs'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-loader-cvs.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-git]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-git.git' 'swh-loader-git'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-loader-git.git' 'swh-loader-git'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-loader-git.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-mercurial]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-mercurial.git' 'swh-loader-mercurial'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-loader-mercurial.git' 'swh-loader-mercurial'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-loader-mercurial.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-metadata]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-metadata.git' 'swh-loader-metadata'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-loader-metadata.git' 'swh-loader-metadata'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-loader-metadata.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-loader-svn]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-loader-svn.git' 'swh-loader-svn'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-loader-svn.git' 'swh-loader-svn'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-loader-svn.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-model]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-model.git' 'swh-model'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-model.git' 'swh-model'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-model.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-objstorage]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-objstorage.git' 'swh-objstorage'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-objstorage.git' 'swh-objstorage'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-objstorage.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-objstorage-replayer]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-objstorage-replayer.git' 'swh-objstorage-replayer'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-objstorage-replayer.git' 'swh-objstorage-replayer'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-objstorage-replayer.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-perfecthash]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-perfecthash.git' 'swh-perfecthash'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-perfecthash.git' 'swh-perfecthash'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-perfecthash.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-py-template]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-py-template.git' 'swh-py-template'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-py-template.git' 'swh-py-template'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-py-template.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-scanner]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-scanner.git' 'swh-scanner'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-scanner.git' 'swh-scanner'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-scanner.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-scheduler]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-scheduler.git' 'swh-scheduler'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-scheduler.git' 'swh-scheduler'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-scheduler.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-scrubber]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-scrubber.git' 'swh-scrubber'
-fixups = grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-scrubber.git' 'swh-scrubber'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-scrubber.git
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
 
 [swh-search]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-search.git' 'swh-search'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-search.git' 'swh-search'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-search.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-storage]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-storage.git' 'swh-storage'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-storage.git' 'swh-storage'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-storage.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-vault]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-vault.git' 'swh-vault'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-vault.git' 'swh-vault'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-vault.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-web]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-web.git' 'swh-web'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-web.git' 'swh-web'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-web.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
 [swh-web-client]
-checkout = git clone 'https://forge.softwareheritage.org/source/swh-web-client.git' 'swh-web-client'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-web-client.git' 'swh-web-client'
 fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-web-client.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
