@@ -111,7 +111,7 @@ def deposit_host(request, docker_compose):
 
 @pytest.fixture(scope="session")
 def git_url():
-    return "https://forge.softwareheritage.org/source/swh-core"
+    return "https://gitlab.softwareheritage.org/swh/devel/swh-core.git"
 
 
 @pytest.fixture(scope="session")

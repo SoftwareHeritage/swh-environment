@@ -30,8 +30,15 @@ def test_git_loader(scheduler_host, git_origin):
     print("Check every identified git ref has been loaded")
     snapshot = apiget(f'snapshot/{visit["snapshot"]}')
 
-    print(f'snapshot has {len(snapshot["branches"])} branches')
     branches = snapshot["branches"]
+
+    while snapshot["next_branch"] is not None:
+        snapshot = apiget(
+            f'snapshot/{visit["snapshot"]}?branches_from={snapshot["next_branch"]}'
+        )
+        branches.update(snapshot["branches"])
+
+    print(f"snapshot has {len(branches)} branches")
 
     # check every fetched branch is present in the snapshot
     for branch_name, rev in gitrefs.items():
