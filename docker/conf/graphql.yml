@@ -7,3 +7,8 @@ search:
   url: http://swh-search:5010/
 
 debug: yes
+
+introspection: yes
+
+max_query_cost:
+  anonymous: 500
