@@ -1,0 +1,182 @@
+#!/usr/bin/env python3
+import logging
+import pathlib
+import subprocess
+import time
+
+import click
+import gitlab
+
+logger = logging.getLogger(__name__)
+gitlab_baseurl = "https://gitlab.softwareheritage.org/"
+
+
+def get_gitlab(gitlab_instance):
+    gl = gitlab.Gitlab.from_config(gitlab_instance)
+    gl.auth()
+
+    return gl
+
+
+def git_output(repo_dir, *args):
+    return subprocess.check_output(
+        ["git", "-C", str(repo_dir), *args], encoding="utf-8"
+    ).strip()
+
+
+def git_call(repo_dir, *args):
+    return subprocess.check_call(["git", "-C", str(repo_dir), *args])
+
+
+@click.command()
+@click.pass_context
+@click.option(
+    "--gitlab",
+    "-g",
+    "gitlab_instance",
+    help="Which GitLab instance to use, as configured in the python-gitlab config",
+    default=None,
+)
+@click.option("--log-level", default="INFO")
+@click.option(
+    "--invite-jenkins/--no-invite-jenkins",
+    help="Invite the jenkins user to the forked repository (for merge-request pipeline reporting)",
+    is_flag=True,
+    show_default=True,
+    default=True,
+)
+@click.option(
+    "--setup-remote/--no-setup-remote",
+    help="Setup a forked remote with the proper URL",
+    is_flag=True,
+    show_default=True,
+    default=True,
+)
+@click.argument("local_checkout", type=pathlib.Path)
+def fork_repo(
+    ctx, gitlab_instance, log_level, invite_jenkins, setup_remote, local_checkout
+):
+    """Fork a repository on the Software Heritage GitLab, and set it up for
+    contribution.
+
+    This tool does the following on any local checkout of a SWH GitLab
+    repository:
+
+    \b
+      - Forks the repository to your user namespace if needed;
+      - Adds the ``jenkins`` user as Developer on the forked project so
+        it can report pipeline results;
+      - Sets up a ``forked`` remote in the local checkout.
+
+    To use this tool, you need to `configure python-gitlab`_ with a personal
+    access token that has write access to your account.
+
+    \b
+    .. _configure python-gitlab: https://python-gitlab.readthedocs.io/en/stable/cli-usage.html#cli-configuration
+
+    """
+    logging.root.setLevel(log_level)
+
+    gl = get_gitlab(gitlab_instance)
+    assert gl.user
+
+    if not gl.url.startswith(gitlab_baseurl[:-1]):
+        logger.warning(
+            "Unknown GitLab instance: %s (expected gitlab.softwareheritage.org)", gl.url
+        )
+
+    git_basedir = local_checkout / ".git"
+    if not git_basedir.is_dir():
+        logger.warning(
+            "Unknown repository %s: %s not found", local_checkout, git_basedir
+        )
+        ctx.exit(1)
+    else:
+        logger.debug("Found repository at %s", git_basedir)
+
+    repo_url = git_output(local_checkout, "remote", "get-url", "origin")
+    if not repo_url.startswith(gitlab_baseurl):
+        logger.warning(
+            "origin remote url %s is not on the Software Heritage GitLab!", repo_url
+        )
+        ctx.exit(1)
+
+    project_name = repo_url[len(gitlab_baseurl) :]
+    if project_name.endswith(".git"):
+        project_name = project_name[:-4]
+
+    repo_name = project_name.split("/")[-1]
+
+    project = gl.projects.get(project_name)
+
+    forked_repo_name = f"{gl.user.username}/{repo_name}"
+
+    try:
+        forked_project = gl.projects.get(forked_repo_name)
+    except gitlab.exceptions.GitlabGetError:
+        forked_project = None
+
+    if not forked_project:
+        logger.info(
+            "Forking %s in namespace of user %s", project.web_url, gl.user.username
+        )
+
+        forked_project = project.forks.create(namespace_path=gl.user.username)
+        forked_project_id = forked_project.id
+
+        for attempt in range(10):
+            forked_project = gl.projects.get(forked_project_id)
+            logger.debug(
+                "attempt %s: import status for %s: %s",
+                attempt,
+                forked_project.web_url,
+                forked_project.import_status,
+            )
+            if forked_project.import_status == "finished":
+                logger.info("Forked!")
+                break
+            time.sleep(10)
+        else:
+            logger.warn("Timed out waiting for fork.")
+            ctx.exit(1)
+
+    else:
+        logger.info("%s already forked as %s", project.web_url, forked_project.web_url)
+
+    if invite_jenkins:
+        logger.info("Inviting jenkins as Developer in %s", forked_project.web_url)
+        try:
+            forked_project.members.create(
+                {
+                    "user_id": gl.users.list(username="jenkins")[0].id,
+                    "access_level": gitlab.const.AccessLevel.DEVELOPER,
+                }
+            )
+            logger.info("Invited!")
+        except gitlab.exceptions.GitlabCreateError as e:
+            if e.response_code != 409:
+                # already created
+                raise
+            else:
+                logger.info("Already a member!")
+
+    if setup_remote:
+        logger.info("Setting up forked remote")
+
+        url_to_repo = forked_project.http_url_to_repo
+        remotes = git_output(local_checkout, "remote", "show").splitlines()
+        if "forked" not in remotes:
+            git_call(local_checkout, "remote", "add", "forked", url_to_repo)
+        elif git_output(local_checkout, "remote", "get-url", "forked") != url_to_repo:
+            git_call(local_checkout, "remote", "set-url", "forked", url_to_repo)
+        else:
+            logger.info("Already setup!")
+
+        git_call(local_checkout, "remote", "update", "forked")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s %(name)s:%(levelname)s %(message)s"
+    )
+    fork_repo()
