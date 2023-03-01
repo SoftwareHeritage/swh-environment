@@ -6,7 +6,7 @@ fixups =
   git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/snippets.git
 
 [swh-alter]
-checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-alter.git' 'swh-auth'
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-alter.git' 'swh-alter'
 fixups =
   git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-alter.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
