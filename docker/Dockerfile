@@ -94,6 +94,7 @@ RUN pip install \
   swh-loader-svn \
   swh-storage \
   swh-objstorage \
+  swh-objstorage[winery] \
   swh-scheduler \
   swh-vault \
   swh-web

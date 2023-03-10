@@ -1,0 +1,8 @@
+objstorage:
+  cls: winery
+  readonly: false
+  base_dsn: postgresql:///?service=swh-objstorage
+  shard_dsn: postgresql:///?service=swh-objstorage
+  shard_max_size: 512
+
+client_max_size: 1073741824

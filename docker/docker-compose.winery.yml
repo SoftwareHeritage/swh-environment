@@ -1,0 +1,139 @@
+# ceph configuration inspired from https://github.com/VasiliyLiao/ceph-docker-compose/blob/master/docker-compose.yml
+# bootstrap osd
+# - ceph auth get-or-create osd.1  mon 'allow profile osd' osd 'allow *' mgr 'allow profile osd' -o ./keyring
+# - ceph-osd --conf /etc/ceph/ceph.conf --osd-data . --mkfs -i 1
+
+version: "2.1"
+
+volumes:
+  ceph-conf:
+  ceph-lib:
+  ceph-osd1:
+  ceph-osd2:
+  objstorage-data:
+
+networks:
+  ceph:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.99.99.0/24"
+
+services:
+#   ceph-mon:
+#     image: quay.io/ceph/daemon
+#     environment:
+#       - CEPH_PUBLIC_NETWORK=${HOST_NETWORK}
+#       - MON_IP=${HOST_IP}
+#     command: ["mon"]
+#     network_mode: host
+#     volumes:
+#       - ceph-conf:/etc/ceph
+#       - ceph-lib:/var/lib/ceph
+#       - ceph-osd1:/var/lib/ceph/osd/ceph-1
+#       - ceph-osd2:/var/lib/ceph/osd/ceph-2
+
+#   ceph-mgr:
+#     container_name: ceph-mgr
+#     image: quay.io/ceph/daemon
+#     restart: always
+#     command: ["mgr"]
+#     environment:
+#       LANG: en_US.utf8
+#       TZ: UTC
+#     volumes:
+#       - ceph-conf:/etc/ceph
+#       - ceph-lib:/var/lib/ceph/
+#     network_mode: host
+#     depends_on:
+#       - ceph-mon
+#     ports:
+#       - 8443:8443
+# #      - 8080:8080
+
+#   ceph-osd1:
+#     container_name: ceph-osd1
+#     image: quay.io/ceph/daemon
+#     restart: always
+#     command: ["osd_directory_single"]
+#     environment:
+#       LANG: en_US.utf8
+#       TZ: UTC
+#     volumes:
+#       - ceph-conf:/etc/ceph
+#       - ceph-lib:/var/lib/ceph/
+#       - ceph-osd1:/var/lib/ceph/osd/ceph-1
+#       - ceph-osd2:/var/lib/ceph/osd/ceph-2
+#     network_mode: host
+#     depends_on:
+#       - ceph-mon
+
+#   ceph-osd2:
+#     container_name: ceph-osd2
+#     image: quay.io/ceph/daemon
+#     restart: always
+#     command: ["osd_directory_single"]
+#     environment:
+#       LANG: en_US.utf8
+#       TZ: UTC
+#     volumes:
+#       - ceph-conf:/etc/ceph
+#       - ceph-lib:/var/lib/ceph/
+#       - ceph-osd1:/var/lib/ceph/osd/ceph-1
+#       - ceph-osd2:/var/lib/ceph/osd/ceph-2
+#     network_mode: host
+#     depends_on:
+#       - ceph-mon
+#       - ceph-osd1
+
+  ceph-demo:
+    container_name: ceph-demo
+    image: quay.io/ceph/demo
+    restart: always
+    command: ["demo"]
+    environment:
+      LANG: en_US.utf8
+      TZ: UTC
+      CEPH_PUBLIC_NETWORK: 10.99.99.0/24
+      # HOST_NETWORK: ${HOST_NETWORK}
+      MON_IP: 10.99.99.10
+      CEPH_DEMO_UID: 1000
+      BLUESTORE_BLOCK_SIZE: 1024M
+      OSD_COUNT: 2
+    volumes:
+      - ceph-conf:/etc/ceph
+      - ceph-lib:/var/lib/ceph/
+      - ceph-osd1:/var/lib/ceph/osd/ceph-1
+      - ceph-osd2:/var/lib/ceph/osd/ceph-2
+    networks:
+      ceph:
+        ipv4_address: 10.99.99.10
+
+  swh-objstorage:
+    build: ./
+    image: swh/stack
+    ports:
+      - 5003:5003
+    env_file:
+      - ./env/common_python.env
+      - ./env/objstorage.env
+    environment:
+      SWH_CONFIG_FILENAME: /objstorage.yml
+    entrypoint: /entrypoint.sh
+    depends_on:
+      - swh-objstorage-db
+      - ceph-demo
+    volumes:
+      - "./conf/objstorage-winery-writer.yml:/objstorage.yml:ro"
+      - "./services/swh-objstorage-winery/entrypoint.sh:/entrypoint.sh:ro"
+    networks:
+      default:
+      ceph:
+
+  swh-objstorage-db:
+    image: postgres:12
+    env_file:
+      - ./env/objstorage-db.env
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+      - objstorage-data:/var/lib/postgresql
