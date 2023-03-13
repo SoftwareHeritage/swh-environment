@@ -12,3 +12,10 @@ introspection: yes
 
 max_query_cost:
   anonymous: 500
+
+auth:
+  server: https://auth.softwareheritage.org/auth/
+  realm: SoftwareHeritageStaging
+  client: swh-web
+  cache:
+    url: memory://
