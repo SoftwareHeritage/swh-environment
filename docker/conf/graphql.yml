@@ -11,11 +11,6 @@ debug: yes
 introspection: yes
 
 max_query_cost:
-  anonymous: 500
-
-auth:
-  server: https://auth.softwareheritage.org/auth/
-  realm: SoftwareHeritageStaging
-  client: swh-web
-  cache:
-    url: memory://
+  # no auth by default so bump max_query_cost to ease testing
+  anonymous: 50000
+  user: 50000

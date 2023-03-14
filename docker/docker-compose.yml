@@ -700,6 +700,24 @@ services:
       - "./conf/search_journal_client_indexed.yml:/etc/softwareheritage/search/journal_client.yml:ro"
       - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
 
+  # GraphQL API
+
+  swh-graphql:
+    image: swh/stack
+    build: ./
+    depends_on:
+      - swh-storage
+    ports:
+      - 5013:5013
+    environment:
+      SWH_CONFIG_FILENAME: /graphql.yml
+    env_file:
+      - ./env/common_python.env
+    volumes:
+      - "./conf/graphql.yml:/graphql.yml:ro"
+      - "./services/swh-graphql/entrypoint.sh:/entrypoint.sh:ro"
+    entrypoint: /entrypoint.sh
+
 volumes:
   redis-data:
   storage-data:
