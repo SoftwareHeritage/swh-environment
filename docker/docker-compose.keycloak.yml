@@ -43,3 +43,10 @@ services:
     volumes:
       - "./conf/deposit-keycloak.yml:/deposit-keycloak.yml:ro"
 
+  swh-graphql:
+    depends_on:
+      - keycloak
+    environment:
+      SWH_CONFIG_FILENAME: /graphql-keycloak.yml
+    volumes:
+      - "./conf/graphql-keycloak.yml:/graphql-keycloak.yml:ro"

@@ -1,0 +1,23 @@
+storage:
+  cls: remote
+  url: http://swh-storage:5002
+
+search:
+  cls: remote
+  url: http://swh-search:5010/
+
+debug: yes
+
+introspection: yes
+
+max_query_cost:
+  anonymous: 500
+  user: 50000
+
+auth:
+  server: http://keycloak:8080/keycloak/auth/
+  realm: SoftwareHeritage
+  client: swh-web
+  cache:
+    # used to cache auth tokens
+    url: memcached://memcache:11211
