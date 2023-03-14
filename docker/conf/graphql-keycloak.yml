@@ -16,6 +16,7 @@ max_query_cost:
 
 auth:
   server: http://keycloak:8080/keycloak/auth/
+  public_server: http://localhost:5080/keycloak/auth/
   realm: SoftwareHeritage
   client: swh-web
   cache:

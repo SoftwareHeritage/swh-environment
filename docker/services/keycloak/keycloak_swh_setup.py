@@ -87,7 +87,12 @@ assign_client_base_url(
 )
 
 KEYCLOAK_ADMIN.update_realm(
-    "master", payload={"loginTheme": "swh", "accountTheme": "swh", "adminTheme": "swh",}
+    "master",
+    payload={
+        "loginTheme": "swh",
+        "accountTheme": "swh",
+        "adminTheme": "swh",
+    },
 )
 
 # create swh realm
@@ -176,7 +181,15 @@ KEYCLOAK_ADMIN = KeycloakAdmin(
 )
 
 for (client_name, redirect_uris) in [
-    (CLIENT_WEBAPP_NAME, ["http://localhost:5004/*", "http://localhost:5080/*"]),
+    (
+        CLIENT_WEBAPP_NAME,
+        [
+            "http://localhost:5004/*",
+            "http://localhost:5080/*",
+            "http://localhost:5013/*",
+            "http://localhost:5080/graphql",
+        ],
+    ),
     (CLIENT_DEPOSIT_NAME, ["http://localhost:5006/*"]),
 ]:
     # create swh-web public client
@@ -229,7 +242,12 @@ for (client_name, redirect_uris) in [
     )
 
 # create staff group
-KEYCLOAK_ADMIN.create_group(payload={"name": "staff",}, skip_exists=True)
+KEYCLOAK_ADMIN.create_group(
+    payload={
+        "name": "staff",
+    },
+    skip_exists=True,
+)
 
 GROUPS = KEYCLOAK_ADMIN.get_groups()
 
@@ -262,7 +280,9 @@ DEPOSIT_API_ROLE_NAME = "swh.deposit.api"
 
 # create deposit client roles
 create_client_roles(
-    KEYCLOAK_ADMIN, CLIENT_DEPOSIT_NAME, [DEPOSIT_API_ROLE_NAME],
+    KEYCLOAK_ADMIN,
+    CLIENT_DEPOSIT_NAME,
+    [DEPOSIT_API_ROLE_NAME],
 )
 
 # create some test users
@@ -324,7 +344,8 @@ AMBASSADOR_ROLE_NAME = "swh.ambassador"
 
 # create SoftwareHeritage realm roles
 create_realm_roles(
-    KEYCLOAK_ADMIN, [AMBASSADOR_ROLE_NAME],
+    KEYCLOAK_ADMIN,
+    [AMBASSADOR_ROLE_NAME],
 )
 
 assign_realm_roles_to_user(KEYCLOAK_ADMIN, [AMBASSADOR_ROLE_NAME], "ambassador")
