@@ -75,3 +75,5 @@ counters:
   url: http://nginx:5080/counters
 counters_backend: swh-counters
 history_counters_url: http://nginx:5080/counters/counters_history/history.json
+
+save_code_now_webhook_secret: whsec_QgEXGNJPBPjKsyBMPwtAkJpgVtA0g41A

@@ -1,0 +1,52 @@
+version: "2.1"
+
+services:
+
+  svix-db:
+    image: postgres:16
+    env_file:
+      - ./env/svix-db.env
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+
+  svix:
+    image: svix/svix-server
+    environment:
+      WAIT_FOR: "true" # We want to wait for the default services
+    env_file:
+      - ./env/svix.env
+    volumes:
+      - "./conf/svix.toml:/config.toml:ro"
+    ports:
+      - "8071:8071"
+    depends_on:
+      - redis
+      - svix-db
+
+  swh-webhooks-journal-client:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    env_file:
+      - ./env/common_python.env
+    environment:
+      SWH_CONFIG_FILENAME: /journal_client.yml
+    depends_on:
+      - kafka
+      - svix
+      - nginx
+
+    volumes:
+      - "./conf/web.yml:/web.yml:ro"
+      - "./conf/webhooks_journal_client.yml:/journal_client.yml:ro"
+      - "./services/swh-webhooks-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+      - "../swh-webhooks:/src/swh-webhooks"
+
+  swh-web:
+    depends_on:
+      - kafka
+      - svix
+      - nginx
+
+  swh-web-cron:
+    command: noop

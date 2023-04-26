@@ -1,0 +1,16 @@
+journal:
+  brokers:
+    - kafka
+  group_id: swh.webhooks.save_code_now
+  prefix: swh.journal.objects
+  object_types:
+    - origin_visit_status
+
+webhooks:
+  svix:
+    server_url: http://nginx:5080/svix
+    auth_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQ\
+      iOjE2ODIwODU4ODUsImV4cCI6MTk5NzQ0NTg4NSwibmJmIjoxNjgyMD\
+      g1ODg1LCJpc3MiOiJzdml4LXNlcnZlciIsInN1YiI6Im9yZ18yM3JiO\
+      FlkR3FNVDBxSXpwZ0d3ZFhmSGlyTXUifQ.5r19B_eNWeke6exW8d9pC\
+      MWWzp71eOe7oo_q_vnPp1I"

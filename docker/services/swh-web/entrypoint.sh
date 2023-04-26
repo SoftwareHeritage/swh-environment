@@ -11,6 +11,9 @@ setup_pip
 source /srv/softwareheritage/utils/swhutils.sh
 
 case "$1" in
+    "noop")
+        exit 0
+        ;;
     "shell")
         exec bash -i
         ;;

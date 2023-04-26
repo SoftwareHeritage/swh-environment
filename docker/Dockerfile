@@ -99,7 +99,8 @@ RUN pip install \
   swh-scheduler \
   swh-scrubber \
   swh-vault \
-  swh-web
+  swh-web \
+  swh-webhooks
 
 COPY utils/*.sh /srv/softwareheritage/utils/
 RUN mkdir -p /srv/softwareheritage/objects

@@ -261,6 +261,23 @@ def api_get_directory(api_url):
 
 
 @pytest.fixture(scope="module")
+def webapp_host(docker_compose):
+    # run a container in which test commands are executed
+    docker_id = docker_compose.check_compose_output(
+        "run -d swh-web shell sleep 1h"
+    ).strip()
+    webapp_host = testinfra.get_host("docker://" + docker_id)
+    webapp_host.check_output(f"wait-for-it swh-storage:5002 -t {WFI_TIMEOUT}")
+    webapp_host.check_output(f"wait-for-it swh-web:5004 -t {WFI_TIMEOUT}")
+
+    # return a testinfra connection to the container
+    yield webapp_host
+
+    # at the end of the test suite, destroy the container
+    docker_compose.check_output(f"docker rm -f {docker_id}")
+
+
+@pytest.fixture(scope="module")
 def origin_urls() -> List[Tuple[str, str]]:
     # This fixture is meant to be overloaded in test modules to initialize the
     # main storage with the content from the loading of the origins listed

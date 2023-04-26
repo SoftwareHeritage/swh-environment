@@ -71,3 +71,5 @@ keycloak:
   server_url: http://nginx:5080/keycloak/auth/
   realm_name: SoftwareHeritage
 instance_name: archive-docker.softwareheritage.org
+
+save_code_now_webhook_secret: whsec_QgEXGNJPBPjKsyBMPwtAkJpgVtA0g41A
