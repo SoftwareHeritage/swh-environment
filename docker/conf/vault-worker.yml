@@ -1,6 +1,6 @@
 storage:
   cls: remote
-  url: http://swh-storage:5002/
+  url: http://nginx:5080/storage
 vault:
   cls: remote
   url: http://swh-vault:5005/
