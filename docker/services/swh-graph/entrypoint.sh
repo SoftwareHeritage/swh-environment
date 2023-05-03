@@ -32,14 +32,11 @@ case "$1" in
         update_graph
       fi
       echo "Starting the swh-graph API server"
-      exec gunicorn --bind 0.0.0.0:5009 \
-           --worker-class aiohttp.worker.GunicornWebWorker \
-           --reload \
-           --threads 4 \
-           --workers 2 \
+      exec swh \
            --log-level DEBUG \
-           --timeout 3600 \
-           --config 'python:swh.core.api.gunicorn_config' \
-           'swh.graph.server.app:make_app_from_configfile()'
+           graph \
+           grpc-serve \
+           --port 5009 \
+           --graph $DATADIR/compressed/graph
       ;;
 esac
