@@ -12,11 +12,11 @@ update_graph() {
   rm -rf $DATADIR/*  # cleanup results from previous runs
   mkdir $DATADIR/g/
   echo "Exporting edges and nodes"
-  swh dataset -C $SWH_CONFIG_FILENAME graph export $DATADIR/g --processes=8 --formats=edges
+  swh dataset -C $SWH_CONFIG_FILENAME graph export $DATADIR/g --processes=8 --formats=orc
   echo "Sorting edges and nodes"
   swh dataset graph sort $DATADIR/g/edges
   echo "Compressing graph"
-  swh graph compress --graph $DATADIR/g/edges/graph --outdir $DATADIR/compressed
+  swh graph compress --input-dataset $DATADIR/g/orc/ --output-directory $DATADIR/compressed
 }
 
 case "$1" in
