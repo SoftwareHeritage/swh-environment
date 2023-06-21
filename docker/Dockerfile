@@ -42,7 +42,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   libsystemd-dev \
   gcc \
   iputils-ping \
-  openjdk-11-jre \
   pkg-config \
   pv \
   postgresql-client-12 \
@@ -61,12 +60,12 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
-# install nix binaries that can be used by swh directory loader
-RUN curl -L https://nixos.org/nix/install -o /tmp/nix_install
-RUN sh /tmp/nix_install --daemon --no-channel-add --daemon-user-count 1
-
 # Install rsvndump (svn loader related)
 COPY --from=rsvndump_image /usr/local/bin/rsvndump /usr/local/bin/rsvndump
+
+ENV JAVA_HOME=/opt/java/openjdk
+COPY --from=eclipse-temurin:11 $JAVA_HOME $JAVA_HOME
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 RUN useradd -md /srv/softwareheritage -s /bin/bash swh
 USER swh
