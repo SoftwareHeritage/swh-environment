@@ -41,6 +41,7 @@ celery:
     - swh.lister.nuget.tasks.NugetListerTask
     - swh.lister.opam.tasks.OpamListerTask
     - swh.lister.packagist.tasks.PackagistListerTask
+    - swh.lister.pagure.tasks.PagureListerTask
     - swh.lister.phabricator.tasks.FullPhabricatorLister
     - swh.lister.phabricator.tasks.IncrementalPhabricatorLister
     - swh.lister.pubdev.tasks.PubDevListerTask
