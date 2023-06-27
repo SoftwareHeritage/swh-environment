@@ -8,14 +8,18 @@ PIP="python3 -m pip $PIP_FLAGS"
 
 # pip 21.3 added support to editable installs for projects that have a
 # pyproject.toml and use a build backend that supports PEP 660, but mypy
-# does not detect yet such editable installs and following errors are
+# does not support such editable installs and following errors are
 # reported when type checking swh modules :
 #
 #  Cannot find implementation or library stub for module named swh....
 #
-# TODO: Remove that version pin once mypy supports PEP 660 editable
-#       installs, see https://github.com/python/mypy/issues/12313
-$PIP install "pip<21.3"
+# As a workaround, we force the legacy behavior of editable installs
+# by passing the "editable_mode=compat" configuration settings to the
+# PEP 517 build backend
+#
+# See https://github.com/python/mypy/issues/13392
+
+$PIP config --site set install.config-settings editable_mode=compat
 
 $PIP install $PREREQUISITES "$@"
 
