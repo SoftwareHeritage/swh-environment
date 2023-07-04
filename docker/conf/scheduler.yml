@@ -7,3 +7,8 @@ celery:
   broker_transport_options:
     max_retries: 1
 no_origins_scheduled_backoff: 60
+# ensure opam origin loading tasks will be scheduled
+scheduling_policy:
+  opam:
+    - policy: origins_without_last_update
+      weight: 100
