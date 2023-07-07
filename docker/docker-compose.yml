@@ -232,6 +232,7 @@ services:
     command: schedule-recurrent
     depends_on:
       - swh-scheduler
+      - swh-loader
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
