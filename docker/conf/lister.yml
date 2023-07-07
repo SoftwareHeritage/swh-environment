@@ -18,7 +18,6 @@ celery:
     - swh.lister.cran.tasks.CRANListerTask
     - swh.lister.crates.tasks.CratesListerTask
     - swh.lister.debian.tasks.DebianListerTask
-    - swh.lister.fedora.tasks.FullFedoraRelister
     - swh.lister.gitea.tasks.FullGiteaRelister
     - swh.lister.gitea.tasks.IncrementalGiteaLister
     - swh.lister.gitea.tasks.RangeGiteaLister
@@ -49,6 +48,8 @@ celery:
     - swh.lister.pubdev.tasks.PubDevListerTask
     - swh.lister.puppet.tasks.PuppetListerTask
     - swh.lister.pypi.tasks.PyPIListerTask
+    - swh.lister.rpm.tasks.FullRPMLister
+    - swh.lister.rpm.tasks.IncrementalRPMLister
     - swh.lister.rubygems.tasks.RubyGemsListerTask
     - swh.lister.sourceforge.tasks.FullSourceForgeLister
     - swh.lister.sourceforge.tasks.IncrementalSourceForgeLister
