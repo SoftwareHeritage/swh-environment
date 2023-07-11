@@ -28,6 +28,7 @@ celery:
     - swh.lister.gitlab.tasks.FullGitLabRelister
     - swh.lister.gitlab.tasks.IncrementalGitLabLister
     - swh.lister.gitlab.tasks.RangeGitLabLister
+    - swh.lister.gitweb.tasks.GitwebListerTask
     - swh.lister.gnu.tasks.GNUListerTask
     - swh.lister.gogs.tasks.FullGogsRelister
     - swh.lister.golang.tasks.FullGolangLister
