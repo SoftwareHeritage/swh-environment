@@ -14,3 +14,4 @@ journal:
   object_types:
     - origin
     - origin_visit_status
+  create_topics: true

@@ -2,6 +2,7 @@ journal:
   brokers:
     - kafka
   prefix: swh.journal.objects
+  create_topics: true
 
 graph:
   path: /srv/softwareheritage/graph/compressed/graph

@@ -19,29 +19,8 @@ services:
     ports:
       - "5092:5092"
     env_file: ./env/kafka.env
-    environment:
-      # all other kafka config options are defined in env/kafka.env
-      KAFKA_CREATE_TOPICS: swh.journal.objects.content:16:1:compact,
-        swh.journal.objects.directory:16:1:compact,
-        swh.journal.objects.extid:16:1:compact,
-        swh.journal.objects.origin:16:1:compact,
-        swh.journal.objects.origin_visit:16:1:compact,
-        swh.journal.objects.origin_visit_status:16:1:compact,
-        swh.journal.objects.raw_extrinsic_metadata:16:1:compact,
-        swh.journal.objects.release:16:1:compact,
-        swh.journal.objects_privileged.release:16:1:compact,
-        swh.journal.objects.revision:16:1:compact,
-        swh.journal.objects_privileged.revision:16:1:compact,
-        swh.journal.objects.skipped_content:16:1:compact,
-        swh.journal.objects.snapshot:16:1:compact,
-        swh.journal.indexed.origin_intrinsic_metadata:16:1:compact
     depends_on:
       - zookeeper
-    healthcheck:
-      test: "[ `JMX_PORT= kafka-topics.sh --list --zookeeper zookeeper:2181 | wc -l` -ge `echo $$KAFKA_CREATE_TOPICS | tr ',' '\n' | wc -l` ]"
-      interval: 10s
-      timeout: 5s
-      retries: 10
     volumes:
       - kafka-data:/kafka
 
@@ -571,14 +550,10 @@ services:
       CONCURRENCY: 4
     entrypoint: /entrypoint.sh
     depends_on:
-      kafka:
-        condition: service_healthy
-      swh-storage:
-        condition: service_started
-      swh-idx-storage:
-        condition: service_started
-      swh-objstorage:
-        condition: service_started
+      - kafka
+      - swh-storage
+      - swh-idx-storage
+      - swh-objstorage
     volumes:
       - "./conf/indexer.yml:/indexer.yml:ro"
       - "./services/swh-indexer-worker-journal/entrypoint.sh:/entrypoint.sh:ro"
@@ -592,10 +567,8 @@ services:
     env_file:
       - ./env/common_python.env
     depends_on:
-      kafka:
-        condition: service_healthy
-      swh-scheduler:
-        condition: service_started
+      - kafka
+      - swh-scheduler
     volumes:
       - "./conf/scheduler_journal_client.yml:/etc/softwareheritage/scheduler/journal_client.yml:ro"
       - "./services/swh-scheduler-journal-client/entrypoint.sh:/entrypoint.sh:ro"
@@ -611,8 +584,7 @@ services:
     ports:
       - 5011:5011
     depends_on:
-      redis:
-        condition: service_healthy
+      - redis
     volumes:
       - "./conf/counters.yml:/etc/softwareheritage/counters/server.yml:ro"
       - "./services/swh-counters/entrypoint.sh:/entrypoint.sh:ro"
@@ -629,12 +601,9 @@ services:
     env_file:
       - ./env/common_python.env
     depends_on:
-      kafka:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      swh-counters:
-        condition: service_healthy
+      - kafka
+      - redis
+      - swh-counters
     volumes:
       - "./conf/counters_journal_client.yml:/etc/softwareheritage/counters/journal_client.yml:ro"
       - "./services/swh-counters-journal-client/entrypoint.sh:/entrypoint.sh:ro"
@@ -660,10 +629,8 @@ services:
     build: ./
     entrypoint: /entrypoint.sh
     depends_on:
-      kafka:
-        condition: service_healthy
-      swh-search:
-        condition: service_started
+      - kafka
+      - swh-search
     volumes:
       - "./conf/search_journal_client_objects.yml:/etc/softwareheritage/search/journal_client.yml:ro"
       - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
@@ -673,10 +640,8 @@ services:
     build: ./
     entrypoint: /entrypoint.sh
     depends_on:
-      kafka:
-        condition: service_healthy
-      swh-search:
-        condition: service_started
+      - kafka
+      - swh-search
     volumes:
       - "./conf/search_journal_client_indexed.yml:/etc/softwareheritage/search/journal_client.yml:ro"
       - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"

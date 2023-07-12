@@ -32,6 +32,7 @@ journal:
     - kafka
   group_id: swh.indexer.journal_client
   prefix: swh.journal.objects
+  create_topics: true
 max_messages: 50
 
 tools:
