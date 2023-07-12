@@ -25,6 +25,7 @@ celery:
     - swh.lister.github.tasks.FullGitHubRelister
     - swh.lister.github.tasks.IncrementalGitHubLister
     - swh.lister.github.tasks.RangeGitHubLister
+    - swh.lister.gitiles.tasks.GitilesListerTask
     - swh.lister.gitlab.tasks.FullGitLabRelister
     - swh.lister.gitlab.tasks.IncrementalGitLabLister
     - swh.lister.gitlab.tasks.RangeGitLabLister
