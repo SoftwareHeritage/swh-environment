@@ -51,3 +51,4 @@ celery:
     - swh.lister.rubygems.tasks.RubyGemsListerTask
     - swh.lister.sourceforge.tasks.FullSourceForgeLister
     - swh.lister.sourceforge.tasks.IncrementalSourceForgeLister
+    - swh.lister.stagit.tasks.StagitListerTask
