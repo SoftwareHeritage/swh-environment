@@ -18,6 +18,8 @@ case "$1" in
 
         wait_pgsql
 
+        wait-for-it swh-idx-storage:5007 -s --timeout=0
+
         echo Starting swh-indexer journal-based worker
         swh --log-level ${LOGLEVEL} indexer --config-file /indexer.yml journal-client '*'
     ;;

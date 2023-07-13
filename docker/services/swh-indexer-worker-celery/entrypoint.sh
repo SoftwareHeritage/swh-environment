@@ -18,6 +18,8 @@ case "$1" in
 
         wait_pgsql
 
+        wait-for-it swh-idx-storage:5007 -s --timeout=0
+
         echo Starting swh-indexer Celery-based worker
         exec python -m celery \
              --app=swh.scheduler.celery_backend.config.app \
