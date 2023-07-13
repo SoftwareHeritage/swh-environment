@@ -26,7 +26,7 @@ case "$1" in
           swh db create --db-name ${POSTGRES_DB} storage
       fi
       echo Initializing the database...
-      swh db init --db-name ${POSTGRES_DB} --flavor read_replica storage
+      swh db init --db-name postgresql:///?service=${POSTGRES_DB} --flavor read_replica storage
 
       wait_pgsql ${POSTGRES_DB_SRC} ${PGHOST_SRC}
 

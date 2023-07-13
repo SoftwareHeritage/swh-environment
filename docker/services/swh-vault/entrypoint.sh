@@ -35,7 +35,7 @@ case "$1" in
         swh db init-admin --db-name ${POSTGRES_DB} vault
 
         echo Initializing the database...
-        swh db init --db-name ${POSTGRES_DB} vault
+        swh db init --db-name postgresql:///?service=${POSTGRES_DB} vault
 
         echo Starting the swh-vault API server
         exec swh vault rpc-serve -C ${SWH_CONFIG_FILENAME}

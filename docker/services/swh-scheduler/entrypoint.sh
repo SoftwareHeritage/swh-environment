@@ -37,7 +37,7 @@ case "$1" in
         swh db init-admin --db-name ${POSTGRES_DB} scheduler
 
         echo Initializing the database...
-        swh db init --db-name ${POSTGRES_DB} scheduler
+        swh db init --db-name postgresql:///?service=${POSTGRES_DB} scheduler
 
         echo Starting the swh-scheduler API server
         exec gunicorn --bind 0.0.0.0:5008 \

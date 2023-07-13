@@ -21,7 +21,7 @@ case "$1" in
     swh db init-admin --db-name ${POSTGRES_DB} indexer
 
     echo Initializing the database...
-    swh db init --db-name ${POSTGRES_DB} indexer
+    swh db init --db-name postgresql:///?service=${POSTGRES_DB} indexer
 
     echo Starting the swh-indexer-storage API server
     exec gunicorn --bind 0.0.0.0:5007 \

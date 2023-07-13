@@ -39,7 +39,7 @@ case "$1" in
           swh db init-admin --db-name ${POSTGRES_DB} storage
 
           echo Initializing the database...
-          swh db init --db-name ${POSTGRES_DB} storage
+          swh db init --db-name postgresql:///?service=${POSTGRES_DB} storage
       fi
 
       echo Starting the swh-storage API server
