@@ -1,5 +1,5 @@
 storage:
-  cls: local
+  cls: postgresql
   db: postgresql:///?service=swh-storage-read-replica
   objstorage:
     cls: filtered

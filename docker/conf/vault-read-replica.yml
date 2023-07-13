@@ -5,7 +5,7 @@ scheduler:
   cls: remote
   url: http://swh-scheduler:5008/
 vault:
-  cls: local
+  cls: postgresql
   db: postgresql:///?service=swh-vault
 cache:
   cls: pathslicing
