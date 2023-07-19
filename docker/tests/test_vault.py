@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2021  The Software Heritage developers
+# Copyright (C) 2019-2023  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
@@ -12,10 +12,49 @@ from urllib.parse import quote_plus
 
 import pytest
 
+from .conftest import DOCKER_BRIDGE_NETWORK_GATEWAY_IP
 
-@pytest.fixture(scope="module")
-def compose_files() -> List[str]:
-    return ["docker-compose.yml", "docker-compose.vault.yml"]
+
+@pytest.fixture(
+    scope="module",
+    params=[
+        [
+            "docker-compose.yml",
+            "docker-compose.vault.yml",
+            "docker-compose.vault-azure.yml",
+        ],
+        ["docker-compose.yml", "docker-compose.vault.yml"],
+    ],
+    ids=["azure_cache", "local_cache"],
+)
+def compose_files(request) -> List[str]:
+    return request.param
+
+
+@pytest.fixture(scope="module", autouse=True)
+def azure_blob_endpoint_updater(
+    docker_compose, compose_cmd, compose_files, compose_files_tmpdir
+):
+    """Update azurite configuration for the vault as another port is used
+    when running those tests.
+    """
+    if "docker-compose.vault-azure.yml" in compose_files:
+        docker_compose.check_output(f"{compose_cmd} stop swh-vault")
+        azurite_default_port = 10000
+        azurite_new_port = docker_compose.check_output(
+            f"{compose_cmd} port azurite {azurite_default_port}"
+        ).split(":")[1]
+        vault_config_file = join(compose_files_tmpdir, "conf", "vault-azure.yml")
+        with open(vault_config_file, "r") as vault_config_reader:
+            vault_config = vault_config_reader.read()
+        with open(vault_config_file, "w") as vault_config_writer:
+            vault_config_writer.write(
+                vault_config.replace(
+                    f"http://{DOCKER_BRIDGE_NETWORK_GATEWAY_IP}:{azurite_default_port}",
+                    f"http://{DOCKER_BRIDGE_NETWORK_GATEWAY_IP}:{azurite_new_port}",
+                )
+            )
+        docker_compose.check_output(f"{compose_cmd} start swh-vault")
 
 
 def test_vault_directory(origins, api_get, api_poll, api_get_directory):

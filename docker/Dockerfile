@@ -95,7 +95,7 @@ RUN pip install \
   swh-loader-metadata \
   swh-loader-svn \
   swh-storage \
-  swh-objstorage \
+  swh-objstorage[azure] \
   swh-objstorage-replayer \
   swh-scheduler \
   swh-scrubber \

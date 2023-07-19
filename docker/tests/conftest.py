@@ -105,13 +105,16 @@ def compose_files_tmpdir(tmpdir_factory):
     compose_files_dir = os.path.join(os.path.dirname(__file__), "..")
     # create symlinks in that directory to the paths referenced in compose files
     for _, dirs, _ in os.walk(compose_files_dir):
-        for dir_ in (d for d in dirs if not d.startswith(".")):
+        for dir_ in (d for d in dirs if not d.startswith(".") and d != "conf"):
             os.symlink(
                 os.path.join(compose_files_dir, dir_),
                 os.path.join(tmpdir, dir_),
                 target_is_directory=True,
             )
         break
+    shutil.copytree(
+        os.path.join(compose_files_dir, "conf"), os.path.join(tmpdir, "conf")
+    )
     return tmpdir
 
 
@@ -170,6 +173,9 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
     failed_tests_count = request.node.session.testsfailed
     print(f"Starting the compose session {project_name}...", end=" ", flush=True)
     try:
+        # pull required docker images
+        docker_host.check_output(f"{compose_cmd} pull --ignore-pull-failures")
+
         # start the whole cluster
         docker_host.check_output(f"{compose_cmd} up -d")
         print("OK")

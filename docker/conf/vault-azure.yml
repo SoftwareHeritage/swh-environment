@@ -1,0 +1,22 @@
+storage:
+  cls: remote
+  url: http://nginx:5080/storage
+scheduler:
+  cls: remote
+  url: http://nginx:5080/scheduler
+vault:
+  cls: postgresql
+  db: postgresql:///?service=swh-vault
+cache:
+  cls: azure
+  compression: none
+  # https://github.com/Azure/Azurite/blob/main/README.md#usage-with-azure-storage-sdks-or-tools
+  connection_string: "DefaultEndpointsProtocol=http;\
+    AccountName=devstoreaccount1;\
+    AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;\
+    BlobEndpoint=http://172.17.0.1:10000/devstoreaccount1;"
+    # use docker network default gateway IP to ensure azurite CDN is reachable from the docker host
+  container_name: contents
+smtp:
+  port: 1025
+  host: mailhog

@@ -1,0 +1,38 @@
+version: "2.1"
+
+services:
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    healthcheck:
+      test: nc 127.0.0.1 10000 -z
+      interval: 1s
+      retries: 30
+    ports:
+      - 10000:10000
+    command: azurite-blob --blobHost 0.0.0.0
+
+  azure-cli:
+    image: mcr.microsoft.com/azure-cli:latest
+    # create contents container and allow CORS in order for vault bundle
+    # downloads to not be blocked by browsers
+    command: /bin/sh -c "az storage container create --name contents &&
+      az storage cors add --methods GET --origins '*' --services b &&
+      tail -f /dev/null"
+    depends_on:
+      azurite:
+        condition: service_healthy
+    environment:
+      # https://github.com/Azure/Azurite/blob/main/README.md#usage-with-azure-storage-sdks-or-tools
+      AZURE_STORAGE_CONNECTION_STRING: "DefaultEndpointsProtocol=http;\
+        AccountName=devstoreaccount1;\
+        AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;\
+        BlobEndpoint=http://azurite:10000/devstoreaccount1;"
+
+  swh-vault:
+    depends_on:
+      - azurite
+      - azure-cli
+    environment:
+      SWH_CONFIG_FILENAME: /vault-azure.yml
+    volumes:
+      - "./conf/vault-azure.yml:/vault-azure.yml:ro"
