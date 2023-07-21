@@ -26,7 +26,7 @@ celery:
     - swh.loader.mercurial.tasks.LoadArchiveMercurial
     - swh.loader.mercurial.tasks.LoadMercurial
     - swh.loader.package.arch.tasks.LoadArch
-    - swh.loader.package.archive.tasks.LoadArchive
+    - swh.loader.package.archive.tasks.LoadTarball
     - swh.loader.package.aur.tasks.LoadAur
     - swh.loader.package.cpan.tasks.LoadCpan
     - swh.loader.package.cran.tasks.LoadCRAN
@@ -53,4 +53,4 @@ celery:
     - save_code_now:swh.loader.mercurial.tasks.LoadMercurial
     - save_code_now:swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
     - save_code_now:swh.loader.svn.tasks.MountAndLoadSvnRepository
-    - save_code_now:swh.loader.package.archive.tasks.LoadArchive
+    - save_code_now:swh.loader.package.archive.tasks.LoadTarball
