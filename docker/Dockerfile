@@ -53,8 +53,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   zstd && \
   apt-get install -y --no-install-recommends \
   opam \
-  r-base-core \
-  r-cran-jsonlite \
+  r-base-dev \
   rpm2cpio \
   cpio && \
   apt-get clean && \
