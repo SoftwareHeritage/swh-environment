@@ -54,3 +54,14 @@ celery:
     - swh.lister.sourceforge.tasks.FullSourceForgeLister
     - swh.lister.sourceforge.tasks.IncrementalSourceForgeLister
     - swh.lister.stagit.tasks.StagitListerTask
+
+# use the following to add credentials a lister can use
+credentials:
+  # replace by real lister name (e.g. github)
+  lister_name:
+    # replace by real lister instance name (e.g. github for github lister)
+    lister_instance:
+      # add credentials as a list
+      - username: # username
+        password: # password or API token
+
