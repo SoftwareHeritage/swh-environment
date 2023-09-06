@@ -54,3 +54,5 @@ celery:
     - save_code_now:swh.loader.svn.tasks.DumpMountAndLoadSvnRepository
     - save_code_now:swh.loader.svn.tasks.MountAndLoadSvnRepository
     - save_code_now:swh.loader.package.archive.tasks.LoadTarball
+    - add_forge_now:swh.loader.git.tasks.UpdateGitRepository
+    - add_forge_now:swh.loader.mercurial.tasks.LoadMercurial
