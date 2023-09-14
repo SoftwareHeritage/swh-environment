@@ -280,7 +280,7 @@ services:
     volumes:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
       - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
-      - objstorage-data:/srv/softwareheritage
+      - objstorage-data:/srv/softwareheritage/objects
 
   # Indexer storage
 
