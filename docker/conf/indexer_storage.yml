@@ -1,6 +1,15 @@
+# config is a bit messy here, generic db handling (swh.core.db) expect the
+# main config section to named after the swh package (indexer) while the
+# indexer storage service expect it to be indexer_storage
+
+# this is used only for db setup
+indexer:
+  cls: postgresql
+  db: postgresql:///?service=swh-idx-storage
+
 indexer_storage:
   cls: postgresql
-  db: postgresql:///?service=swh-indexers
+  db: postgresql:///?service=swh-idx-storage
   journal_writer:
     cls: kafka
     brokers:
@@ -9,4 +18,3 @@ indexer_storage:
     client_id: swh.idx_storage.journal_writer
     producer_config:
       message.max.bytes: 1000000000
-

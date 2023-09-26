@@ -18,20 +18,18 @@ case "$1" in
       exec bash -i
       ;;
     *)
-      wait_pgsql template1
+      wait_pgsql
 
       echo Database setup
-      if ! check_pgsql_db_created; then
-          echo Creating database and extensions...
-          swh db create --db-name ${POSTGRES_DB} storage
-      fi
-      echo Initializing the database...
-      swh db init --db-name postgresql:///?service=${POSTGRES_DB} --flavor read_replica storage
-
-      wait_pgsql ${POSTGRES_DB_SRC} ${PGHOST_SRC}
+      echo " step 1: init-admin"
+      swh db init-admin --dbname postgresql:///?service=${NAME} storage
+      echo " step 2: init"
+	  swh db init --flavor ${DB_FLAVOR:-default} storage
+      echo " step 3: upgrade"
+      python3 -m swh db upgrade --non-interactive storage
 
       has_publication=$(\
-        psql service=${POSTGRES_DB_SRC} \
+        psql service=${REPLICA_SRC} \
           --quiet --no-psqlrc --no-align --tuples-only -v ON_ERROR_STOP=1 \
           -c "select count(*) from pg_publication where pubname='softwareheritage';" \
       )
@@ -47,13 +45,13 @@ for file in files("swh.storage"):
     if str(file).endswith("sql/logical_replication/replication_source.sql"):
         print(file.read_text())
 ')
-          psql service=${POSTGRES_DB_SRC} \
+          psql service=${REPLICA_SRC} \
                -v ON_ERROR_STOP=1 \
                -c "$replication_contents"
       fi
 
       has_subscription=$(\
-        psql service=${POSTGRES_DB_SRC} \
+        psql service=${NAME} \
           --quiet --no-psqlrc --no-align --tuples-only -v ON_ERROR_STOP=1 \
           -c "select count(*) from pg_subscription where subname='softwareheritage_replica';" \
       )
@@ -62,7 +60,7 @@ for file in files("swh.storage"):
           echo "Subscription found on replica database"
       else
           echo "Adding subscription to replica database"
-          psql service=${POSTGRES_DB} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION 'host=${PGHOST_SRC} user=${PGUSER_SRC} dbname=${POSTGRES_DB_SRC} password=${POSTGRES_PASSWORD_SRC}' PUBLICATION softwareheritage;"
+          psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage;"
       fi
 
       echo Starting the swh-storage API server

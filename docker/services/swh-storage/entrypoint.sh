@@ -31,15 +31,18 @@ case "$1" in
         ;;
     *)
       if [ "$STORAGE_BACKEND" = "postgresql" ]; then
-          wait_pgsql ${POSTGRES_DB}
+          wait_pgsql
 
           echo Database setup
 
-          echo Creating extensions...
-          swh db init-admin --db-name ${POSTGRES_DB} storage
+          echo " step 1: Creating extensions..."
+          swh db init-admin --dbname postgresql:///?service=${POSTGRES_DB} storage
 
-          echo Initializing the database...
-          swh db init --db-name postgresql:///?service=${POSTGRES_DB} storage
+          echo " step 2: Initializing the database..."
+          swh db init --flavor ${DB_FLAVOR:-default} storage
+
+          echo " step 3: upgrade"
+          swh db upgrade --non-interactive storage
       fi
 
       echo Starting the swh-storage API server

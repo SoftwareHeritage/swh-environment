@@ -34,8 +34,8 @@ case "$1" in
         echo Creating extensions...
         swh db init-admin --db-name ${POSTGRES_DB} vault
 
-        echo Initializing the database...
-        swh db init --db-name postgresql:///?service=${POSTGRES_DB} vault
+        echo Initializing the database ${POSTGRES_DB}...
+        swh db init --db-name postgresql:///?service=${NAME} vault
 
         echo Starting the swh-vault API server
         exec swh vault rpc-serve -C ${SWH_CONFIG_FILENAME}

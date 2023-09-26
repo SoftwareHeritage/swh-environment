@@ -10,15 +10,10 @@ services:
 
   # create a dedicated db for the mirror
   swh-storage-mirror-db:
-    image: postgres:12
-    env_file:
-      - ./env/storage-db-mirror.env
+    image: postgres:16
     environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
-      # unset POSTGRES_DB: we're handling db creation ourselves in the backend
-      # service entrypoint
-      POSTGRES_DB:
+      POSTGRES_DB: swh-storage-mirror
+      POSTGRES_PASSWORD: testpassword
 
   # and an RPC server
   swh-storage-mirror:
@@ -28,8 +23,11 @@ services:
       - swh-storage-mirror-db
       - swh-objstorage
     env_file:
-      - ./env/storage-db-mirror.env
+      - ./env/common_python.env
     environment:
+      DB_FLAVOR: mirror
+      POSTGRES_DB: swh-storage-mirror
+      STORAGE_BACKEND: postgresql
       SWH_CONFIG_FILENAME: /storage-mirror.yml
     entrypoint: /entrypoint.sh
     volumes:
@@ -45,22 +43,25 @@ services:
       - swh-storage-mirror-db
       - swh-objstorage
     env_file:
-      - ./env/storage-db-mirror.env
+      - ./env/common_python.env
     environment:
+      DB_FLAVOR: mirror
+      POSTGRES_DB: swh-storage-mirror
       SWH_CONFIG_FILENAME: /storage-mirror.yml
+      LOG_LEVEL: DEBUG
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/storage-mirror.yml:/storage-mirror.yml:ro"
       - "./services/swh-storage-replayer/entrypoint.sh:/entrypoint.sh:ro"
+      - "../swh-storage:/src/swh-storage"
 
   swh-journal-backfiller:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
     environment:
+      POSTGRES_DB: swh-storage
       SWH_CONFIG_FILENAME: /storage-mirror-backfiller.yml
-    env_file:
-      - ./env/storage-db.env
     depends_on:
       - swh-storage-db
       - kafka

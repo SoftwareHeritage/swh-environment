@@ -14,14 +14,20 @@ case "$1" in
         ;;
     *)
 
-    wait_pgsql ${POSTGRES_DB}
+    wait_pgsql
 
+	echo "============================"
+	cat $SWH_CONFIG_FILENAME
+	echo "============================"
     echo Database setup
-    echo Creating extensions...
-    swh db init-admin --db-name ${POSTGRES_DB} indexer
+    echo " step 1: Creating extensions..."
+    swh db init-admin --dbname postgresql:///?service=${NAME} indexer
 
-    echo Initializing the database...
-    swh db init --db-name postgresql:///?service=${POSTGRES_DB} indexer
+    echo " step 2: Initializing the database..."
+    swh db init indexer
+
+    echo " step 3: upgrade"
+    python3 -m swh db upgrade --non-interactive indexer
 
     echo Starting the swh-indexer-storage API server
     exec gunicorn --bind 0.0.0.0:5007 \

@@ -113,10 +113,10 @@ services:
   # Scheduler
 
   swh-scheduler-db:
-    image: postgres:12
-    env_file:
-      - ./env/common_python.env
-      - ./env/scheduler-db.env
+    image: postgres:16
+    environment:
+      POSTGRES_DB: swh-scheduler
+      POSTGRES_PASSWORD: testpassword
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
@@ -125,9 +125,8 @@ services:
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/scheduler-db.env
-      - ./env/scheduler.env
     environment:
+      POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
@@ -144,9 +143,9 @@ services:
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/scheduler-db.env
       - ./env/scheduler.env
     environment:
+      POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
@@ -163,9 +162,9 @@ services:
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/scheduler-db.env
       - ./env/scheduler.env
     environment:
+      POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
@@ -182,9 +181,9 @@ services:
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/scheduler-db.env
       - ./env/scheduler.env
     environment:
+      POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
@@ -201,9 +200,9 @@ services:
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/scheduler-db.env
       - ./env/scheduler.env
     environment:
+      POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       LOGLEVEL: INFO
@@ -222,9 +221,9 @@ services:
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/scheduler-db.env
       - ./env/scheduler.env
     environment:
+      POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
@@ -238,9 +237,10 @@ services:
   # Graph storage
 
   swh-storage-db:
-    image: postgres:12
-    env_file:
-      - ./env/storage-db.env
+    image: postgres:16
+    environment:
+      POSTGRES_DB: swh-storage
+      POSTGRES_PASSWORD: testpassword
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
       - storage-data:/var/lib/postgresql
@@ -256,8 +256,8 @@ services:
       - kafka
     env_file:
       - ./env/common_python.env
-      - ./env/storage.env
     environment:
+      POSTGRES_DB: swh-storage
       SWH_CONFIG_FILENAME: /storage.yml
       STORAGE_BACKEND: postgresql
     entrypoint: /entrypoint.sh
@@ -285,9 +285,10 @@ services:
   # Indexer storage
 
   swh-idx-storage-db:
-    image: postgres:12
-    env_file:
-      - ./env/indexers-db.env
+    image: postgres:16
+    environment:
+      POSTGRES_DB: swh-idx-storage
+      POSTGRES_PASSWORD: testpassword
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
@@ -300,9 +301,8 @@ services:
       - swh-idx-storage-db
     env_file:
       - ./env/common_python.env
-      - ./env/indexers-db.env
-      - ./env/indexers.env
     environment:
+      POSTGRES_DB: swh-idx-storage
       SWH_CONFIG_FILENAME: /indexer_storage.yml
     entrypoint: /entrypoint.sh
     volumes:
@@ -311,9 +311,10 @@ services:
 
   # Web interface
   swh-web-db:
-    image: postgres:12
-    env_file:
-      - ./env/01-web-db.env
+    image: postgres:16
+    environment:
+      POSTGRES_DB: swh-web
+      POSTGRES_PASSWORD: testpassword
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
@@ -332,9 +333,8 @@ services:
       - memcache
     env_file:
       - ./env/common_python.env
-      - ./env/01-web-db.env
-      - ./env/02-web-db.env
     environment:
+      POSTGRES_DB: swh-web
       VERBOSITY: 3
       DJANGO_SETTINGS_MODULE: swh.web.settings.production
       SWH_CONFIG_FILENAME: /web.yml
@@ -350,9 +350,8 @@ services:
       - swh-web
     env_file:
       - ./env/common_python.env
-      - ./env/01-web-db.env
-      - ./env/02-web-db.env
     environment:
+      POSTGRES_DB: swh-web
       VERBOSITY: 2
       DJANGO_SETTINGS_MODULE: swh.web.settings.production
       SWH_CONFIG_FILENAME: /web.yml
@@ -363,9 +362,10 @@ services:
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-deposit-db:
-    image: postgres:12
-    env_file:
-      - ./env/deposit-db.env
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-deposit
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
@@ -375,13 +375,11 @@ services:
     ports:
       - 5006:5006
     depends_on:
-      - swh-deposit-db
       - swh-scheduler
     env_file:
       - ./env/common_python.env
-      - ./env/deposit-db.env
-      - ./env/deposit.env
     environment:
+      POSTGRES_DB: swh-deposit
       VERBOSITY: 3
       SWH_CONFIG_FILENAME: /deposit.yml
       DJANGO_SETTINGS_MODULE: swh.deposit.settings.production
@@ -391,9 +389,10 @@ services:
       - "./services/swh-deposit/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-vault-db:
-    image: postgres:12
-    env_file:
-      - ./env/vault-db.env
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-vault
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
@@ -402,9 +401,8 @@ services:
     build: ./
     env_file:
       - ./env/common_python.env
-      - ./env/vault-db.env
-      - ./env/vault.env
     environment:
+      POSTGRES_DB: swh-vault
       SWH_CONFIG_FILENAME: /vault.yml
     command: server
     ports:
@@ -517,13 +515,12 @@ services:
     user: swh
     env_file:
       - ./env/common_python.env
-      - ./env/indexers-db.env
-      - ./env/indexers.env
       - ./env/workers.env
     environment:
       SWH_WORKER_INSTANCE: indexer
       SWH_CONFIG_FILENAME: /indexer.yml
       CONCURRENCY: 4
+      POSTGRES_DB: swh-idx-storage
     entrypoint: /entrypoint.sh
     depends_on:
       - swh-scheduler-runner
@@ -541,13 +538,12 @@ services:
     user: swh
     env_file:
       - ./env/common_python.env
-      - ./env/indexers-db.env
-      - ./env/indexers.env
       - ./env/workers.env
     environment:
       SWH_WORKER_INSTANCE: indexer
       SWH_CONFIG_FILENAME: /indexer.yml
       CONCURRENCY: 4
+      POSTGRES_DB: swh-idx-storage
     entrypoint: /entrypoint.sh
     depends_on:
       - kafka

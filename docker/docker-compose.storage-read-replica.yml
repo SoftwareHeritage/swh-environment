@@ -1,15 +1,11 @@
-version: "2.1"
+version: "3.8"
 
 services:
   swh-storage-read-replica-db:
-    image: postgres:12
-    env_file:
-      - ./env/storage-read-replica-db.env
+    image: postgres:16
     environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
-      # unset POSTGRES_DB: we're handling it ourselves
-      POSTGRES_DB:
+      POSTGRES_DB: swh-storage-read-replica
+      POSTGRES_PASSWORD: testpassword
 
   swh-storage-read-replica:
     image: swh/stack
@@ -17,19 +13,19 @@ services:
     ports:
       - 5042:5002
     depends_on:
-      - swh-storage
       - swh-storage-db
       - swh-storage-read-replica-db
       - swh-objstorage
     env_file:
       - ./env/common_python.env
-      - ./env/storage-read-replica-db.env
+      - ./env/storage-read-replica.env
     environment:
-      SWH_CONFIG_FILENAME: /storage.yml
+      SWH_CONFIG_FILENAME: /storage-read-replica.yml
       STORAGE_BACKEND: postgresql
+      DB_FLAVOR: read_replica
     entrypoint: /entrypoint.sh
     volumes:
-      - "./conf/storage-read-replica.yml:/storage.yml:ro"
+      - "./conf/storage-read-replica.yml:/storage-read-replica.yml:ro"
       - "./services/swh-storage-read-replica/entrypoint.sh:/entrypoint.sh:ro"
 
   # override storage db to enable wal_level=logical

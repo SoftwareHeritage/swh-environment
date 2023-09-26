@@ -13,17 +13,20 @@ case "$1" in
       exec bash -i
       ;;
     *)
-      wait_pgsql template1
+      wait_pgsql
 
       echo Database setup
-      if ! check_pgsql_db_created; then
-          echo Creating database and extensions...
-          swh db create --db-name ${POSTGRES_DB} storage
-      fi
-      echo Initializing the database...
-      swh db init --db-name postgresql:///?service=${POSTGRES_DB} --flavor mirror storage
+
+      echo " step 1: init-admin"
+      swh db init-admin --dbname postgresql:///?service=${NAME} storage
+
+      echo " step 2: Initializing the database..."
+      swh db init --flavor ${DB_FLAVOR:-default} storage
+
+      echo " step 3: upgrade"
+      python3 -m swh db upgrade --non-interactive storage
 
       echo Starting the swh-storage Kafka storage replayer
-      exec swh storage replay
+      exec swh --log-level ${LOG_LEVEL:-WARNING} storage replay
       ;;
 esac

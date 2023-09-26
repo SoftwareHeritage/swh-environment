@@ -29,15 +29,18 @@ case "$1" in
         done'
         ;;
     *)
-        wait_pgsql ${POSTGRES_DB}
+        wait_pgsql
 
         echo swh-scheduler database setup
 
-        echo Creating extensions...
-        swh db init-admin --db-name ${POSTGRES_DB} scheduler
+        echo " step 1: Creating extensions..."
+        swh db init-admin --db-name postgresql:///?service=${NAME} scheduler
 
-        echo Initializing the database...
-        swh db init --db-name postgresql:///?service=${POSTGRES_DB} scheduler
+        echo " step 2: Initializing the database..."
+        swh db init scheduler
+
+        echo " step 3: upgrade"
+        swh db upgrade --non-interactive scheduler
 
         echo Starting the swh-scheduler API server
         exec gunicorn --bind 0.0.0.0:5008 \
