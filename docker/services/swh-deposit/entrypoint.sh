@@ -8,6 +8,8 @@ setup_pip
 source /srv/softwareheritage/utils/pgsql.sh
 setup_pgsql
 
+source /srv/softwareheritage/utils/swhutils.sh
+
 if [ "$1" = 'shell' ] ; then
 	shift
 	if (( $# == 0)); then
@@ -34,13 +36,5 @@ else
                     --provider-url https://softwareheritage.org \
                     --domain softwareheritage.org
 
-    echo "starting swh-deposit server"
-    exec gunicorn --bind 0.0.0.0:5006 \
-                  --reload \
-                  --threads 2 \
-                  --workers 2 \
-                  --log-level DEBUG \
-                  --timeout 3600 \
-                  --config 'python:swh.core.api.gunicorn_config' \
-                  'django.core.wsgi:get_wsgi_application()'
+	swh_start_django
 fi

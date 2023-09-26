@@ -55,5 +55,4 @@ services:
       - kafka
     environment:
       CASSANDRA_SEED: cassandra-seed
-      STORAGE_BACKEND: cassandra
       PYTHONUNBUFFERED: 1

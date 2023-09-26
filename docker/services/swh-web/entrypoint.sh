@@ -8,6 +8,8 @@ setup_pgsql
 source /srv/softwareheritage/utils/pyutils.sh
 setup_pip
 
+source /srv/softwareheritage/utils/swhutils.sh
+
 case "$1" in
     "shell")
         exec bash -i
@@ -37,18 +39,5 @@ case "$1" in
             cat $create_user_script | python3 -m swh.web.manage shell
         done
 
-        echo "starting the swh-web server"
-        if [[ -d /src/swh-web ]] ; then
-            # run django development server when overriding swh-web sources
-            exec django-admin runserver --nostatic --settings=${DJANGO_SETTINGS_MODULE} 0.0.0.0:5004
-        else
-            # run gunicorn workers as in production otherwise
-            exec gunicorn --bind 0.0.0.0:5004 \
-                --threads 2 \
-                --workers 2 \
-                --timeout 3600 \
-                --access-logfile '-' \
-                --config 'python:swh.web.gunicorn_config' \
-                'django.core.wsgi:get_wsgi_application()'
-        fi
+		swh_start_django
 esac

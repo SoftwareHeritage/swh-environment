@@ -23,10 +23,12 @@ services:
       SWH_CONFIG_FILENAME: /storage-read-replica.yml
       STORAGE_BACKEND: postgresql
       DB_FLAVOR: read_replica
+      RPC_PORT: 5002
     entrypoint: /entrypoint.sh
+    command: rpc
     volumes:
       - "./conf/storage-read-replica.yml:/storage-read-replica.yml:ro"
-      - "./services/swh-storage-read-replica/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
   # override storage db to enable wal_level=logical
   swh-storage-db:

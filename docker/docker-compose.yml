@@ -129,7 +129,9 @@ services:
       POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      RPC_PORT: 5008
     entrypoint: /entrypoint.sh
+    command: rpc
     depends_on:
       - swh-scheduler-db
     ports:
@@ -149,13 +151,13 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
-    command: start-listener
+    command: worker start-listener
     depends_on:
       - swh-scheduler
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
-      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-scheduler-runner:
     image: swh/stack
@@ -168,13 +170,13 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
-    command: start-runner --period 10
+    command: worker start-runner --period 10
     depends_on:
       - swh-scheduler
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
-      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-scheduler-runner-priority:
     image: swh/stack
@@ -187,13 +189,13 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
     entrypoint: /entrypoint.sh
-    command: start-runner --period 10 --with-priority
+    command: worker start-runner --period 10 --with-priority
     depends_on:
       - swh-scheduler
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
-      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-scheduler-schedule-recurrent:
     image: swh/stack
@@ -207,14 +209,14 @@ services:
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       LOGLEVEL: INFO
     entrypoint: /entrypoint.sh
-    command: schedule-recurrent
+    command: worker schedule-recurrent
     depends_on:
       - swh-scheduler
       - swh-loader
       - amqp
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
-      - "./services/swh-scheduler-worker/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-scheduler-update-metrics:
     image: swh/stack
@@ -259,8 +261,9 @@ services:
     environment:
       POSTGRES_DB: swh-storage
       SWH_CONFIG_FILENAME: /storage.yml
-      STORAGE_BACKEND: postgresql
+      RPC_PORT: 5002
     entrypoint: /entrypoint.sh
+    command: rpc
     volumes:
       - "./conf/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
@@ -276,6 +279,7 @@ services:
       - ./env/common_python.env
     environment:
       SWH_CONFIG_FILENAME: /objstorage.yml
+      RPC_PORT: 5003
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
@@ -304,10 +308,12 @@ services:
     environment:
       POSTGRES_DB: swh-idx-storage
       SWH_CONFIG_FILENAME: /indexer_storage.yml
+      RPC_PORT: 5007
     entrypoint: /entrypoint.sh
+    command: rpc
     volumes:
       - "./conf/indexer_storage.yml:/indexer_storage.yml:ro"
-      - "./services/swh-indexer-storage/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-indexer/entrypoint.sh:/entrypoint.sh:ro"
 
   # Web interface
   swh-web-db:
@@ -383,6 +389,7 @@ services:
       VERBOSITY: 3
       SWH_CONFIG_FILENAME: /deposit.yml
       DJANGO_SETTINGS_MODULE: swh.deposit.settings.production
+      RPC_PORT: 5006
     entrypoint: /entrypoint.sh
     volumes:
       - "./conf/deposit.yml:/deposit.yml:ro"
@@ -404,7 +411,9 @@ services:
     environment:
       POSTGRES_DB: swh-vault
       SWH_CONFIG_FILENAME: /vault.yml
-    command: server
+      RPC_PORT: 5005
+    entrypoint: /entrypoint.sh
+    command: rpc
     ports:
       - 5005:5005
     depends_on:
@@ -412,7 +421,6 @@ services:
       - swh-objstorage
       - swh-storage
       - swh-scheduler
-    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
@@ -420,6 +428,7 @@ services:
   swh-vault-worker:
     image: swh/stack
     build: ./
+    entrypoint: /entrypoint.sh
     command: worker
     env_file:
       - ./env/common_python.env
@@ -429,7 +438,6 @@ services:
     depends_on:
       - swh-vault
       - swh-storage
-    entrypoint: /entrypoint.sh
     volumes:
       - "./conf/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
@@ -453,9 +461,10 @@ services:
       - amqp
       - swh-lister-maven-nginx
     entrypoint: /entrypoint.sh
+    command: worker
     volumes:
       - "./conf/lister.yml:/lister.yml:ro"
-      - "./services/swh-listers-worker/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
 
 
   swh-lister-maven-nginx:
@@ -479,6 +488,7 @@ services:
       SWH_WORKER_INSTANCE: loader
       SWH_CONFIG_FILENAME: /loader.yml
     entrypoint: /entrypoint.sh
+    command: worker
     depends_on:
       - swh-storage
       - swh-scheduler
@@ -498,6 +508,7 @@ services:
       SWH_WORKER_INSTANCE: loader-deposit
       SWH_CONFIG_FILENAME: /loader-deposit.yml
     entrypoint: /entrypoint.sh
+    command: worker
     depends_on:
       - swh-storage
       - swh-scheduler
@@ -522,6 +533,7 @@ services:
       CONCURRENCY: 4
       POSTGRES_DB: swh-idx-storage
     entrypoint: /entrypoint.sh
+    command: worker
     depends_on:
       - swh-scheduler-runner
       - swh-idx-storage
@@ -530,7 +542,7 @@ services:
       - amqp
     volumes:
       - "./conf/indexer.yml:/indexer.yml:ro"
-      - "./services/swh-indexer-worker-celery/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-indexer/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-indexer-worker-journal:
     image: swh/stack
@@ -545,6 +557,7 @@ services:
       CONCURRENCY: 4
       POSTGRES_DB: swh-idx-storage
     entrypoint: /entrypoint.sh
+    command: journal-client
     depends_on:
       - kafka
       - swh-storage
@@ -552,7 +565,7 @@ services:
       - swh-objstorage
     volumes:
       - "./conf/indexer.yml:/indexer.yml:ro"
-      - "./services/swh-indexer-worker-journal/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-indexer/entrypoint.sh:/entrypoint.sh:ro"
 
   # Journal related
 
@@ -560,21 +573,26 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
+    command: journal-client
+    environment:
+      SWH_CONFIG_FILENAME: /scheduler.yml
     env_file:
       - ./env/common_python.env
     depends_on:
       - kafka
       - swh-scheduler
     volumes:
-      - "./conf/scheduler_journal_client.yml:/etc/softwareheritage/scheduler/journal_client.yml:ro"
-      - "./services/swh-scheduler-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/scheduler_journal_client.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-counters:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
+    command: rpc
     environment:
-      SWH_CONFIG_FILENAME: /etc/softwareheritage/counters/server.yml
+      SWH_CONFIG_FILENAME: /counters.yml
+      RPC_PORT: 5011
     env_file:
       - ./env/common_python.env
     ports:
@@ -582,7 +600,7 @@ services:
     depends_on:
       - redis
     volumes:
-      - "./conf/counters.yml:/etc/softwareheritage/counters/server.yml:ro"
+      - "./conf/counters.yml:/counters.yml:ro"
       - "./services/swh-counters/entrypoint.sh:/entrypoint.sh:ro"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:5011/" ]
@@ -594,6 +612,9 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
+    command: journal-client
+    environment:
+      SWH_CONFIG_FILENAME: /counters_journal_client.yml
     env_file:
       - ./env/common_python.env
     depends_on:
@@ -601,8 +622,8 @@ services:
       - redis
       - swh-counters
     volumes:
-      - "./conf/counters_journal_client.yml:/etc/softwareheritage/counters/journal_client.yml:ro"
-      - "./services/swh-counters-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/counters_journal_client.yml:/counters_journal_client.yml:ro"
+      - "./services/swh-counters/entrypoint.sh:/entrypoint.sh:ro"
 
   # Search related
 
@@ -610,10 +631,12 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
+    command: rpc
     ports:
       - 5010:5010
     environment:
       SWH_CONFIG_FILENAME: /search.yml
+      RPC_PORT: 5010
     env_file:
       - ./env/common_python.env
     volumes:
@@ -624,23 +647,29 @@ services:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
+    environment:
+      SWH_CONFIG_FILENAME: /search_journal_client.yml
+    command: journal-client
     depends_on:
       - kafka
       - swh-search
     volumes:
-      - "./conf/search_journal_client_objects.yml:/etc/softwareheritage/search/journal_client.yml:ro"
-      - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/search_journal_client_objects.yml:/search_journal_client.yml:ro"
+      - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-search-journal-client-indexed:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
+    command: journal-client
+    environment:
+      SWH_CONFIG_FILENAME: /search_journal_client.yml
     depends_on:
       - kafka
       - swh-search
     volumes:
-      - "./conf/search_journal_client_indexed.yml:/etc/softwareheritage/search/journal_client.yml:ro"
-      - "./services/swh-search-journal-client/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/search_journal_client_indexed.yml:/search_journal_client.yml:ro"
+      - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
 
   # GraphQL API
 
@@ -653,12 +682,14 @@ services:
       - 5013:5013
     environment:
       SWH_CONFIG_FILENAME: /graphql.yml
+      RPC_PORT: 5013
     env_file:
       - ./env/common_python.env
     volumes:
       - "./conf/graphql.yml:/graphql.yml:ro"
       - "./services/swh-graphql/entrypoint.sh:/entrypoint.sh:ro"
     entrypoint: /entrypoint.sh
+    command: rpc
 
 volumes:
   redis-data:

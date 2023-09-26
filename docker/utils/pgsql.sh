@@ -104,3 +104,57 @@ wait_pgsql () {
 check_pgsql_db_created () {
   psql service=$1 -c "select 1" >/dev/null 2>&1
 }
+
+swh_setup_db() {
+  wait_pgsql
+
+  echo Database setup
+
+  echo " step 1: Creating extensions..."
+  swh db init-admin --dbname postgresql:///?service=${NAME} $1
+
+  echo " step 2: Initializing the database..."
+  swh db init --flavor ${DB_FLAVOR:-default} $1
+
+  echo " step 3: upgrade"
+  swh db upgrade --non-interactive $1
+
+}
+
+swh_setup_dbreplica() {
+  echo "This is a replica DB, check for subscription configuration"
+  has_publication=$(\
+	psql service=${REPLICA_SRC} \
+         --quiet --no-psqlrc --no-align --tuples-only -v ON_ERROR_STOP=1 \
+         -c "select count(*) from pg_publication where pubname='softwareheritage';" \
+  )
+
+  if [ $has_publication -ge 1 ]; then
+      echo "Publication found on source database"
+  else
+      echo "Adding publication to source database"
+      replication_contents=$(python -c '
+from importlib_metadata import files
+
+for file in files("swh.storage"):
+    if str(file).endswith("sql/logical_replication/replication_source.sql"):
+        print(file.read_text())
+')
+      psql service=${REPLICA_SRC} \
+           -v ON_ERROR_STOP=1 \
+           -c "$replication_contents"
+  fi
+
+  has_subscription=$(\
+    psql service=${NAME} \
+         --quiet --no-psqlrc --no-align --tuples-only -v ON_ERROR_STOP=1 \
+         -c "select count(*) from pg_subscription where subname='softwareheritage_replica';" \
+  )
+
+  if [ $has_subscription -ge 1 ]; then
+      echo "Subscription found on replica database"
+  else
+      echo "Adding subscription to replica database"
+      psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage;"
+  fi
+}

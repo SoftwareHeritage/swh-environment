@@ -29,7 +29,9 @@ services:
       POSTGRES_DB: swh-storage-mirror
       STORAGE_BACKEND: postgresql
       SWH_CONFIG_FILENAME: /storage-mirror.yml
+      RPC_PORT: 5002
     entrypoint: /entrypoint.sh
+    command: rpc
     volumes:
       - "./conf/storage-mirror.yml:/storage-mirror.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
@@ -50,15 +52,17 @@ services:
       SWH_CONFIG_FILENAME: /storage-mirror.yml
       LOG_LEVEL: DEBUG
     entrypoint: /entrypoint.sh
+    command: replayer
     volumes:
       - "./conf/storage-mirror.yml:/storage-mirror.yml:ro"
-      - "./services/swh-storage-replayer/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
       - "../swh-storage:/src/swh-storage"
 
   swh-journal-backfiller:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
+    command: backfiller
     environment:
       POSTGRES_DB: swh-storage
       SWH_CONFIG_FILENAME: /storage-mirror-backfiller.yml
@@ -67,4 +71,4 @@ services:
       - kafka
     volumes:
       - "./conf/storage-mirror-backfiller.yml:/storage-mirror-backfiller.yml:ro"
-      - "./services/swh-journal-backfiller/entrypoint.sh:/entrypoint.sh:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"

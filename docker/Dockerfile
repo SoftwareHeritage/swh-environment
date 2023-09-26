@@ -42,6 +42,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
   libsystemd-dev \
   gcc \
   iputils-ping \
+  jq \
   pkg-config \
   pv \
   postgresql-client-12 \
@@ -73,7 +74,7 @@ RUN python3 -m venv /srv/softwareheritage/venv
 ENV PATH="/srv/softwareheritage/venv/bin:${PATH}"
 
 RUN pip install --upgrade pip setuptools wheel
-RUN pip install gunicorn httpie
+RUN pip install gunicorn httpie yq
 # cython and configjob are required to install the breeze (bzr) package
 RUN pip install cython configobj
 

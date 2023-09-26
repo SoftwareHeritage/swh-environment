@@ -3,22 +3,28 @@
 set -e
 
 source /srv/softwareheritage/utils/pyutils.sh
+source /srv/softwareheritage/utils/swhutils.sh
+source /srv/softwareheritage/utils/pgsql.sh
+
 setup_pip
 
-if [ "$STORAGE_BACKEND" = "postgresql" ]; then
-    source /srv/softwareheritage/utils/pgsql.sh
-    setup_pgsql
+backend=$(yq -r .storage.cls $SWH_CONFIG_FILENAME)
 
-elif [ "$STORAGE_BACKEND" = "cassandra" ]; then
-    echo Waiting for Cassandra to start
-    wait-for-it ${CASSANDRA_SEED}:9042 -s --timeout=0
-    echo Creating keyspace
-    cat << EOF | python3
+case "$backend" in
+	"postgresql")
+		setup_pgsql
+		;;
+	"cassandra")
+		echo Waiting for Cassandra to start
+		wait-for-it ${CASSANDRA_SEED}:9042 -s --timeout=0
+		echo Creating keyspace
+		cat << EOF | python3
 from swh.storage.cassandra import create_keyspace
 create_keyspace(['${CASSANDRA_SEED}'], 'swh')
 EOF
 
-fi
+		;;
+esac
 
 case "$1" in
     "shell")
@@ -30,31 +36,32 @@ case "$1" in
         exec swh $@
         ;;
     *)
-      if [ "$STORAGE_BACKEND" = "postgresql" ]; then
-          wait_pgsql
+        if [ "$backend" = "postgresql" ]; then
+			swh_setup_db storage
 
-          echo Database setup
+			if [[ -n $REPLICA_SRC ]]; then
+				swh_setup_dbreplica
+			fi
+        fi
 
-          echo " step 1: Creating extensions..."
-          swh db init-admin --dbname postgresql:///?service=${POSTGRES_DB} storage
-
-          echo " step 2: Initializing the database..."
-          swh db init --flavor ${DB_FLAVOR:-default} storage
-
-          echo " step 3: upgrade"
-          swh db upgrade --non-interactive storage
-      fi
-
-      echo Starting the swh-storage API server
-      exec gunicorn --bind 0.0.0.0:5002 \
-           --reload \
-           --access-logfile /dev/stdout \
-           --access-logformat "%(t)s %(r)s %(s)s %(b)s %(M)s" \
-           --threads 4 \
-           --workers 2 \
-           --log-level INFO \
-           --timeout 3600 \
-           --config 'python:swh.core.api.gunicorn_config' \
-           'swh.storage.api.server:make_app_from_configfile()'
-      ;;
+		cmd=$1
+		shift
+		case "$cmd" in
+			"rpc")
+				swh_start_rpc storage
+                ;;
+			"replayer")
+				echo Starting the Kafka storage replayer
+				exec wait-for-it kafka:9092 -s --timeout=0 -- \
+				     swh --log-level ${LOG_LEVEL:-WARNING} storage replay $@
+				;;
+			"backfiller")
+				echo Starting the Kafka storage backfiller
+				exec wait-for-it kafka:9092 -s --timeout=0 -- \
+					 swh --log-level ${LOG_LEVEL:-WARNING} storage backfill $@
+				;;
+			*)
+				echo Unknown command ${cmd}
+				;;
+		esac
 esac
