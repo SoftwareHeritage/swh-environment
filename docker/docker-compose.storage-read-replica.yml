@@ -1,64 +1,178 @@
 version: "3.8"
 
 services:
-  swh-storage-read-replica-db:
+  swh-storage-replica-db:
     image: postgres:16
     environment:
-      POSTGRES_DB: swh-storage-read-replica
+      POSTGRES_DB: swh-storage-replica
       POSTGRES_PASSWORD: testpassword
 
-  swh-storage-read-replica:
+  swh-storage-replica:
     image: swh/stack
     build: ./
-    ports:
-      - 5042:5002
     depends_on:
       - swh-storage-db
-      - swh-storage-read-replica-db
+      - swh-storage-replica-db
       - swh-objstorage
     env_file:
       - ./env/common_python.env
-      - ./env/storage-read-replica.env
+      - ./env/storage-replica.env
     environment:
-      SWH_CONFIG_FILENAME: /storage-read-replica.yml
+      SWH_CONFIG_FILENAME: /storage.yml
       STORAGE_BACKEND: postgresql
       DB_FLAVOR: read_replica
       RPC_PORT: 5002
     entrypoint: /entrypoint.sh
     command: rpc
     volumes:
-      - "./conf/storage-read-replica.yml:/storage-read-replica.yml:ro"
+      - "./conf/replica/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
   # override storage db to enable wal_level=logical
   swh-storage-db:
     command: postgres -c wal_level=logical
 
-  # override web app to use the replica
-  swh-web:
-    depends_on:
-      - swh-storage-read-replica
-      - swh-idx-storage
+  # a dedicated swh-web db
+  swh-web-replica-db:
+    image: postgres:16
     environment:
-      SWH_CONFIG_FILENAME: /web-read-replica.yml
+      POSTGRES_DB: swh-web-replica
+      POSTGRES_PASSWORD: testpassword
     volumes:
-      - "./conf/web-read-replica.yml:/web-read-replica.yml:ro"
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
-  # override vault to use the replica
-  swh-vault:
+  # a dedicated swh-web
+  swh-web-replica:
+    build: ./
+    image: swh/stack
     depends_on:
-      - swh-storage-read-replica
+      - swh-storage-replica
+      - swh-web-replica-db
+    env_file:
+      - ./env/common_python.env
     environment:
-      SWH_CONFIG_FILENAME: /vault-read-replica.yml
+      POSTGRES_DB: swh-web-replica
+      VERBOSITY: 3
+      DJANGO_SETTINGS_MODULE: swh.web.settings.production
+      SWH_CONFIG_FILENAME: /web.yml
+    entrypoint: /entrypoint.sh
     volumes:
-      - "./conf/vault-read-replica.yml:/vault-read-replica.yml:ro"
+      - "./conf/replica/web.yml:/web.yml:ro"
+      - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
+      - "./assets/replica/:/replica/:ro"
 
-  swh-vault-worker:
+  swh-vault-replica-db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-vault-replica
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+
+  swh-vault-replica:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-vault-replica
+      SWH_CONFIG_FILENAME: /vault.yml
+      RPC_PORT: 5005
+    entrypoint: /entrypoint.sh
+    command: rpc
     depends_on:
-      - swh-storage-read-replica
-    environment:
-      SWH_CONFIG_FILENAME: /cooker-read-replica.yml
+      - swh-vault-replica-db
+      - swh-objstorage
+      - swh-storage-replica
+      - swh-scheduler-replica
     volumes:
-      - "./conf/vault-worker-read-replica.yml:/cooker-read-replica.yml:ro"
+      - "./conf/replica/vault.yml:/vault.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
+  swh-vault-replica-worker:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    command: worker
+    env_file:
+      - ./env/common_python.env
+      - ./env/workers.env
+    environment:
+      SWH_CONFIG_FILENAME: /cooker.yml
+    depends_on:
+      - swh-vault-replica
+      - swh-storage-replica
+    volumes:
+      - "./conf/replica/vault-worker.yml:/cooker.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
+  swh-scheduler-replica-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: swh-scheduler-replica
+      POSTGRES_PASSWORD: testpassword
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+
+  swh-scheduler-replica:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-scheduler-replica
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      RPC_PORT: 5008
+      BROKER_URL: amqp://amqp-replica/
+    entrypoint: /entrypoint.sh
+    command: rpc
+    depends_on:
+      - swh-scheduler-replica-db
+    volumes:
+      - "./conf/replica/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-replica-listener:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-scheduler-replica
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      SWH_WORKER_INSTANCE: scheduler
+      BROKER_URL: amqp://amqp-replica/
+      APP: swh.scheduler.celery_backend.config.app
+    entrypoint: /entrypoint.sh
+    command: worker start-listener
+    depends_on:
+      - swh-scheduler-replica
+      - amqp-replica
+    volumes:
+      - "./conf/replica/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-replica-runner:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-scheduler-replica
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      SWH_WORKER_INSTANCE: scheduler
+      APP: swh.scheduler.celery_backend.config.app
+    entrypoint: /entrypoint.sh
+    command: worker start-runner --period 10
+    depends_on:
+      - swh-scheduler-replica
+      - amqp-replica
+    volumes:
+      - "./conf/replica/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
+
+  amqp-replica:
+    image: rabbitmq:3.6-management

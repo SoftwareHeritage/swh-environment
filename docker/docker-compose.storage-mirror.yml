@@ -1,12 +1,6 @@
 version: "2.1"
 
 services:
-  # override web app to use the mirror
-  swh-web:
-    environment:
-      SWH_CONFIG_FILENAME: /web-mirror.yml
-    volumes:
-      - "./conf/web-mirror.yml:/web-mirror.yml:ro"
 
   # create a dedicated db for the mirror
   swh-storage-mirror-db:
@@ -35,6 +29,34 @@ services:
     volumes:
       - "./conf/storage-mirror.yml:/storage-mirror.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
+
+  # a dedicated swh-web db
+  swh-web-mirror-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: swh-web-mirror
+      POSTGRES_PASSWORD: testpassword
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+
+  # a dedicated swh-web
+  swh-web-mirror:
+    build: ./
+    image: swh/stack
+    depends_on:
+      - swh-storage-mirror
+      - swh-web-mirror-db
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-web-mirror
+      VERBOSITY: 3
+      DJANGO_SETTINGS_MODULE: swh.web.settings.production
+      SWH_CONFIG_FILENAME: /web-mirror.yml
+    entrypoint: /entrypoint.sh
+    volumes:
+      - "./conf/web-mirror.yml:/web-mirror.yml:ro"
+      - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
 
   # and the background process that keeps the mirror in sync with the
   # main graph

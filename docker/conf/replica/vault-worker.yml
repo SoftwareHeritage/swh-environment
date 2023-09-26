@@ -1,12 +1,12 @@
 storage:
   cls: remote
-  url: http://swh-storage-read-replica:5002/
+  url: http://swh-storage-replica:5002/
 vault:
   cls: remote
-  url: http://swh-vault:5005/
+  url: http://swh-vault-replica:5005/
 celery:
   broker_heartbeat: null
-  task_broker: amqp://guest:guest@amqp//
+  task_broker: amqp://guest:guest@amqp-replica//
   task_modules:
     - swh.vault.cooking_tasks
   task_queues:

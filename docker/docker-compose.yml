@@ -150,6 +150,9 @@ services:
       POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      SWH_WORKER_INSTANCE: scheduler
+      BROKER_URL: amqp://amqp/
+      APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-listener
     depends_on:
@@ -169,6 +172,9 @@ services:
       POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      SWH_WORKER_INSTANCE: scheduler
+      BROKER_URL: amqp://amqp/
+      APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10
     depends_on:
@@ -188,6 +194,9 @@ services:
       POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      SWH_WORKER_INSTANCE: scheduler
+      BROKER_URL: amqp://amqp/
+      APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10 --with-priority
     depends_on:
@@ -207,7 +216,9 @@ services:
       POSTGRES_DB: swh-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
-      LOGLEVEL: INFO
+      SWH_WORKER_INSTANCE: scheduler
+      BROKER_URL: amqp://amqp/
+      APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker schedule-recurrent
     depends_on:

@@ -1,6 +1,6 @@
 storage:
   cls: postgresql
-  db: postgresql:///?service=swh-storage-read-replica
+  db: postgresql:///?service=swh-storage-replica
   objstorage:
     cls: filtered
     storage_conf:

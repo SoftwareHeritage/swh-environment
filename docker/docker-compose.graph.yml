@@ -10,8 +10,7 @@ services:
     environment:
       SWH_CONFIG_FILENAME: /graph.yml
     depends_on:
-      kafka:
-        condition: service_healthy
+      - kafka
     env_file:
       - ./env/common_python.env
     volumes:
@@ -19,5 +18,3 @@ services:
       - "./services/swh-graph/entrypoint.sh:/entrypoint.sh:ro"
       - "../swh-graph:/src/swh-graph"
       - "../swh-dataset:/src/swh-dataset"
-
-
