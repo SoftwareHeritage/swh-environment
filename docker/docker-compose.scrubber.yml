@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+
+  swh-scrubber-db:
+    image: postgres:16
+    env_file:
+      - ./env/scrubber-db.env
+    environment:
+      # unset PGHOST as db service crashes otherwise
+      PGHOST:
+
+  swh-scrubber:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    command: scrubber snapshot 16
+    depends_on:
+      - swh-scrubber-db
+      - swh-storage
+    env_file:
+      - ./env/common_python.env
+      - ./env/scrubber.env
+      - ./env/scrubber-db.env
+    environment:
+      SWH_CONFIG_FILENAME: /scrubber.yml
+    volumes:
+      - "./conf/scrubber.yml:/scrubber.yml:ro"
+      - "./services/swh-scrubber/entrypoint.sh:/entrypoint.sh:ro"

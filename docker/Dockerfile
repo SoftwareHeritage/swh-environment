@@ -96,6 +96,7 @@ RUN pip install \
   swh-storage \
   swh-objstorage \
   swh-scheduler \
+  swh-scrubber \
   swh-vault \
   swh-web
 

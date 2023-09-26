@@ -1,0 +1,7 @@
+storage:
+  cls: postgresql
+  db: postgresql:///?service=swh-storage
+
+scrubber:
+  cls: postgresql
+  db: postgresql:///?service=swh-scrubber
