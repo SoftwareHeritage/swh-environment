@@ -9,8 +9,6 @@ services:
   zookeeper:
     image: wurstmeister/zookeeper
     restart: always
-    ports:
-      - "5081:2181"
     environment:
         ZOO_LOG4J_PROP: WARN,CONSOLE
 
