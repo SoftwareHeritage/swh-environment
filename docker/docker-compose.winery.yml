@@ -11,6 +11,7 @@ volumes:
   ceph-osd1:
   ceph-osd2:
   objstorage-data:
+  objstorage-db-data:
 
 networks:
   ceph:
@@ -112,8 +113,7 @@ services:
   swh-objstorage:
     build: ./
     image: swh/stack
-    ports:
-      - 5003:5003
+    ports: !reset []
     env_file:
       - ./env/common_python.env
       - ./env/objstorage.env
@@ -128,6 +128,30 @@ services:
       - "./services/swh-objstorage-winery/entrypoint.sh:/entrypoint.sh:ro"
     networks:
       default:
+        aliases: !reset []
+      ceph:
+
+  swh-objstorage-ro:
+    build: ./
+    image: swh/stack
+    env_file:
+      - ./env/common_python.env
+      - ./env/objstorage.env
+    environment:
+      SWH_CONFIG_FILENAME: /objstorage.yml
+      LOG_LEVEL: DEBUG
+    entrypoint: /entrypoint.sh
+    command:
+      - -c
+      - shared_buffers=1024MB
+    depends_on:
+      - swh-objstorage-db
+      - ceph-demo
+    volumes:
+      - "./conf/objstorage-winery-reader.yml:/objstorage.yml:ro"
+      - "./services/swh-objstorage-winery/entrypoint.sh:/entrypoint.sh:ro"
+    networks:
+      default:
       ceph:
 
   swh-objstorage-db:
@@ -136,4 +160,4 @@ services:
       - ./env/objstorage-db.env
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
-      - objstorage-data:/var/lib/postgresql
+      - objstorage-db-data:/var/lib/postgresql

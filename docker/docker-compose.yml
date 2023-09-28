@@ -281,6 +281,10 @@ services:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
       - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
       - objstorage-data:/srv/softwareheritage/objects
+    networks:
+      default:
+        aliases:
+          - swh-objstorage-ro
 
   # Indexer storage
 
