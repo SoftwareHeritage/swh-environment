@@ -40,4 +40,5 @@ case "$1" in
         done
 
 		swh_start_django
+		echo "Arghh"
 esac

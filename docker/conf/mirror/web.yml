@@ -1,0 +1,79 @@
+storage:
+  cls: remote
+  url: http://swh-storage-mirror:5002/
+  timeout: 1
+
+indexer_storage:
+  cls: remote
+  url: http://swh-idx-storage:5007/
+
+scheduler:
+  cls: remote
+  url: http://swh-scheduler-mirror:5008/
+
+vault:
+  cls: remote
+  args:
+    url: http://swh-vault-mirror:5005/
+
+allowed_hosts:
+  - "*"
+
+debug: yes
+
+serve_assets: yes
+
+development_db: /tmp/swh/web.sqlite3
+
+production_db:
+  host: swh-web-mirror-db
+  port: 5432
+  name: swh-web-mirror
+  user: postgres
+  password: testpassword
+
+throttling:
+  cache_uri: memcache:11211
+  scopes:
+    swh_api:
+      limiter_rate:
+        default: 120/h
+      exempted_networks:
+        - 0.0.0.0/0
+    swh_api_origin_search:
+      limiter_rate:
+        default: 70/m
+      exempted_networks:
+        - 0.0.0.0/0
+    swh_api_origin_visit_latest:
+      limiter_rate:
+        default: 700/m
+      exempted_networks:
+        - 0.0.0.0/0
+    swh_vault_cooking:
+      limiter_rate:
+        default: 120/h
+      exempted_networks:
+        - 0.0.0.0/0
+    swh_save_origin:
+      limiter_rate:
+        default: 120/h
+      exempted_networks:
+        - 0.0.0.0/0
+
+search:
+  cls: remote
+  url: http://swh-search:5010/
+
+search_config:
+  metadata_backend: swh-search
+
+instance_name: mirror-docker.softwareheritage.org
+
+# use this to show it's not the main web app
+mirror_config:
+  partner_name: "MIRROR"
+  partner_url: https://www.softwareheritage.org/
+  static_path: /mirror/static
+  partner_logo_static_path: logo.png
+  templates_path: /mirror/templates

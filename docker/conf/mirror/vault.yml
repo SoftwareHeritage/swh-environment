@@ -1,0 +1,13 @@
+storage:
+  cls: remote
+  url: http://swh-storage-mirror:5002/
+scheduler:
+  cls: remote
+  url: http://swh-scheduler-mirror:5008/
+vault:
+  cls: postgresql
+  db: postgresql:///?service=swh-vault-mirror
+cache:
+  cls: pathslicing
+  root: /srv/softwareheritage/vault
+  slicing: 0:5

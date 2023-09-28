@@ -1,6 +1,14 @@
 version: "3.8"
 
 services:
+
+  nginx-replica:
+    image: nginx
+    volumes:
+      - "./conf/replica/nginx.conf:/etc/nginx/nginx.conf:ro"
+    ports:
+      - 5082:80
+
   swh-storage-replica-db:
     image: postgres:16
     environment:

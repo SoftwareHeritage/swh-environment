@@ -1,0 +1,18 @@
+storage:
+  cls: postgresql
+  db: postgresql:///?service=swh-storage-mirror
+  objstorage:
+    cls: filtered
+    storage_conf:
+      cls: remote
+      url: http://swh-objstorage-mirror:5003/
+    filters_conf:
+      - type: readonly
+
+journal_client:
+  cls: kafka
+  brokers:
+    - kafka
+  prefix: swh.journal.objects
+  group_id: swh.storage.mirror.replayer
+  privileged: true

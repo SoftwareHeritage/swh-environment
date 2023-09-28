@@ -1,0 +1,15 @@
+objstorage:
+  cls: remote
+  url: http://swh-objstorage:5003
+
+objstorage_dst:
+  cls: remote
+  url: http://swh-objstorage-mirror:5003
+
+journal_client:
+  cls: kafka
+  brokers:
+    - kafka
+  prefix: swh.journal.objects
+  group_id: swh.objstorage.mirror.replayer
+  privileged: true

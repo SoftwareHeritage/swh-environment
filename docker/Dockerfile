@@ -2,7 +2,7 @@ ARG REGISTRY=container-registry.softwareheritage.org/swh/infra/swh-apps/
 ARG RSVNDUMP=/usr/local/bin/rsvndump
 FROM ${REGISTRY}rsvndump-base:latest AS rsvndump_image
 
-FROM python:3.7
+FROM python:3.11
 
 ARG PGDG_REPO=http://apt.postgresql.org/pub/repos/apt
 ARG PGDG_GPG_KEY=https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -82,6 +82,7 @@ RUN pip install \
   swh-core[db,http] \
   swh-counters \
   swh-deposit[server] \
+  swh-graph \
   swh-graphql \
   swh-indexer \
   swh-journal \
@@ -95,6 +96,7 @@ RUN pip install \
   swh-loader-svn \
   swh-storage \
   swh-objstorage \
+  swh-objstorage-replayer \
   swh-scheduler \
   swh-scrubber \
   swh-vault \

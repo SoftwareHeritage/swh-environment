@@ -1,6 +1,13 @@
-version: "2.1"
+version: "3.8"
 
 services:
+
+  nginx-mirror:
+    image: nginx
+    volumes:
+      - "./conf/mirror/nginx.conf:/etc/nginx/nginx.conf:ro"
+    ports:
+      - 5081:80
 
   # create a dedicated db for the mirror
   swh-storage-mirror-db:
@@ -15,20 +22,36 @@ services:
     build: ./
     depends_on:
       - swh-storage-mirror-db
-      - swh-objstorage
+      - swh-objstorage-mirror
     env_file:
       - ./env/common_python.env
     environment:
       DB_FLAVOR: mirror
       POSTGRES_DB: swh-storage-mirror
       STORAGE_BACKEND: postgresql
-      SWH_CONFIG_FILENAME: /storage-mirror.yml
+      SWH_CONFIG_FILENAME: /storage.yml
       RPC_PORT: 5002
     entrypoint: /entrypoint.sh
     command: rpc
     volumes:
-      - "./conf/storage-mirror.yml:/storage-mirror.yml:ro"
+      - "./conf/mirror/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
+
+  # Object storage
+  swh-objstorage-mirror:
+    build: ./
+    image: swh/stack
+    env_file:
+      - ./env/common_python.env
+    environment:
+      SWH_CONFIG_FILENAME: /objstorage.yml
+      RPC_PORT: 5003
+    entrypoint: /entrypoint.sh
+    command: rpc
+    volumes:
+      - "./conf/objstorage.yml:/objstorage.yml:ro"
+      - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
+      - /srv/softwareheritage/objects
 
   # a dedicated swh-web db
   swh-web-mirror-db:
@@ -52,13 +75,14 @@ services:
       POSTGRES_DB: swh-web-mirror
       VERBOSITY: 3
       DJANGO_SETTINGS_MODULE: swh.web.settings.production
-      SWH_CONFIG_FILENAME: /web-mirror.yml
+      SWH_CONFIG_FILENAME: /web.yml
     entrypoint: /entrypoint.sh
     volumes:
-      - "./conf/web-mirror.yml:/web-mirror.yml:ro"
+      - "./conf/mirror/web.yml:/web.yml:ro"
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
+      - "./assets/mirror/:/mirror/:ro"
 
-  # and the background process that keeps the mirror in sync with the
+  # and the background processes that keeps the mirror in sync with the
   # main graph
   swh-storage-mirror-replayer:
     image: swh/stack
@@ -71,26 +95,144 @@ services:
     environment:
       DB_FLAVOR: mirror
       POSTGRES_DB: swh-storage-mirror
-      SWH_CONFIG_FILENAME: /storage-mirror.yml
+      SWH_CONFIG_FILENAME: /storage.yml
       LOG_LEVEL: DEBUG
     entrypoint: /entrypoint.sh
     command: replayer
     volumes:
-      - "./conf/storage-mirror.yml:/storage-mirror.yml:ro"
+      - "./conf/mirror/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
-      - "../swh-storage:/src/swh-storage"
 
-  swh-journal-backfiller:
+  swh-objstorage-mirror-replayer:
+    image: swh/stack
+    build: ./
+    depends_on:
+      - swh-objstorage
+      - swh-objstorage-mirror
+    env_file:
+      - ./env/common_python.env
+    environment:
+      SWH_CONFIG_FILENAME: /content-replayer.yml
+      LOG_LEVEL: DEBUG
+    entrypoint: /entrypoint.sh
+    command: replayer
+    volumes:
+      - "./conf/mirror/content-replayer.yml:/content-replayer.yml:ro"
+      - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
+
+  # and a vault full-stack
+  swh-vault-mirror-db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-vault-mirror
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+
+  swh-vault-mirror:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-vault-mirror
+      SWH_CONFIG_FILENAME: /vault.yml
+      RPC_PORT: 5005
+    entrypoint: /entrypoint.sh
+    command: rpc
+    depends_on:
+      - swh-vault-mirror-db
+      - swh-objstorage
+      - swh-storage-mirror
+      - swh-scheduler-mirror
+    volumes:
+      - "./conf/mirror/vault.yml:/vault.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-vault-mirror-worker:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
-    command: backfiller
+    command: worker
+    env_file:
+      - ./env/common_python.env
+      - ./env/workers.env
     environment:
-      POSTGRES_DB: swh-storage
-      SWH_CONFIG_FILENAME: /storage-mirror-backfiller.yml
+      SWH_CONFIG_FILENAME: /cooker.yml
     depends_on:
-      - swh-storage-db
-      - kafka
+      - swh-vault-mirror
+      - swh-storage-mirror
     volumes:
-      - "./conf/storage-mirror-backfiller.yml:/storage-mirror-backfiller.yml:ro"
-      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/mirror/vault-worker.yml:/cooker.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-mirror-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: swh-scheduler-mirror
+      POSTGRES_PASSWORD: testpassword
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+
+  swh-scheduler-mirror:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-scheduler-mirror
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      RPC_PORT: 5008
+      BROKER_URL: amqp://amqp-mirror/
+    entrypoint: /entrypoint.sh
+    command: rpc
+    depends_on:
+      - swh-scheduler-mirror-db
+    volumes:
+      - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-mirror-listener:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-scheduler-mirror
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      SWH_WORKER_INSTANCE: scheduler
+      BROKER_URL: amqp://amqp-mirror/
+      APP: swh.scheduler.celery_backend.config.app
+    entrypoint: /entrypoint.sh
+    command: worker start-listener
+    depends_on:
+      - swh-scheduler-mirror
+      - amqp-mirror
+    volumes:
+      - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-mirror-runner:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-scheduler-mirror
+      SWH_CONFIG_FILENAME: /scheduler.yml
+      SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
+      SWH_WORKER_INSTANCE: scheduler
+      APP: swh.scheduler.celery_backend.config.app
+    entrypoint: /entrypoint.sh
+    command: worker start-runner --period 10
+    depends_on:
+      - swh-scheduler-mirror
+      - amqp-mirror
+    volumes:
+      - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
+      - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
+
+  amqp-mirror:
+    image: rabbitmq:3.6-management
