@@ -149,12 +149,22 @@ for file in files("swh.storage"):
     psql service=${NAME} \
          --quiet --no-psqlrc --no-align --tuples-only -v ON_ERROR_STOP=1 \
          -c "select count(*) from pg_subscription where subname='softwareheritage_replica';" \
+				  )
+
+  has_publication=$(\
+    psql service=${REPLICA_SRC} \
+         --quiet --no-psqlrc --no-align --tuples-only -v ON_ERROR_STOP=1 \
+         -c "select count(*) from pg_publication where pubname='softwareheritage';" \
   )
 
   if [ $has_subscription -ge 1 ]; then
       echo "Subscription found on replica database"
   else
       echo "Adding subscription to replica database"
-      psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage;"
+	  if [ $has_publication -ge 1 ]; then
+		  psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage;"
+	  else
+		  psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage WITH (create_slot=false);"
+	  fi
   fi
 }
