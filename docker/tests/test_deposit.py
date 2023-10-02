@@ -5,6 +5,56 @@
 
 import json
 import time
+from typing import List
+
+import pytest
+import testinfra
+
+from .conftest import WFI_TIMEOUT
+
+SAMPLE_METADATA = """\
+<?xml version="1.0" encoding="utf-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+       xmlns:swh="https://www.softwareheritage.org/schema/2018/deposit"
+       xmlns:codemeta="https://doi.org/10.5063/SCHEMA/CODEMETA-2.0"
+       xmlns:schema="http://schema.org/">
+  <title>Test Software</title>
+  <client>swh</client>
+  <external_identifier>test-software</external_identifier>
+  <codemeta:author>
+    <codemeta:name>No One</codemeta:name>
+  </codemeta:author>
+  <swh:deposit>
+    <swh:metadata-provenance>
+        <schema:url>some-metadata-provenance-url</schema:url>
+    </swh:metadata-provenance>
+  </swh:deposit>
+</entry>
+"""
+
+
+@pytest.fixture(scope="module")
+def compose_files() -> List[str]:
+    return ["docker-compose.yml", "docker-compose.deposit.yml"]
+
+
+# scope='session' so we use the same container for all the tests;
+@pytest.fixture(scope="module")
+def deposit_host(request, docker_compose):
+    # run a container in which test commands are executed
+    docker_id = docker_compose.check_compose_output(
+        "run -d swh-deposit shell sleep 1h"
+    ).strip()
+    deposit_host = testinfra.get_host("docker://" + docker_id)
+    deposit_host.check_output("echo 'print(\"Hello World!\")\n' > /tmp/hello.py")
+    deposit_host.check_output("tar -C /tmp -czf /tmp/archive.tgz /tmp/hello.py")
+    deposit_host.check_output(f"echo '{SAMPLE_METADATA}' > /tmp/metadata.xml")
+    deposit_host.check_output(f"wait-for-it swh-deposit:5006 -t {WFI_TIMEOUT}")
+    # return a testinfra connection to the container
+    yield deposit_host
+
+    # at the end of the test suite, destroy the container
+    docker_compose.check_output(f"docker rm -f {docker_id}")
 
 
 def test_admin_collection(deposit_host):

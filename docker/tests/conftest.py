@@ -16,28 +16,9 @@ import testinfra
 
 APIURL = "http://127.0.0.1:5080/api/1/"
 
-SAMPLE_METADATA = """\
-<?xml version="1.0" encoding="utf-8"?>
-<entry xmlns="http://www.w3.org/2005/Atom"
-       xmlns:swh="https://www.softwareheritage.org/schema/2018/deposit"
-       xmlns:codemeta="https://doi.org/10.5063/SCHEMA/CODEMETA-2.0"
-       xmlns:schema="http://schema.org/">
-  <title>Test Software</title>
-  <client>swh</client>
-  <external_identifier>test-software</external_identifier>
-  <codemeta:author>
-    <codemeta:name>No One</codemeta:name>
-  </codemeta:author>
-  <swh:deposit>
-    <swh:metadata-provenance>
-        <schema:url>some-metadata-provenance-url</schema:url>
-    </swh:metadata-provenance>
-  </swh:deposit>
-</entry>
-"""
 
 # wait-for-it timeout
-WFI_TIMEOUT = 60
+WFI_TIMEOUT = 120
 
 
 @pytest.fixture(scope="module")
@@ -67,8 +48,10 @@ def compose_cmd(docker_host, compose_files):
 # scope='module' so we use the same container for all the tests in a test file
 @pytest.fixture(scope="module")
 def docker_compose(request, docker_host, compose_cmd):
+    print("Start the compose session...", end=" ", flush=True)
     # start the whole cluster
     docker_host.check_output(f"{compose_cmd} up -d")
+    print("OK")
 
     # small hack: add a helper func to docker_host; so it's not necessary to
     # use all 3 docker_compose, docker_host and compose_cmd fixtures everywhere
@@ -98,25 +81,6 @@ def scheduler_host(request, docker_compose):
     docker_compose.check_output(f"docker rm -f {docker_id}")
 
 
-# scope='module' so we use the same container for all the tests in a test file
-@pytest.fixture(scope="module")
-def deposit_host(request, docker_compose):
-    # run a container in which test commands are executed
-    docker_id = docker_compose.check_compose_output(
-        "run -d swh-deposit shell sleep 1h"
-    ).strip()
-    deposit_host = testinfra.get_host("docker://" + docker_id)
-    deposit_host.check_output("echo 'print(\"Hello World!\")\n' > /tmp/hello.py")
-    deposit_host.check_output("tar -C /tmp -czf /tmp/archive.tgz /tmp/hello.py")
-    deposit_host.check_output(f"echo '{SAMPLE_METADATA}' > /tmp/metadata.xml")
-    deposit_host.check_output(f"wait-for-it swh-deposit:5006 -t {WFI_TIMEOUT}")
-    # return a testinfra connection to the container
-    yield deposit_host
-
-    # at the end of the test suite, destroy the container
-    docker_compose.check_output(f"docker rm -f {docker_id}")
-
-
 @pytest.fixture(scope="module")
 def origin_urls() -> List[Tuple[str, str]]:
     return [("git", "https://gitlab.softwareheritage.org/swh/devel/swh-core.git")]
@@ -131,6 +95,7 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
     state.
     """
     for origin_type, origin_url in origin_urls:
+        print(f"Scheduling {origin_type} loading task for {origin_url}")
         task = scheduler_host.check_output(
             f"swh scheduler task add load-{origin_type} url={origin_url}"
         )
@@ -139,38 +104,39 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
         taskid = m.group("id")
         assert int(taskid) > 0
 
-    for i in range(60):
-        status = scheduler_host.check_output(
-            f"swh scheduler task list --list-runs --task-id {taskid}"
-        )
-        if "Executions:" in status:
-            if "[eventful]" in status:
-                break
-            if "[started]" in status or "[scheduled]" in status:
-                time.sleep(1)
-                continue
-            if "[failed]" in status:
-                loader_logs = docker_compose.check_compose_output("logs swh-loader")
-                assert False, (
-                    "Loading execution failed\n"
-                    f"status: {status}\n"
-                    f"loader logs: " + loader_logs
-                )
-            assert False, f"Loading execution failed, task status is {status}"
+        for i in range(120):
+            status = scheduler_host.check_output(
+                f"swh scheduler task list --list-runs --task-id {taskid}"
+            )
+            if "Executions:" in status:
+                if "[eventful]" in status:
+                    break
+                if "[started]" in status or "[scheduled]" in status:
+                    time.sleep(1)
+                    continue
+                if "[failed]" in status:
+                    loader_logs = docker_compose.check_compose_output("logs swh-loader")
+                    assert False, (
+                        "Loading execution failed\n"
+                        f"status: {status}\n"
+                        f"loader logs: " + loader_logs
+                    )
+                assert False, f"Loading execution failed, task status is {status}"
     return origin_urls
 
 
 # Utility functions
-
-
 def apiget(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
     """Query the API at path and return the json result or raise an
     AssertionError"""
-
+    assert path[0] != "/", "you probably do not want that..."
     url = urljoin(baseurl, path)
     resp = requests.request(verb, url, **kwargs)
     assert resp.status_code == 200, f"failed to retrieve {url}: {resp.text}"
-    return resp.json()
+    if verb.lower() == "head":
+        return resp
+    else:
+        return resp.json()
 
 
 def pollapi(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):

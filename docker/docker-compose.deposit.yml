@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  swh-deposit-db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-deposit
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+
+  swh-deposit:
+    image: swh/stack
+    build: ./
+    ports:
+      - 5006:5006
+    depends_on:
+      - swh-scheduler
+      - prometheus-statsd-exporter
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-deposit
+      VERBOSITY: 3
+      SWH_CONFIG_FILENAME: /deposit.yml
+      DJANGO_SETTINGS_MODULE: swh.deposit.settings.production
+      RPC_PORT: 5006
+    entrypoint: /entrypoint.sh
+    healthcheck:
+      test: curl -f http://localhost:5006 || exit 1
+    volumes:
+      - "./conf/deposit.yml:/deposit.yml:ro"
+      - "./services/swh-deposit/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-loader-deposit:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+      - ./env/workers.env
+    user: swh
+    environment:
+      SWH_WORKER_INSTANCE: loader-deposit
+      SWH_CONFIG_FILENAME: /loader-deposit.yml
+    entrypoint: /entrypoint.sh
+    command: worker
+    depends_on:
+      - swh-storage
+      - swh-scheduler
+      - swh-deposit
+      - amqp
+      - prometheus-statsd-exporter
+    volumes:
+      - "./conf/loader-deposit.yml:/loader-deposit.yml:ro"
+      - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"

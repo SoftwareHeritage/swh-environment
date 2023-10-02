@@ -7,9 +7,17 @@ import hashlib
 import io
 from os.path import join
 import tarfile
+from typing import List
 from urllib.parse import quote_plus
 
+import pytest
+
 from .conftest import apiget, getdirectory, pollapi
+
+
+@pytest.fixture(scope="module")
+def compose_files() -> List[str]:
+    return ["docker-compose.yml", "docker-compose.vault.yml"]
 
 
 def test_vault_directory(scheduler_host, origins):
@@ -48,7 +56,9 @@ def test_vault_directory(scheduler_host, origins):
                     fdata = tfinfo.linkname.encode()
                 else:
                     # symlink has no size in tar archive so this test fails
-                    assert fdesc["length"] == tfinfo.size, f"File {fname}: length mismatch"
+                    assert (
+                        fdesc["length"] == tfinfo.size
+                    ), f"File {fname}: length mismatch"
                     fdata = tarf.extractfile(tfinfo).read()
 
                 for algo in fdesc["checksums"]:
@@ -101,7 +111,7 @@ def test_vault_git_bare(host, scheduler_host, origins, tmp_path, monkeypatch):
         host.check_output(f"git -C {repo} rev-parse HEAD") == rev_id
         host.run_test(f"git -C {repo} log")
 
-        # check the working direcoty matches dir_id content from the archive
+        # check the working directory matches dir_id content from the archive
         for fname, fdesc in directory:
             if fdesc["type"] == "file":
                 assert (repo / fname).is_file()

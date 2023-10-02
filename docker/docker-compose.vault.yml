@@ -1,0 +1,55 @@
+version: "2.1"
+
+services:
+  mailhog:
+    image: mailhog/mailhog
+
+  swh-vault-db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: testpassword
+      POSTGRES_DB: swh-vault
+    volumes:
+      - "./services/initdb.d:/docker-entrypoint-initdb.d"
+
+  swh-vault:
+    image: swh/stack
+    build: ./
+    env_file:
+      - ./env/common_python.env
+    environment:
+      POSTGRES_DB: swh-vault
+      SWH_CONFIG_FILENAME: /vault.yml
+      RPC_PORT: 5005
+    entrypoint: /entrypoint.sh
+    command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5005 || exit 1
+    ports:
+      - 5005:5005
+    depends_on:
+      - swh-vault-db
+      - swh-objstorage
+      - swh-storage
+      - swh-scheduler
+      - prometheus-statsd-exporter
+    volumes:
+      - "./conf/vault.yml:/vault.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-vault-worker:
+    image: swh/stack
+    build: ./
+    entrypoint: /entrypoint.sh
+    command: worker
+    env_file:
+      - ./env/common_python.env
+      - ./env/workers.env
+    environment:
+      SWH_CONFIG_FILENAME: /cooker.yml
+    depends_on:
+      - swh-vault
+      - swh-storage
+    volumes:
+      - "./conf/vault-worker.yml:/cooker.yml:ro"
+      - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
