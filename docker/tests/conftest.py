@@ -6,7 +6,7 @@
 from os.path import join
 import re
 import time
-from typing import Generator, Mapping, Tuple
+from typing import List, Generator, Mapping, Tuple
 from urllib.parse import urljoin
 from uuid import uuid4 as uuid
 
@@ -110,15 +110,22 @@ def deposit_host(request, docker_compose):
 
 
 @pytest.fixture(scope="session")
-def git_url():
-    return "https://gitlab.softwareheritage.org/swh/devel/swh-core.git"
+def origin_urls() -> List[Tuple[str, str]]:
+    return [("git", "https://gitlab.softwareheritage.org/swh/devel/swh-core.git")]
 
 
 @pytest.fixture(scope="session")
-def git_origin(docker_compose, scheduler_host, git_url):
-    task = scheduler_host.check_output(f"swh scheduler task add load-git url={git_url}")
-    taskid = re.search(r"^Task (?P<id>\d+)$", task, flags=re.MULTILINE).group("id")
-    assert int(taskid) > 0
+def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
+    """A fixture that ingest origins from origin_urls in the storage
+
+    For each origin url listed in origin_urls, scheduler a loading task and
+    wait for all the loading tasks to finish. Check these are in the 'eventful'
+    state.
+    """
+    for origin_type, origin_url in origin_urls:
+        task = scheduler_host.check_output(f"swh scheduler task add load-{origin_type} url={origin_url}")
+        taskid = re.search(r"^Task (?P<id>\d+)$", task, flags=re.MULTILINE).group("id")
+        assert int(taskid) > 0
 
     for i in range(60):
         status = scheduler_host.check_output(
@@ -138,7 +145,7 @@ def git_origin(docker_compose, scheduler_host, git_url):
                     f"loader logs: " + loader_logs
                 )
             assert False, f"Loading execution failed, task status is {status}"
-    return git_url
+    return origin_urls
 
 
 # Utility functions
