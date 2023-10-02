@@ -1,6 +1,40 @@
 version: "3.8"
 
 services:
+  # first, add a bit of startup initialization and sanity check
+  kafka:
+    environment:
+      # we need these to be defined beforehand so the replayer can actually
+      # subscribe to topics (even if the producer has not started)
+      KAFKA_CREATE_TOPICS: swh.journal.objects.content:16:1:compact,
+        swh.journal.objects.directory:16:1:compact,
+        swh.journal.objects.extid:16:1:compact,
+        swh.journal.objects.origin:16:1:compact,
+        swh.journal.objects.origin_visit:16:1:compact,
+        swh.journal.objects.origin_visit_status:16:1:compact,
+        swh.journal.objects.raw_extrinsic_metadata:16:1:compact,
+        swh.journal.objects.release:16:1:compact,
+        swh.journal.objects_privileged.release:16:1:compact,
+        swh.journal.objects.revision:16:1:compact,
+        swh.journal.objects_privileged.revision:16:1:compact,
+        swh.journal.objects.skipped_content:16:1:compact,
+        swh.journal.objects.snapshot:16:1:compact,
+        swh.journal.indexed.origin_intrinsic_metadata:16:1:compact
+    healthcheck:
+      test: "[ `JMX_PORT= kafka-topics.sh --list --zookeeper zookeeper:2181 | wc -l` -ge `echo $$KAFKA_CREATE_TOPICS | tr ',' '\n' | wc -l` ]"
+      interval: 2s
+      timeout: 5s
+      retries: 20
+
+  swh-storage:
+    # we want to make sure kafka has started and topics have been created
+    depends_on:
+      kafka:
+        condition: service_healthy
+      swh-objstorage:
+        condition: service_healthy
+      swh-storage-db:
+        condition: service_started
 
   nginx-mirror:
     image: nginx
@@ -93,14 +127,12 @@ services:
     env_file:
       - ./env/common_python.env
     environment:
-      DB_FLAVOR: mirror
-      POSTGRES_DB: swh-storage-mirror
-      SWH_CONFIG_FILENAME: /storage.yml
+      SWH_CONFIG_FILENAME: /replayer.yml
       LOG_LEVEL: DEBUG
     entrypoint: /entrypoint.sh
     command: replayer
     volumes:
-      - "./conf/mirror/storage.yml:/storage.yml:ro"
+      - "./conf/mirror/replayer.yml:/replayer.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-objstorage-mirror-replayer:
