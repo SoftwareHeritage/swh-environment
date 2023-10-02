@@ -6,7 +6,7 @@
 from os.path import join
 import re
 import time
-from typing import List, Generator, Mapping, Tuple
+from typing import Generator, List, Mapping, Tuple
 from urllib.parse import urljoin
 from uuid import uuid4 as uuid
 
@@ -36,28 +36,36 @@ SAMPLE_METADATA = """\
 </entry>
 """
 
-# wait-for-it timout
+# wait-for-it timeout
 WFI_TIMEOUT = 60
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def docker_host():
     return testinfra.get_host("local://")
 
 
-@pytest.fixture(scope="session")
-def compose_cmd(docker_host):
+@pytest.fixture(scope="module")
+def compose_files() -> List[str]:
+    return ["docker-compose.yml"]
+
+
+@pytest.fixture(scope="module")
+def compose_cmd(docker_host, compose_files):
+
     project_name = f"swh_test_{uuid()}"
+    print(f"compose project is {project_name}")
+    compose_file_cmd = "".join(f" -f {fname} " for fname in compose_files)
     try:
         docker_host.check_output("docker compose version")
-        return f"docker compose -p {project_name}"
+        return f"docker compose -p {project_name} {compose_file_cmd} "
     except AssertionError:
         print("Fall back to old docker-compose command")
-        return f"docker-compose -p {project_name}"
+        return f"docker-compose -p {project_name} {compose_file_cmd} "
 
 
-# scope='session' so we use the same container for all the tests;
-@pytest.fixture(scope="session")
+# scope='module' so we use the same container for all the tests in a test file
+@pytest.fixture(scope="module")
 def docker_compose(request, docker_host, compose_cmd):
     # start the whole cluster
     docker_host.check_output(f"{compose_cmd} up -d")
@@ -73,7 +81,7 @@ def docker_compose(request, docker_host, compose_cmd):
     docker_host.check_output(f"{compose_cmd} down -v")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def scheduler_host(request, docker_compose):
     # run a container in which test commands are executed
     docker_id = docker_compose.check_compose_output(
@@ -90,8 +98,8 @@ def scheduler_host(request, docker_compose):
     docker_compose.check_output(f"docker rm -f {docker_id}")
 
 
-# scope='session' so we use the same container for all the tests;
-@pytest.fixture(scope="session")
+# scope='module' so we use the same container for all the tests in a test file
+@pytest.fixture(scope="module")
 def deposit_host(request, docker_compose):
     # run a container in which test commands are executed
     docker_id = docker_compose.check_compose_output(
@@ -109,12 +117,12 @@ def deposit_host(request, docker_compose):
     docker_compose.check_output(f"docker rm -f {docker_id}")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def origin_urls() -> List[Tuple[str, str]]:
     return [("git", "https://gitlab.softwareheritage.org/swh/devel/swh-core.git")]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
     """A fixture that ingest origins from origin_urls in the storage
 
@@ -123,8 +131,12 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
     state.
     """
     for origin_type, origin_url in origin_urls:
-        task = scheduler_host.check_output(f"swh scheduler task add load-{origin_type} url={origin_url}")
-        taskid = re.search(r"^Task (?P<id>\d+)$", task, flags=re.MULTILINE).group("id")
+        task = scheduler_host.check_output(
+            f"swh scheduler task add load-{origin_type} url={origin_url}"
+        )
+        m = re.search(r"^Task (?P<id>\d+)$", task, flags=re.MULTILINE)
+        assert m
+        taskid = m.group("id")
         assert int(taskid) > 0
 
     for i in range(60):
@@ -151,19 +163,19 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
 # Utility functions
 
 
-def apiget(path: str, verb: str = "GET", **kwargs):
+def apiget(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
     """Query the API at path and return the json result or raise an
     AssertionError"""
 
-    url = urljoin(APIURL, path)
+    url = urljoin(baseurl, path)
     resp = requests.request(verb, url, **kwargs)
     assert resp.status_code == 200, f"failed to retrieve {url}: {resp.text}"
     return resp.json()
 
 
-def pollapi(path: str, verb: str = "GET", **kwargs):
+def pollapi(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
     """Poll the API at path until it returns an OK result"""
-    url = urljoin(APIURL, path)
+    url = urljoin(baseurl, path)
     for i in range(60):
         resp = requests.request(verb, url, **kwargs)
         if resp.ok:
@@ -175,13 +187,13 @@ def pollapi(path: str, verb: str = "GET", **kwargs):
 
 
 def getdirectory(
-    dirid: str, currentpath: str = ""
+    dirid: str, currentpath: str = "", apiurl: str = APIURL
 ) -> Generator[Tuple[str, Mapping], None, None]:
     """Recursively retrieve directory description from the archive"""
-    directory = apiget(f"directory/{dirid}")
+    directory = apiget(f"directory/{dirid}", baseurl=apiurl)
     for direntry in directory:
         path = join(currentpath, direntry["name"])
         if direntry["type"] != "dir":
             yield (path, direntry)
         else:
-            yield from getdirectory(direntry["target"], path)
+            yield from getdirectory(direntry["target"], path, apiurl)

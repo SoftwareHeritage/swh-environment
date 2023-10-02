@@ -52,8 +52,9 @@ case "$1" in
                 ;;
 			"replayer")
 				echo Starting the Kafka storage replayer
-				exec wait-for-it kafka:9092 -s --timeout=0 -- \
-				     swh --log-level ${LOG_LEVEL:-WARNING} storage replay $@
+				wait-for-it kafka:9092 -s --timeout=0
+				wait-for-it kafka-rest:8082 -s --timeout=0
+				exec swh --log-level ${LOG_LEVEL:-WARNING} storage replay $@
 				;;
 			"backfiller")
 				echo Starting the Kafka storage backfiller

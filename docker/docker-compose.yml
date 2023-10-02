@@ -34,6 +34,15 @@ services:
     environment:
       ZK_HOSTS: "zookeeper:2181"
 
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest
+    environment:
+      KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+    depends_on:
+      - kafka
+    healthcheck:
+      test: curl -f http://localhost:8082 || exit 1
+
   prometheus:
     image: prom/prometheus
     depends_on:
