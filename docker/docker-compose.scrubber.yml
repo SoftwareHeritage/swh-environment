@@ -4,11 +4,9 @@ services:
 
   swh-scrubber-db:
     image: postgres:16
-    env_file:
-      - ./env/scrubber-db.env
     environment:
-      # unset PGHOST as db service crashes otherwise
-      PGHOST:
+      POSTGRES_DB: swh-scrubber
+      POSTGRES_PASSWORD: testpassword
 
   swh-scrubber:
     image: swh/stack
@@ -22,7 +20,6 @@ services:
     env_file:
       - ./env/common_python.env
       - ./env/scrubber.env
-      - ./env/scrubber-db.env
     environment:
       SWH_CONFIG_FILENAME: /scrubber.yml
     volumes:
