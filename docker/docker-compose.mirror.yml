@@ -68,6 +68,8 @@ services:
       RPC_PORT: 5002
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5002 || exit 1
     volumes:
       - "./conf/mirror/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
@@ -85,6 +87,8 @@ services:
       RPC_PORT: 5003
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5003 || exit 1
     volumes:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
       - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
@@ -115,6 +119,8 @@ services:
       DJANGO_SETTINGS_MODULE: swh.web.settings.production
       SWH_CONFIG_FILENAME: /web.yml
     entrypoint: /entrypoint.sh
+    healthcheck:
+      test: curl -f http://localhost:5004 || exit 1
     volumes:
       - "./conf/mirror/web.yml:/web.yml:ro"
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
@@ -126,9 +132,12 @@ services:
     image: swh/stack
     build: ./
     depends_on:
-      - swh-storage-mirror-db
-      - swh-objstorage
-      - prometheus-statsd-exporter
+      kafka:  # needed to make sure topics exists so we can subscribe
+        condition: service_healthy
+      swh-storage-mirror-db:
+        condition: service_started
+      prometheus-statsd-exporter:
+        condition: service_started
     env_file:
       - ./env/common_python.env
     environment:
@@ -144,9 +153,15 @@ services:
     image: swh/stack
     build: ./
     depends_on:
-      - swh-objstorage
-      - prometheus-statsd-exporter
-      - swh-objstorage-mirror
+      kafka:  # needed to make sure topics exists so we can subscribe
+        condition: service_healthy
+      prometheus-statsd-exporter:
+        condition: service_started
+      swh-objstorage:
+        condition: service_healthy
+      swh-objstorage-mirror:
+        condition: service_healthy
+
     env_file:
       - ./env/common_python.env
     environment:
@@ -178,6 +193,8 @@ services:
       RPC_PORT: 5005
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5005 || exit 1
     depends_on:
       - swh-vault-mirror-db
       - swh-objstorage
@@ -227,6 +244,8 @@ services:
       BROKER_URL: amqp://amqp-mirror/
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5008 || exit 1
     depends_on:
       - swh-scheduler-mirror-db
       - prometheus-statsd-exporter

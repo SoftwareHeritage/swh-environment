@@ -100,7 +100,6 @@ services:
       timeout: 5s
       retries: 10
 
-
   nginx:
     image: nginx
     volumes:
@@ -130,6 +129,8 @@ services:
       RPC_PORT: 5008
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5008 || exit 1
     depends_on:
       - swh-scheduler-db
       - prometheus-statsd-exporter
@@ -274,6 +275,8 @@ services:
       RPC_PORT: 5002
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5002 || exit 1
     volumes:
       - "./conf/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
@@ -294,6 +297,8 @@ services:
       RPC_PORT: 5003
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5003 || exit 1
     volumes:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
       - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
@@ -325,6 +330,8 @@ services:
       RPC_PORT: 5007
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5007 || exit 1
     volumes:
       - "./conf/indexer_storage.yml:/indexer_storage.yml:ro"
       - "./services/swh-indexer/entrypoint.sh:/entrypoint.sh:ro"
@@ -360,6 +367,8 @@ services:
       DJANGO_SETTINGS_MODULE: swh.web.settings.production
       SWH_CONFIG_FILENAME: /web.yml
     entrypoint: /entrypoint.sh
+    healthcheck:
+      test: curl -f http://localhost:5004 || exit 1
     volumes:
       - "./conf/web.yml:/web.yml:ro"
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
@@ -407,6 +416,8 @@ services:
       DJANGO_SETTINGS_MODULE: swh.deposit.settings.production
       RPC_PORT: 5006
     entrypoint: /entrypoint.sh
+    healthcheck:
+      test: curl -f http://localhost:5006 || exit 1
     volumes:
       - "./conf/deposit.yml:/deposit.yml:ro"
       - "./services/swh-deposit/entrypoint.sh:/entrypoint.sh:ro"
@@ -430,6 +441,8 @@ services:
       RPC_PORT: 5005
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5005 || exit 1
     ports:
       - 5005:5005
     depends_on:
@@ -624,7 +637,7 @@ services:
       - "./conf/counters.yml:/counters.yml:ro"
       - "./services/swh-counters/entrypoint.sh:/entrypoint.sh:ro"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5011/" ]
+      test: curl -f http://localhost:5011 || exit 1
       interval: 10s
       timeout: 5s
       retries: 10
@@ -654,6 +667,8 @@ services:
     build: ./
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5010 || exit 1
     ports:
       - 5010:5010
     environment:
@@ -715,6 +730,8 @@ services:
       - "./services/swh-graphql/entrypoint.sh:/entrypoint.sh:ro"
     entrypoint: /entrypoint.sh
     command: rpc
+    healthcheck:
+      test: curl -f http://localhost:5013 || exit 1
 
 volumes:
   redis-data:
