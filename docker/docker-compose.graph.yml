@@ -11,6 +11,7 @@ services:
       SWH_CONFIG_FILENAME: /graph.yml
     depends_on:
       - kafka
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     volumes:

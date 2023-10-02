@@ -16,6 +16,7 @@ services:
     entrypoint: /entrypoint.sh
     command: scrubber snapshot 16
     depends_on:
+      - prometheus-statsd-exporter
       - swh-scrubber-db
       - swh-storage
     env_file:

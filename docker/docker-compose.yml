@@ -132,6 +132,7 @@ services:
     command: rpc
     depends_on:
       - swh-scheduler-db
+      - prometheus-statsd-exporter
     ports:
       - 5008:5008
     volumes:
@@ -155,6 +156,7 @@ services:
     depends_on:
       - swh-scheduler
       - amqp
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
@@ -176,6 +178,7 @@ services:
     depends_on:
       - swh-scheduler
       - amqp
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
@@ -197,6 +200,7 @@ services:
     depends_on:
       - swh-scheduler
       - amqp
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
@@ -219,6 +223,7 @@ services:
       - swh-scheduler
       - swh-loader
       - amqp
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
@@ -260,6 +265,7 @@ services:
       - swh-storage-db
       - swh-objstorage
       - kafka
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
@@ -279,6 +285,8 @@ services:
     image: swh/stack
     ports:
       - 5003:5003
+    depends_on:
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
@@ -308,6 +316,7 @@ services:
       - 5007:5007
     depends_on:
       - swh-idx-storage-db
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
@@ -342,6 +351,7 @@ services:
       - swh-web-db
       - swh-search
       - memcache
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
@@ -387,6 +397,7 @@ services:
       - 5006:5006
     depends_on:
       - swh-scheduler
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
@@ -426,6 +437,7 @@ services:
       - swh-objstorage
       - swh-storage
       - swh-scheduler
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
@@ -465,6 +477,7 @@ services:
       - swh-scheduler-runner
       - amqp
       - swh-lister-maven-nginx
+      - prometheus-statsd-exporter
     entrypoint: /entrypoint.sh
     command: worker
     volumes:
@@ -498,6 +511,7 @@ services:
       - swh-storage
       - swh-scheduler
       - amqp
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/loader.yml:/loader.yml:ro"
       - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
@@ -519,6 +533,7 @@ services:
       - swh-scheduler
       - swh-deposit
       - amqp
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/loader-deposit.yml:/loader-deposit.yml:ro"
       - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"
@@ -604,6 +619,7 @@ services:
       - 5011:5011
     depends_on:
       - redis
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/counters.yml:/counters.yml:ro"
       - "./services/swh-counters/entrypoint.sh:/entrypoint.sh:ro"
@@ -626,6 +642,7 @@ services:
       - kafka
       - redis
       - swh-counters
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/counters_journal_client.yml:/counters_journal_client.yml:ro"
       - "./services/swh-counters/entrypoint.sh:/entrypoint.sh:ro"
@@ -644,6 +661,8 @@ services:
       RPC_PORT: 5010
     env_file:
       - ./env/common_python.env
+    depends_on:
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/search-memory.yml:/search.yml:ro"
       - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
@@ -683,6 +702,7 @@ services:
     build: ./
     depends_on:
       - swh-storage
+      - prometheus-statsd-exporter
     ports:
       - 5013:5013
     environment:

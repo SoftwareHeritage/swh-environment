@@ -16,6 +16,7 @@ services:
   swh-search:
     depends_on:
       - elasticsearch
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/search.yml:/search.yml:ro"
 

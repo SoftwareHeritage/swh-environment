@@ -57,6 +57,7 @@ services:
     depends_on:
       - swh-storage-mirror-db
       - swh-objstorage-mirror
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
@@ -77,6 +78,8 @@ services:
     image: swh/stack
     env_file:
       - ./env/common_python.env
+    depends_on:
+      - prometheus-statsd-exporter
     environment:
       SWH_CONFIG_FILENAME: /objstorage.yml
       RPC_PORT: 5003
@@ -103,6 +106,7 @@ services:
     depends_on:
       - swh-storage-mirror
       - swh-web-mirror-db
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
@@ -124,6 +128,7 @@ services:
     depends_on:
       - swh-storage-mirror-db
       - swh-objstorage
+      - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
@@ -140,6 +145,7 @@ services:
     build: ./
     depends_on:
       - swh-objstorage
+      - prometheus-statsd-exporter
       - swh-objstorage-mirror
     env_file:
       - ./env/common_python.env
@@ -177,6 +183,7 @@ services:
       - swh-objstorage
       - swh-storage-mirror
       - swh-scheduler-mirror
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
@@ -194,6 +201,7 @@ services:
     depends_on:
       - swh-vault-mirror
       - swh-storage-mirror
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
@@ -221,6 +229,7 @@ services:
     command: rpc
     depends_on:
       - swh-scheduler-mirror-db
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
@@ -242,6 +251,7 @@ services:
     depends_on:
       - swh-scheduler-mirror
       - amqp-mirror
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
@@ -262,6 +272,7 @@ services:
     depends_on:
       - swh-scheduler-mirror
       - amqp-mirror
+      - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"

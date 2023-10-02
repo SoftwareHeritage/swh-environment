@@ -53,6 +53,7 @@ services:
       - cassandra-seed
       - swh-objstorage
       - kafka
+      - prometheus-statsd-exporter
     environment:
       CASSANDRA_SEED: cassandra-seed
       PYTHONUNBUFFERED: 1
