@@ -32,9 +32,13 @@ def compose_files() -> List[str]:
 
 
 @pytest.fixture(scope="module")
-def compose_cmd(docker_host, compose_files):
+def project_name() -> str:
+    return f"swh_test_{uuid()}"
 
-    project_name = f"swh_test_{uuid()}"
+
+@pytest.fixture(scope="module")
+def compose_cmd(docker_host, project_name, compose_files):
+
     print(f"compose project is {project_name}")
     compose_file_cmd = "".join(f" -f {fname} " for fname in compose_files)
     try:
@@ -47,21 +51,37 @@ def compose_cmd(docker_host, compose_files):
 
 # scope='module' so we use the same container for all the tests in a test file
 @pytest.fixture(scope="module")
-def docker_compose(request, docker_host, compose_cmd):
-    print("Start the compose session...", end=" ", flush=True)
-    # start the whole cluster
-    docker_host.check_output(f"{compose_cmd} up -d")
-    print("OK")
+def docker_compose(request, docker_host, project_name, compose_cmd):
+    print(f"Starting the compose session {project_name}...", end=" ", flush=True)
+    try:
+        # start the whole cluster
+        docker_host.check_output(f"{compose_cmd} up -d")
+        print("OK")
 
-    # small hack: add a helper func to docker_host; so it's not necessary to
-    # use all 3 docker_compose, docker_host and compose_cmd fixtures everywhere
-    docker_host.check_compose_output = lambda command: docker_host.check_output(
-        f"{compose_cmd} {command}"
-    )
-    yield docker_host
-
-    # and stop the cluster
-    docker_host.check_output(f"{compose_cmd} down -v")
+        # small hack: add a helper func to docker_host; so it's not necessary to
+        # use all 3 docker_compose, docker_host and compose_cmd fixtures everywhere
+        docker_host.check_compose_output = lambda command: docker_host.check_output(
+            f"{compose_cmd} {command}"
+        )
+        yield docker_host
+    finally:
+        print(f"\nStopping the compose session {project_name}...", end=" ", flush=True)
+        # first kill all the containers (brutal but much faster than a proper shutdown)
+        containers = docker_host.check_output(f"{compose_cmd} ps -q").replace("\n", " ")
+        docker_host.check_output(f"docker kill {containers}")
+        # and gently stop the cluster
+        docker_host.check_output(f"{compose_cmd} down -v")
+        print("OK")
+        for i in range(30):
+            if not docker_host.check_output(f"{compose_cmd} ps -q"):
+                print("... All the services are stopped")
+                break
+            time.sleep(1)
+        else:
+            breakpoint()
+            assert not docker_host.check_output(
+                f"{compose_cmd} ps -q"
+            ), "Failed to shut compose down"
 
 
 @pytest.fixture(scope="module")
