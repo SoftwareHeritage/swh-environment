@@ -42,6 +42,7 @@ services:
     environment:
       SWH_WORKER_INSTANCE: loader-deposit
       SWH_CONFIG_FILENAME: /loader-deposit.yml
+      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
     entrypoint: /entrypoint.sh
     command: worker
     depends_on:

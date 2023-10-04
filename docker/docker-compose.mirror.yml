@@ -215,6 +215,7 @@ services:
       - ./env/workers.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
+      SWH_SCHEDULER_INSTANCE: http://swh-mirror-scheduler:5008
     depends_on:
       - swh-mirror-vault
       - swh-mirror-storage

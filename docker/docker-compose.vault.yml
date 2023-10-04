@@ -47,6 +47,7 @@ services:
       - ./env/workers.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
+      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
     depends_on:
       - swh-vault
       - swh-storage

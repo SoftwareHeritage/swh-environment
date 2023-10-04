@@ -395,6 +395,7 @@ services:
     environment:
       SWH_WORKER_INSTANCE: listers
       SWH_CONFIG_FILENAME: /lister.yml
+      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
     depends_on:
       - swh-scheduler
       - swh-scheduler-runner
@@ -428,6 +429,7 @@ services:
     environment:
       SWH_WORKER_INSTANCE: loader
       SWH_CONFIG_FILENAME: /loader.yml
+      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
     entrypoint: /entrypoint.sh
     command: worker
     depends_on:
@@ -453,6 +455,7 @@ services:
       SWH_CONFIG_FILENAME: /indexer.yml
       CONCURRENCY: 4
       POSTGRES_DB: swh-idx-storage
+      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
     entrypoint: /entrypoint.sh
     command: worker
     depends_on:
@@ -477,6 +480,7 @@ services:
       SWH_CONFIG_FILENAME: /indexer.yml
       CONCURRENCY: 4
       POSTGRES_DB: swh-idx-storage
+      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
     entrypoint: /entrypoint.sh
     command: journal-client
     depends_on:
