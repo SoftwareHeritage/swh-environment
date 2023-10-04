@@ -12,4 +12,3 @@ journal_client:
     - kafka
   prefix: swh.journal.objects
   group_id: swh.objstorage.mirror.replayer
-  privileged: true
