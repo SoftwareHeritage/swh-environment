@@ -21,6 +21,7 @@ celery:
     - swh.loader.cvs.tasks.LoadCvsRepository
     - swh.loader.dir.tasks.LoadDirRepository
     - swh.loader.git.tasks.LoadDiskGitRepository
+    - swh.loader.git.tasks.LoadGitCheckout
     - swh.loader.git.tasks.UncompressAndLoadDiskGitRepository
     - swh.loader.git.tasks.UpdateGitRepository
     - swh.loader.mercurial.tasks.LoadArchiveMercurial
