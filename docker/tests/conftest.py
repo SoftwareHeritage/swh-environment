@@ -72,7 +72,7 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
         # and gently stop the cluster
         docker_host.check_output(f"{compose_cmd} down -v")
         print("OK")
-        for i in range(30):
+        for _ in range(30):
             if not docker_host.check_output(f"{compose_cmd} ps -q"):
                 print("... All the services are stopped")
                 break
@@ -124,7 +124,7 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
         taskid = m.group("id")
         assert int(taskid) > 0
 
-        for i in range(120):
+        for _ in range(120):
             status = scheduler_host.check_output(
                 f"swh scheduler task list --list-runs --task-id {taskid}"
             )
@@ -136,12 +136,14 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
                     continue
                 if "[failed]" in status:
                     loader_logs = docker_compose.check_compose_output("logs swh-loader")
-                    assert False, (
+                    raise AssertionError(
                         "Loading execution failed\n"
                         f"status: {status}\n"
                         f"loader logs: " + loader_logs
                     )
-                assert False, f"Loading execution failed, task status is {status}"
+                raise AssertionError(
+                    f"Loading execution failed, task status is {status}"
+                )
     return origin_urls
 
 
@@ -162,13 +164,13 @@ def apiget(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
 def pollapi(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
     """Poll the API at path until it returns an OK result"""
     url = urljoin(baseurl, path)
-    for i in range(60):
+    for _ in range(60):
         resp = requests.request(verb, url, **kwargs)
         if resp.ok:
             break
         time.sleep(1)
     else:
-        assert False, f"Polling {url} failed"
+        raise AssertionError(f"Polling {url} failed")
     return resp
 
 

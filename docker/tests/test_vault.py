@@ -107,8 +107,8 @@ def test_vault_git_bare(host, scheduler_host, origins, tmp_path, monkeypatch):
         repo = tmp_path / "repo"
         host.run_test(f"git clone {tmp_path/swhid}.git {repo}")
         # check a few basic git stuff
-        host.check_output(f"git -C {repo} branch") == "* master"
-        host.check_output(f"git -C {repo} rev-parse HEAD") == rev_id
+        assert host.check_output(f"git -C {repo} branch") == "* master"
+        assert host.check_output(f"git -C {repo} rev-parse HEAD") == rev_id
         host.run_test(f"git -C {repo} log")
 
         # check the working directory matches dir_id content from the archive
@@ -136,9 +136,9 @@ def test_vault_git_bare(host, scheduler_host, origins, tmp_path, monkeypatch):
                 # TODO
                 pass
             else:
-                assert (
-                    False
-                ), f"Unexpected directory entry type {fdesc['type']} from {fdesc}"
+                raise AssertionError(
+                    f"Unexpected directory entry type {fdesc['type']} from {fdesc}"
+                )
 
         # check that if we ask a second time this directory, it returns the same
         # and does not cook it again

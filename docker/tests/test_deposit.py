@@ -84,7 +84,7 @@ def test_create_deposit_simple(deposit_host):
     assert deposit["deposit_status"] == "deposited"
     deposit_id = deposit["deposit_id"]
 
-    for i in range(60):
+    for _ in range(60):
         status = json.loads(
             deposit_host.check_output(
                 "swh deposit status --format json --username test --password test "
@@ -95,7 +95,7 @@ def test_create_deposit_simple(deposit_host):
             break
         time.sleep(1)
     else:
-        assert False, "Deposit loading failed"
+        raise AssertionError("Deposit loading failed")
 
 
 def test_create_deposit_with_metadata(deposit_host):
@@ -116,7 +116,7 @@ def test_create_deposit_with_metadata(deposit_host):
     assert deposit["deposit_status"] == "deposited"
     deposit_id = deposit["deposit_id"]
 
-    for i in range(60):
+    for _ in range(60):
         status = json.loads(
             deposit_host.check_output(
                 "swh deposit status --format json --username test --password test "
@@ -127,7 +127,7 @@ def test_create_deposit_with_metadata(deposit_host):
             break
         time.sleep(1)
     else:
-        assert False, "Deposit loading failed"
+        raise AssertionError("Deposit loading failed")
 
 
 def test_create_deposit_multipart(deposit_host):
@@ -158,7 +158,7 @@ def test_create_deposit_multipart(deposit_host):
     assert deposit["deposit_status"] == "deposited"
     assert deposit["deposit_id"] == deposit_id
 
-    for i in range(60):
+    for _ in range(60):
         status = json.loads(
             deposit_host.check_output(
                 "swh deposit status --format json --username test --password test "
@@ -169,4 +169,4 @@ def test_create_deposit_multipart(deposit_host):
             break
         time.sleep(1)
     else:
-        assert False, "Deposit loading failed; current status is %s" % status
+        raise AssertionError(f"Deposit loading failed; current status is {status}")
