@@ -114,6 +114,11 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
     wait for all the loading tasks to finish. Check these are in the 'eventful'
     state.
     """
+    task_ids = {}
+    if len(origin_urls) > 1:
+        # spawn a few loaders to try to speed things up a bit
+        docker_compose.check_compose_output("up -d --no-recreate --scale swh-loader=4")
+
     for origin_type, origin_url in origin_urls:
         print(f"Scheduling {origin_type} loading task for {origin_url}")
         task = scheduler_host.check_output(
@@ -123,7 +128,10 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
         assert m
         taskid = m.group("id")
         assert int(taskid) > 0
+        task_ids[origin_url] = taskid
 
+    for _, origin_url in origin_urls:
+        taskid = task_ids[origin_url]
         for _ in range(120):
             status = scheduler_host.check_output(
                 f"swh scheduler task list --list-runs --task-id {taskid}"
