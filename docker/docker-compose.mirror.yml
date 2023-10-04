@@ -23,7 +23,7 @@ services:
     healthcheck:
       test: "[ `JMX_PORT= kafka-topics.sh --list --zookeeper zookeeper:2181 | wc -l` -ge `echo $$KAFKA_CREATE_TOPICS | tr ',' '\n' | wc -l` ]"
       interval: 2s
-      timeout: 5s
+      timeout: 10s
       retries: 20
 
   swh-storage:
