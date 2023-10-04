@@ -3,6 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from functools import partial
 import hashlib
 import io
 from os.path import join
@@ -12,7 +13,9 @@ from urllib.parse import quote_plus
 
 import pytest
 
-from .conftest import apiget, getdirectory, pollapi
+from .conftest import apiget as apiget_
+from .conftest import getdirectory as getdirectory_
+from .conftest import pollapi as pollapi_
 
 
 @pytest.fixture(scope="module")
@@ -20,13 +23,23 @@ def compose_files() -> List[str]:
     return ["docker-compose.yml", "docker-compose.vault.yml"]
 
 
-def test_vault_directory(scheduler_host, origins):
+def test_vault_directory(origins, api_url):
     # retrieve the root directory of the master branch of the ingested git
     # repository (by the git_origin fixture)
+    apiget = partial(apiget_, baseurl=api_url)
+    pollapi = partial(pollapi_, baseurl=api_url)
+    getdirectory = partial(getdirectory_, apiurl=api_url)
+
     for _, origin_url in origins:
         visit = apiget(f"origin/{quote_plus(origin_url)}/visit/latest")
         snapshot = apiget(f'snapshot/{visit["snapshot"]}')
-        rev_id = snapshot["branches"]["refs/heads/master"]["target"]
+
+        assert snapshot["branches"]["HEAD"]["target_type"] == "alias"
+        tgt_name = snapshot["branches"]["HEAD"]["target"]
+        target = snapshot["branches"][tgt_name]
+        assert target["target_type"] == "revision"
+        rev_id = target["target"]
+
         revision = apiget(f"revision/{rev_id}")
         dir_id = revision["directory"]
         swhid = f"swh:1:dir:{dir_id}"
@@ -78,13 +91,22 @@ def test_vault_directory(scheduler_host, origins):
         assert recook["status"] == "done"  # no need to wait for this to be true
 
 
-def test_vault_git_bare(host, scheduler_host, origins, tmp_path, monkeypatch):
+def test_vault_git_bare(host, origins, api_url, tmp_path, monkeypatch):
     # retrieve the revision of the master branch of the ingested git
     # repository (by the git_origin fixture)
+    apiget = partial(apiget_, baseurl=api_url)
+    pollapi = partial(pollapi_, baseurl=api_url)
+    getdirectory = partial(getdirectory_, apiurl=api_url)
     for _, origin_url in origins:
         visit = apiget(f"origin/{quote_plus(origin_url)}/visit/latest")
+
         snapshot = apiget(f'snapshot/{visit["snapshot"]}')
-        rev_id = snapshot["branches"]["refs/heads/master"]["target"]
+        assert snapshot["branches"]["HEAD"]["target_type"] == "alias"
+        tgt_name = snapshot["branches"]["HEAD"]["target"]
+        target = snapshot["branches"][tgt_name]
+        assert target["target_type"] == "revision"
+        rev_id = target["target"]
+
         swhid = f"swh:1:rev:{rev_id}"
         revision = apiget(f"revision/{rev_id}")
         dir_id = revision["directory"]
@@ -104,7 +126,7 @@ def test_vault_git_bare(host, scheduler_host, origins, tmp_path, monkeypatch):
 
         # extract it in a tmp file and attempt to git clone it
         tarf.extractall(path=tmp_path)
-        repo = tmp_path / "repo"
+        repo = tmp_path / swhid
         host.run_test(f"git clone {tmp_path/swhid}.git {repo}")
         # check a few basic git stuff
         assert host.check_output(f"git -C {repo} branch") == "* master"

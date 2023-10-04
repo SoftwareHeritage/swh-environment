@@ -37,6 +37,11 @@ def project_name() -> str:
 
 
 @pytest.fixture(scope="module")
+def api_url() -> str:
+    return APIURL
+
+
+@pytest.fixture(scope="module")
 def compose_cmd(docker_host, project_name, compose_files):
 
     print(f"compose project is {project_name}")

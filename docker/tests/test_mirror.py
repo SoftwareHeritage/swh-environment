@@ -3,7 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-import functools
+from functools import partial
 from time import sleep
 from typing import List
 from urllib.parse import quote_plus
@@ -11,10 +11,18 @@ from urllib.parse import quote_plus
 import pytest
 import requests
 
-from .conftest import apiget, getdirectory
+from .conftest import APIURL
+from .conftest import apiget as apiget_
+from .conftest import getdirectory as getdirectory_
+from .test_vault import test_vault_directory, test_vault_git_bare  # noqa
 
 MIRROR_API = "http://127.0.0.1:5081/api/1/"
 KAFKA_REST_API = "http://127.0.0.1:5080/kafka/v3/clusters"
+
+
+@pytest.fixture(scope="module")
+def api_url(mirror) -> str:
+    return MIRROR_API
 
 
 @pytest.fixture(scope="module")
@@ -31,8 +39,12 @@ def compose_files() -> List[str]:
     return ["docker-compose.yml", "docker-compose.mirror.yml"]
 
 
-def test_mirror(docker_host, compose_cmd, origins):
-    # wait until everybody is up and running
+@pytest.fixture(scope="module")
+def mirror(docker_host, compose_cmd, origins):
+    apiget = partial(apiget_, baseurl=APIURL)
+    mirror_apiget = partial(apiget_, baseurl=MIRROR_API)
+    # this fixture ensures the origins have been loaded in the prinmary
+    # storage, the mirror is up, and the replayers are done
     ps = f"{compose_cmd} ps --quiet "
     while docker_host.check_output(f"{ps} --status created"):
         sleep(0.2)
@@ -69,19 +81,19 @@ def test_mirror(docker_host, compose_cmd, origins):
 
     # wait until the replayer is done
     print("Waiting for the replayer to be done")
-    for i in range(30):
+    for _ in range(30):
         lag_sum = kget("consumer-groups/swh.storage.mirror.replayer/lag-summary")
         if lag_sum["total_lag"] == 0:
             break
         sleep(1)
     else:
-        assert False, "Could not detect a condition where the replayer did its job"
-
-    mirror_apiget = functools.partial(apiget, baseurl=MIRROR_API)
+        raise AssertionError(
+            "Could not detect a condition where the replayer did its job"
+        )
 
     print("Checking we have origins in the mirror")
     # at this point, origins should be in the mirror storage...
-    for i in range(30):
+    for _ in range(30):
         m_origins = set(x["url"] for x in mirror_apiget("origins/"))
         if m_origins == expected_urls:
             break
@@ -91,15 +103,21 @@ def test_mirror(docker_host, compose_cmd, origins):
 
     print("Waiting for the content replayer to be done")
     # wait until the content replayer is done
-    for i in range(30):
+    for _ in range(30):
         lag_sum = kget("consumer-groups/swh.objstorage.mirror.replayer/lag-summary")
         if lag_sum["total_lag"] == 0:
             break
         sleep(1)
     else:
-        assert (
-            False
-        ), "Could not detect a condition where the content replayer did its job"
+        raise AssertionError(
+            "Could not detect a condition where the content replayer did its job"
+        )
+
+
+def test_mirror(origins, mirror, api_url):
+    apiget = partial(apiget_, baseurl=APIURL)
+    getdirectory = partial(getdirectory_, apiurl=APIURL)
+    mirror_apiget = partial(apiget_, baseurl=api_url)
 
     def filter_obj(objd):
         if isinstance(objd, dict):
