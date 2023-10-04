@@ -22,18 +22,6 @@ services:
     volumes:
       - kafka-data:/kafka
 
-  cmak:
-    # Note: CMAK does not work out of the box, you need to run this first:
-    # $ docker-compose exec zookeeper ./bin/zkCli.sh
-    #   create /kafka-manager/mutex ""
-    #   create /kafka-manager/mutex/locks ""
-    #   create /kafka-manager/mutex/leases ""
-    # See: https://github.com/yahoo/CMAK/issues/731#issuecomment-643880544
-
-    image: hlebalbau/kafka-manager:stable
-    environment:
-      ZK_HOSTS: "zookeeper:2181"
-
   kafka-rest:
     image: confluentinc/cp-kafka-rest
     environment:
