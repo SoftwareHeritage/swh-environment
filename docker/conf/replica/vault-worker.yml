@@ -1,9 +1,9 @@
 storage:
   cls: remote
-  url: http://swh-storage-replica:5002/
+  url: http://swh-replica-storage:5002/
 vault:
   cls: remote
-  url: http://swh-vault-replica:5005/
+  url: http://swh-replica-vault:5005/
 celery:
   broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp-replica//

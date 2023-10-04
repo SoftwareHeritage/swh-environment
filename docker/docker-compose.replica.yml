@@ -9,18 +9,18 @@ services:
     ports:
       - 5082:80
 
-  swh-storage-replica-db:
+  swh-replica-storage-db:
     image: postgres:16
     environment:
-      POSTGRES_DB: swh-storage-replica
+      POSTGRES_DB: swh-replica-storage
       POSTGRES_PASSWORD: testpassword
 
-  swh-storage-replica:
+  swh-replica-storage:
     image: swh/stack
     build: ./
     depends_on:
       - swh-storage-db
-      - swh-storage-replica-db
+      - swh-replica-storage-db
       - swh-objstorage
       - prometheus-statsd-exporter
     env_file:
@@ -42,26 +42,26 @@ services:
     command: postgres -c wal_level=logical
 
   # a dedicated swh-web db
-  swh-web-replica-db:
+  swh-replica-web-db:
     image: postgres:16
     environment:
-      POSTGRES_DB: swh-web-replica
+      POSTGRES_DB: swh-replica-web
       POSTGRES_PASSWORD: testpassword
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
   # a dedicated swh-web
-  swh-web-replica:
+  swh-replica-web:
     build: ./
     image: swh/stack
     depends_on:
-      - swh-storage-replica
-      - swh-web-replica-db
+      - swh-replica-storage
+      - swh-replica-web-db
       - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-web-replica
+      POSTGRES_DB: swh-replica-web
       VERBOSITY: 3
       DJANGO_SETTINGS_MODULE: swh.web.settings.production
       SWH_CONFIG_FILENAME: /web.yml
@@ -71,36 +71,36 @@ services:
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
       - "./assets/replica/:/replica/:ro"
 
-  swh-vault-replica-db:
+  swh-replica-vault-db:
     image: postgres:16
     environment:
       POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: swh-vault-replica
+      POSTGRES_DB: swh-replica-vault
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
-  swh-vault-replica:
+  swh-replica-vault:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-vault-replica
+      POSTGRES_DB: swh-replica-vault
       SWH_CONFIG_FILENAME: /vault.yml
       RPC_PORT: 5005
     entrypoint: /entrypoint.sh
     command: rpc
     depends_on:
-      - swh-vault-replica-db
+      - swh-replica-vault-db
       - swh-objstorage
-      - swh-storage-replica
-      - swh-scheduler-replica
+      - swh-replica-storage
+      - swh-replica-scheduler
       - prometheus-statsd-exporter
     volumes:
       - "./conf/replica/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-vault-replica-worker:
+  swh-replica-vault-worker:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
@@ -111,28 +111,28 @@ services:
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
     depends_on:
-      - swh-vault-replica
-      - swh-storage-replica
+      - swh-replica-vault
+      - swh-replica-storage
       - prometheus-statsd-exporter
     volumes:
       - "./conf/replica/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-scheduler-replica-db:
+  swh-replica-scheduler-db:
     image: postgres:16
     environment:
-      POSTGRES_DB: swh-scheduler-replica
+      POSTGRES_DB: swh-replica-scheduler
       POSTGRES_PASSWORD: testpassword
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
-  swh-scheduler-replica:
+  swh-replica-scheduler:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-scheduler-replica
+      POSTGRES_DB: swh-replica-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       RPC_PORT: 5008
@@ -140,19 +140,19 @@ services:
     entrypoint: /entrypoint.sh
     command: rpc
     depends_on:
-      - swh-scheduler-replica-db
+      - swh-replica-scheduler-db
       - prometheus-statsd-exporter
     volumes:
       - "./conf/replica/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-scheduler-replica-listener:
+  swh-replica-scheduler-listener:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-scheduler-replica
+      POSTGRES_DB: swh-replica-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       SWH_WORKER_INSTANCE: scheduler
@@ -161,20 +161,20 @@ services:
     entrypoint: /entrypoint.sh
     command: worker start-listener
     depends_on:
-      - swh-scheduler-replica
+      - swh-replica-scheduler
       - amqp-replica
       - prometheus-statsd-exporter
     volumes:
       - "./conf/replica/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-scheduler-replica-runner:
+  swh-replica-scheduler-runner:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-scheduler-replica
+      POSTGRES_DB: swh-replica-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       SWH_WORKER_INSTANCE: scheduler
@@ -182,7 +182,7 @@ services:
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10
     depends_on:
-      - swh-scheduler-replica
+      - swh-replica-scheduler
       - amqp-replica
       - prometheus-statsd-exporter
     volumes:

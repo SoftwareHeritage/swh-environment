@@ -1,6 +1,6 @@
 storage:
   cls: remote
-  url: http://swh-storage-mirror:5002
+  url: http://swh-mirror-storage:5002
 
 journal_client:
   cls: kafka

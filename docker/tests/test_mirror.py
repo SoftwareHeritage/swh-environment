@@ -57,7 +57,7 @@ def mirror(docker_host, compose_cmd, origins):
     assert docker_host.check_output(f"{ps} --status running swh-storage")
     print("OK")
     print("Mirror Storage...", end=" ", flush=True)
-    assert docker_host.check_output(f"{ps} --status running swh-storage-mirror")
+    assert docker_host.check_output(f"{ps} --status running swh-mirror-storage")
     print("OK")
     print("Kafka REST proxy...", end=" ", flush=True)
     assert docker_host.check_output(f"{ps} --status running kafka-rest")
@@ -114,7 +114,7 @@ def mirror(docker_host, compose_cmd, origins):
         )
 
 
-def test_mirror(origins, mirror, api_url):
+def test_mirror_replication(origins, mirror, api_url):
     apiget = partial(apiget_, baseurl=APIURL)
     getdirectory = partial(getdirectory_, apiurl=APIURL)
     mirror_apiget = partial(apiget_, baseurl=api_url)

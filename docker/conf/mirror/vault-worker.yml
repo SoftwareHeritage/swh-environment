@@ -1,9 +1,9 @@
 storage:
   cls: remote
-  url: http://swh-storage-mirror:5002/
+  url: http://swh-mirror-storage:5002/
 vault:
   cls: remote
-  url: http://swh-vault-mirror:5005/
+  url: http://swh-mirror-vault:5005/
 celery:
   broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp-mirror/

@@ -4,7 +4,7 @@ objstorage:
 
 objstorage_dst:
   cls: remote
-  url: http://swh-objstorage-mirror:5003
+  url: http://swh-mirror-objstorage:5003
 
 journal_client:
   cls: kafka

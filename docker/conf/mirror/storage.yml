@@ -1,10 +1,10 @@
 storage:
   cls: postgresql
-  db: postgresql:///?service=swh-storage-mirror
+  db: postgresql:///?service=swh-mirror-storage
   objstorage:
     cls: filtered
     storage_conf:
       cls: remote
-      url: http://swh-objstorage-mirror:5003/
+      url: http://swh-mirror-objstorage:5003/
     filters_conf:
       - type: readonly

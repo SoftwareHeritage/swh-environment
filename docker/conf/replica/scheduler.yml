@@ -1,6 +1,6 @@
 scheduler:
   cls: postgresql
-  db: postgresql:///?service=swh-scheduler-replica
+  db: postgresql:///?service=swh-replica-scheduler
 celery:
   broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp-replica/%2f

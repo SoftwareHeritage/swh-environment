@@ -1,12 +1,12 @@
 storage:
   cls: remote
-  url: http://swh-storage-replica:5002/
+  url: http://swh-replica-storage:5002/
 scheduler:
   cls: remote
-  url: http://swh-scheduler-replica:5008/
+  url: http://swh-replica-scheduler:5008/
 vault:
   cls: postgresql
-  db: postgresql:///?service=swh-vault-replica
+  db: postgresql:///?service=swh-replica-vault
 cache:
   cls: pathslicing
   root: /srv/softwareheritage/vault

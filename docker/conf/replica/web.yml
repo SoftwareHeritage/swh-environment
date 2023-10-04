@@ -1,6 +1,6 @@
 storage:
   cls: remote
-  url: http://swh-storage-replica:5002/
+  url: http://swh-replica-storage:5002/
   timeout: 1
 
 indexer_storage:
@@ -9,12 +9,12 @@ indexer_storage:
 
 scheduler:
   cls: remote
-  url: http://swh-scheduler-replica:5008/
+  url: http://swh-replica-scheduler:5008/
 
 vault:
   cls: remote
   args:
-    url: http://swh-vault-replica:5005/
+    url: http://swh-replica-vault:5005/
 
 deposit:
   private_api_url: http://swh-deposit:5006/1/private/
@@ -31,9 +31,9 @@ serve_assets: yes
 development_db: /tmp/swh/web.sqlite3
 
 production_db:
-  host: swh-web-db
+  host: swh-replica-web-db
   port: 5432
-  name: swh-web
+  name: swh-replica-web
   user: postgres
   password: testpassword
 
@@ -73,7 +73,7 @@ search:
 search_config:
   metadata_backend: swh-search
 
-instance_name: archive-docker.softwareheritage.org
+instance_name: replica-docker.softwareheritage.org
 
 # use this to show it's not the main web app
 mirror_config:

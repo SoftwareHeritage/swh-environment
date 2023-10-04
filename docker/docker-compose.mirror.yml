@@ -44,25 +44,25 @@ services:
       - 5081:80
 
   # create a dedicated db for the mirror
-  swh-storage-mirror-db:
+  swh-mirror-storage-db:
     image: postgres:16
     environment:
-      POSTGRES_DB: swh-storage-mirror
+      POSTGRES_DB: swh-mirror-storage
       POSTGRES_PASSWORD: testpassword
 
   # and an RPC server
-  swh-storage-mirror:
+  swh-mirror-storage:
     image: swh/stack
     build: ./
     depends_on:
-      - swh-storage-mirror-db
-      - swh-objstorage-mirror
+      - swh-mirror-storage-db
+      - swh-mirror-objstorage
       - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
       DB_FLAVOR: mirror
-      POSTGRES_DB: swh-storage-mirror
+      POSTGRES_DB: swh-mirror-storage
       STORAGE_BACKEND: postgresql
       SWH_CONFIG_FILENAME: /storage.yml
       RPC_PORT: 5002
@@ -75,7 +75,7 @@ services:
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
   # Object storage
-  swh-objstorage-mirror:
+  swh-mirror-objstorage:
     build: ./
     image: swh/stack
     env_file:
@@ -95,26 +95,26 @@ services:
       - /srv/softwareheritage/objects
 
   # a dedicated swh-web db
-  swh-web-mirror-db:
+  swh-mirror-web-db:
     image: postgres:16
     environment:
-      POSTGRES_DB: swh-web-mirror
+      POSTGRES_DB: swh-mirror-web
       POSTGRES_PASSWORD: testpassword
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
   # a dedicated swh-web
-  swh-web-mirror:
+  swh-mirror-web:
     build: ./
     image: swh/stack
     depends_on:
-      - swh-storage-mirror
-      - swh-web-mirror-db
+      - swh-mirror-storage
+      - swh-mirror-web-db
       - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-web-mirror
+      POSTGRES_DB: swh-mirror-web
       VERBOSITY: 3
       DJANGO_SETTINGS_MODULE: swh.web.settings.production
       SWH_CONFIG_FILENAME: /web.yml
@@ -128,13 +128,13 @@ services:
 
   # and the background processes that keeps the mirror in sync with the
   # main graph
-  swh-storage-mirror-replayer:
+  swh-mirror-storage-replayer:
     image: swh/stack
     build: ./
     depends_on:
       kafka:  # needed to make sure topics exists so we can subscribe
         condition: service_healthy
-      swh-storage-mirror-db:
+      swh-mirror-storage-db:
         condition: service_started
       prometheus-statsd-exporter:
         condition: service_started
@@ -149,7 +149,7 @@ services:
       - "./conf/mirror/replayer.yml:/replayer.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-objstorage-mirror-replayer:
+  swh-mirror-objstorage-replayer:
     image: swh/stack
     build: ./
     depends_on:
@@ -159,7 +159,7 @@ services:
         condition: service_started
       swh-objstorage:
         condition: service_healthy
-      swh-objstorage-mirror:
+      swh-mirror-objstorage:
         condition: service_healthy
 
     env_file:
@@ -174,21 +174,21 @@ services:
       - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
 
   # and a vault full-stack
-  swh-vault-mirror-db:
+  swh-mirror-vault-db:
     image: postgres:16
     environment:
       POSTGRES_PASSWORD: testpassword
-      POSTGRES_DB: swh-vault-mirror
+      POSTGRES_DB: swh-mirror-vault
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
-  swh-vault-mirror:
+  swh-mirror-vault:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-vault-mirror
+      POSTGRES_DB: swh-mirror-vault
       SWH_CONFIG_FILENAME: /vault.yml
       RPC_PORT: 5005
     entrypoint: /entrypoint.sh
@@ -196,16 +196,16 @@ services:
     healthcheck:
       test: curl -f http://localhost:5005 || exit 1
     depends_on:
-      - swh-vault-mirror-db
+      - swh-mirror-vault-db
       - swh-objstorage
-      - swh-storage-mirror
-      - swh-scheduler-mirror
+      - swh-mirror-storage
+      - swh-mirror-scheduler
       - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-vault-mirror-worker:
+  swh-mirror-vault-worker:
     image: swh/stack
     build: ./
     entrypoint: /entrypoint.sh
@@ -216,28 +216,28 @@ services:
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
     depends_on:
-      - swh-vault-mirror
-      - swh-storage-mirror
+      - swh-mirror-vault
+      - swh-mirror-storage
       - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-scheduler-mirror-db:
+  swh-mirror-scheduler-db:
     image: postgres:16
     environment:
-      POSTGRES_DB: swh-scheduler-mirror
+      POSTGRES_DB: swh-mirror-scheduler
       POSTGRES_PASSWORD: testpassword
     volumes:
       - "./services/initdb.d:/docker-entrypoint-initdb.d"
 
-  swh-scheduler-mirror:
+  swh-mirror-scheduler:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-scheduler-mirror
+      POSTGRES_DB: swh-mirror-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       RPC_PORT: 5008
@@ -247,19 +247,19 @@ services:
     healthcheck:
       test: curl -f http://localhost:5008 || exit 1
     depends_on:
-      - swh-scheduler-mirror-db
+      - swh-mirror-scheduler-db
       - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-scheduler-mirror-listener:
+  swh-mirror-scheduler-listener:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-scheduler-mirror
+      POSTGRES_DB: swh-mirror-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       SWH_WORKER_INSTANCE: scheduler
@@ -268,20 +268,20 @@ services:
     entrypoint: /entrypoint.sh
     command: worker start-listener
     depends_on:
-      - swh-scheduler-mirror
+      - swh-mirror-scheduler
       - amqp-mirror
       - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
 
-  swh-scheduler-mirror-runner:
+  swh-mirror-scheduler-runner:
     image: swh/stack
     build: ./
     env_file:
       - ./env/common_python.env
     environment:
-      POSTGRES_DB: swh-scheduler-mirror
+      POSTGRES_DB: swh-mirror-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       SWH_WORKER_INSTANCE: scheduler
@@ -289,7 +289,7 @@ services:
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10
     depends_on:
-      - swh-scheduler-mirror
+      - swh-mirror-scheduler
       - amqp-mirror
       - prometheus-statsd-exporter
     volumes:

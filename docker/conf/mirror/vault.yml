@@ -1,12 +1,12 @@
 storage:
   cls: remote
-  url: http://swh-storage-mirror:5002/
+  url: http://swh-mirror-storage:5002/
 scheduler:
   cls: remote
-  url: http://swh-scheduler-mirror:5008/
+  url: http://swh-mirror-scheduler:5008/
 vault:
   cls: postgresql
-  db: postgresql:///?service=swh-vault-mirror
+  db: postgresql:///?service=swh-mirror-vault
 cache:
   cls: pathslicing
   root: /srv/softwareheritage/vault

@@ -1,20 +1,20 @@
 storage:
   cls: remote
-  url: http://swh-storage-mirror:5002/
+  url: http://swh-mirror-storage:5002/
   timeout: 1
 
 indexer_storage:
   cls: remote
-  url: http://swh-idx-storage:5007/
+  url: http://swh-storage-idx:5007/
 
 scheduler:
   cls: remote
-  url: http://swh-scheduler-mirror:5008/
+  url: http://swh-mirror-scheduler:5008/
 
 vault:
   cls: remote
   args:
-    url: http://swh-vault-mirror:5005/
+    url: http://swh-mirror-vault:5005/
 
 allowed_hosts:
   - "*"
@@ -26,9 +26,9 @@ serve_assets: yes
 development_db: /tmp/swh/web.sqlite3
 
 production_db:
-  host: swh-web-mirror-db
+  host: swh-mirror-web-db
   port: 5432
-  name: swh-web-mirror
+  name: swh-mirror-web
   user: postgres
   password: testpassword
 
@@ -61,6 +61,7 @@ throttling:
       exempted_networks:
         - 0.0.0.0/0
 
+# for now we use the main search service
 search:
   cls: remote
   url: http://swh-search:5010/
