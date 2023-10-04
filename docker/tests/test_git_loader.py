@@ -7,11 +7,13 @@ from urllib.parse import quote_plus
 
 from dulwich import porcelain
 from dulwich.repo import MemoryRepo
+from swh.core.utils import grouper
 
 from .conftest import apiget
 
 
 def test_git_loader(scheduler_host, origins):
+    # check the loaded repos from origins are OK, and nothing is missing
     for origin_type, url in origins:
         assert origin_type == "git"
         print(f"Retrieve references available at {url}")
@@ -43,7 +45,9 @@ def test_git_loader(scheduler_host, origins):
         # check every fetched branch is present in the snapshot
         for branch_name, rev in gitrefs.items():
             # for tags, only check for final revision id
-            if branch_name.startswith(b"refs/tags/") and not branch_name.endswith(b"^{}"):
+            if branch_name.startswith(b"refs/tags/") and not branch_name.endswith(
+                b"^{}"
+            ):
                 continue
             rev_desc = apiget(f"revision/{rev.decode()}")
             assert rev_desc["type"] == "git"
@@ -72,15 +76,19 @@ def test_git_loader(scheduler_host, origins):
             assert tag_desc["target_type"] == "release"
             assert tag_desc["target"] == release_id
 
-        print("Check every git object stored in the repository has been loaded")
-        for sha1 in repo.object_store:
-            obj = repo.get_object(sha1)
-            sha1_str = sha1.decode()
-            if obj.type_name == b"blob":
-                apiget(f"content/sha1_git:{sha1_str}")
-            elif obj.type_name == b"commit":
-                apiget(f"revision/{sha1_str}")
-            elif obj.type_name == b"tree":
-                apiget(f"directory/{sha1_str}")
-            elif obj.type_name == b"tag":
-                apiget(f"release/{sha1_str}")
+        print("Check every git object is known by the archive")
+        for batch in grouper(repo.object_store, 1000):
+            swhids = []
+            for sha1 in batch:
+                obj = repo.get_object(sha1)
+                sha1_str = sha1.decode()
+                if obj.type_name == b"blob":
+                    swhids.append(f"swh:1:cnt:{sha1_str}")
+                elif obj.type_name == b"commit":
+                    swhids.append(f"swh:1:rev:{sha1_str}")
+                elif obj.type_name == b"tree":
+                    swhids.append(f"swh:1:dir:{sha1_str}")
+                elif obj.type_name == b"tag":
+                    swhids.append(f"swh:1:rel:{sha1_str}")
+            known = apiget("known/", verb="post", json=swhids)
+            assert all(v["known"] for k, v in known.items())
