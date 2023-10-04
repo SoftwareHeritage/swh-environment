@@ -21,7 +21,7 @@ KAFKA_REST_API = "http://127.0.0.1:5080/kafka/v3/clusters"
 def origin_urls():
     return [
         ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-core.git"),
-        ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-storage.git"),
+        ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-model.git"),
         ("hg", "https://hg.sr.ht/~douardda/pygpibtoolkit"),
     ]
 
