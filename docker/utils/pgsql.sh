@@ -28,7 +28,7 @@ EOF
 
   fi
   if [[ -n $PGCFG_0 ]]; then
-	# more generic setup allowing to declare several db access
+    # more generic setup allowing to declare several db access
     # Note that the last one will be considered as the "main" one, i.e.
     # used for init/upgrade purpose;
     : > ~/.pgpass
@@ -124,7 +124,7 @@ swh_setup_db() {
 swh_setup_dbreplica() {
   echo "This is a replica DB, check for subscription configuration"
   has_publication=$(\
-	psql service=${REPLICA_SRC} \
+    psql service=${REPLICA_SRC} \
          --quiet --no-psqlrc --no-align --tuples-only -v ON_ERROR_STOP=1 \
          -c "select count(*) from pg_publication where pubname='softwareheritage';" \
   )
@@ -149,7 +149,7 @@ for file in files("swh.storage"):
     psql service=${NAME} \
          --quiet --no-psqlrc --no-align --tuples-only -v ON_ERROR_STOP=1 \
          -c "select count(*) from pg_subscription where subname='softwareheritage_replica';" \
-				  )
+                  )
 
   has_publication=$(\
     psql service=${REPLICA_SRC} \
@@ -161,10 +161,10 @@ for file in files("swh.storage"):
       echo "Subscription found on replica database"
   else
       echo "Adding subscription to replica database"
-	  if [ $has_publication -ge 1 ]; then
-		  psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage;"
-	  else
-		  psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage WITH (create_slot=false);"
-	  fi
+      if [ $has_publication -ge 1 ]; then
+          psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage;"
+      else
+          psql service=${NAME} -c "CREATE SUBSCRIPTION softwareheritage_replica CONNECTION '${REPLICA_SRC_DSN}' PUBLICATION softwareheritage WITH (create_slot=false);"
+      fi
   fi
 }

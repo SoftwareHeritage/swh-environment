@@ -27,10 +27,10 @@ case "$1" in
         ;;
 
     "rpc")
-		shift
+        shift
         # ensure the pathslicing root dir for the cache exists
         mkdir -p /srv/softwareheritage/vault
-		swh_setup_db vault
-		swh_start_rpc vault
-		;;
+        swh_setup_db vault
+        swh_start_rpc vault
+        ;;
 esac

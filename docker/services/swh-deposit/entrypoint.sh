@@ -11,12 +11,12 @@ setup_pgsql
 source /srv/softwareheritage/utils/swhutils.sh
 
 if [ "$1" = 'shell' ] ; then
-	shift
-	if (( $# == 0)); then
-		exec bash -i
-	else
-		"$@"
-	fi
+    shift
+    if (( $# == 0)); then
+        exec bash -i
+    else
+        "$@"
+    fi
 else
 
     if [ ! -z "$MEMCACHED" ]; then
@@ -36,5 +36,5 @@ else
                     --provider-url https://softwareheritage.org \
                     --domain softwareheritage.org
 
-	swh_start_django
+    swh_start_django
 fi

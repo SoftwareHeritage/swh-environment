@@ -13,18 +13,18 @@ case "$1" in
       ;;
 
     "rpc")
-	  shift
+      shift
       echo "Starting the swh-counters API server"
       wait-for-it redis:6379 -s --timeout=0
-	  swh_start_rpc counters
-	  ;;
+      swh_start_rpc counters
+      ;;
 
-	"journal-client")
-	  shift
-	  echo "Starting swh-counters-journal client"
+    "journal-client")
+      shift
+      echo "Starting swh-counters-journal client"
       exec wait-for-it kafka:9092 -s --timeout=0 -- \
            swh --log-level DEBUG counters \
-		   --config-file $SWH_CONFIG_FILENAME \
-		   journal-client
+           --config-file $SWH_CONFIG_FILENAME \
+           journal-client
       ;;
 esac

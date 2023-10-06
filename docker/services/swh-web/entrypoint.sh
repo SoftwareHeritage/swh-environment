@@ -39,6 +39,5 @@ case "$1" in
             cat $create_user_script | python3 -m swh.web.manage shell
         done
 
-		swh_start_django
-		echo "Arghh"
+        swh_start_django
 esac

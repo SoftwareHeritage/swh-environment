@@ -14,40 +14,40 @@ case "$1" in
       ;;
 
     "rpc")
-	  shift
+      shift
       GUNICORN_WORKERS=${GUNICORN_WORKERS:-2}
       echo Extracting swh-search backend from config file
       backend=$(yq -r .search.cls $SWH_CONFIG_FILENAME)
 
-	  case "$backend" in
-		  "elasticsearch")
-			  wait-for-it elasticsearch:9200 -s --timeout=0
-			  echo "Waiting for ElasticSearch cluster to be up"
-			  cat << EOF | python3
+      case "$backend" in
+          "elasticsearch")
+              wait-for-it elasticsearch:9200 -s --timeout=0
+              echo "Waiting for ElasticSearch cluster to be up"
+              cat << EOF | python3
 import elasticsearch
 es = elasticsearch.Elasticsearch(['elasticsearch:9200'])
 es.cluster.health(wait_for_status='yellow')
 EOF
-			  echo "ElasticSearch cluster is up"
-			  ;;
+              echo "ElasticSearch cluster is up"
+              ;;
 
-		  "memory")
-			  # use a single worker when using a memory backend for swh-search
-			  # as each worker has its own search instance otherwise
-			  GUNICORN_WORKERS=1
-			  ;;
-	  esac
+          "memory")
+              # use a single worker when using a memory backend for swh-search
+              # as each worker has its own search instance otherwise
+              GUNICORN_WORKERS=1
+              ;;
+      esac
 
-	  swh_start_rpc search
+      swh_start_rpc search
       ;;
 
-	"journal-client")
+    "journal-client")
       echo "Starting swh-search-journal client"
       exec wait-for-it -s kafka:9092 -s --timeout=0 -- \
           wait-for-it -s swh-search:5010 -s --timeout=0 -- \
           swh --log-level DEBUG search \
-		      --config-file $SWH_CONFIG_FILENAME \
-		      journal-client objects
+              --config-file $SWH_CONFIG_FILENAME \
+              journal-client objects
       ;;
 
 esac

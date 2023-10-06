@@ -7,17 +7,17 @@ setup_pip
 
 case "$1" in
     "shell")
-		shift
-		echo "Running command $@"
+        shift
+        echo "Running command $@"
         exec bash -i "$@"
         ;;
 
-	"swh")
-		shift
+    "swh")
+        shift
         wait-for-it swh-storage:5002 -s --timeout=0
         echo "Running swh command $@"
         exec swh $@
-		;;
+        ;;
 
     "worker")
         echo Register task types in scheduler database
@@ -27,8 +27,8 @@ case "$1" in
         echo Waiting for RabbitMQ to start
         wait-for-it amqp:5672 -s --timeout=0
 
-		# make sure workers (esp. loaders) do not try to ingest content while
-		# the storage is actually not ready yet.
+        # make sure workers (esp. loaders) do not try to ingest content while
+        # the storage is actually not ready yet.
         echo Waiting for the storage to start
         wait-for-it swh-storage:5002 -s --timeout=0
 

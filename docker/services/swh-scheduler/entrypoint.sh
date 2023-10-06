@@ -32,12 +32,12 @@ case "$1" in
         ;;
 
     "rpc")
-		swh_setup_db scheduler
-		swh_start_rpc scheduler
-		;;
+        swh_setup_db scheduler
+        swh_start_rpc scheduler
+        ;;
 
-	"worker")
-		shift
+    "worker")
+        shift
         wait-for-it swh-scheduler:5008 -s --timeout=0
         wait-for-it amqp:5672 -s --timeout=0
 
@@ -55,11 +55,11 @@ assert any(worker_name.startswith('loader@')
         exec swh --log-level ${LOG_LEVEL:-INFO} scheduler -C $SWH_CONFIG_FILENAME $@
         ;;
 
-	"journal-client")
+    "journal-client")
       echo "Starting swh-scheduler-journal client"
       exec wait-for-it kafka:9092 -s --timeout=0 -- \
            swh --log-level ${LOG_LEVEL:-INFO} \
-		   scheduler --config-file $SWH_CONFIG_FILENAME \
-		   journal-client
-	  ;;
+           scheduler --config-file $SWH_CONFIG_FILENAME \
+           journal-client
+      ;;
 esac

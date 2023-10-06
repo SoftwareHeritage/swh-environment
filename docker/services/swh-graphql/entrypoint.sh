@@ -13,8 +13,8 @@ case "$1" in
       ;;
     "rpc")
 
-		echo Starting the swh-graphql API server
-		exec gunicorn --bind 0.0.0.0:${RPC_PORT:-5000} \
+        echo Starting the swh-graphql API server
+        exec gunicorn --bind 0.0.0.0:${RPC_PORT:-5000} \
          --reload \
          --log-level ${LOG_LEVEL:-INFO} \
          --access-logfile /dev/stdout \
