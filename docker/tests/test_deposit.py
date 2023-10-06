@@ -38,7 +38,8 @@ def compose_files() -> List[str]:
     return ["docker-compose.yml", "docker-compose.deposit.yml"]
 
 
-# scope='session' so we use the same container for all the tests;
+# scope='module' so we use the same container for all the tests in a given test
+# file
 @pytest.fixture(scope="module")
 def deposit_host(request, docker_compose):
     # run a container in which test commands are executed

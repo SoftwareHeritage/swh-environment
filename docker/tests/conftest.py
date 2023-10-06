@@ -28,6 +28,8 @@ def docker_host():
 
 @pytest.fixture(scope="module")
 def compose_files() -> List[str]:
+    # this fixture is meant to be overloaded in test modules to include the
+    # required compose files for the test (see test_deposit.py for example)
     return ["docker-compose.yml"]
 
 
@@ -108,6 +110,10 @@ def scheduler_host(request, docker_compose):
 
 @pytest.fixture(scope="module")
 def origin_urls() -> List[Tuple[str, str]]:
+    # This fixture is meant to be overloaded in test modules to initialize the
+    # main storage with the content from the loading of the origins listed
+    # here. By default we only load one git origin (to try to keep execution
+    # time under control), but some tests may require more than that.
     return [("git", "https://gitlab.softwareheritage.org/swh/devel/swh-core.git")]
 
 
