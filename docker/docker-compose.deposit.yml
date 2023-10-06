@@ -15,6 +15,7 @@ services:
     ports:
       - 5006:5006
     depends_on:
+      - swh-deposit-db
       - swh-scheduler
       - prometheus-statsd-exporter
     env_file:
