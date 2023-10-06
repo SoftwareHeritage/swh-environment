@@ -142,6 +142,7 @@ services:
     command: rpc
     depends_on:
       - swh-replica-scheduler-db
+      - amqp-replica
       - prometheus-statsd-exporter
     volumes:
       - "./conf/replica/scheduler.yml:/scheduler.yml:ro"
@@ -179,6 +180,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       SWH_WORKER_INSTANCE: scheduler
+      BROKER_URL: amqp://amqp-replica/
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10

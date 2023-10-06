@@ -202,7 +202,7 @@ services:
       test: curl -f http://localhost:5005 || exit 1
     depends_on:
       - swh-mirror-vault-db
-      - swh-objstorage
+      - swh-mirror-objstorage
       - swh-mirror-storage
       - swh-mirror-scheduler
       - prometheus-statsd-exporter
@@ -254,6 +254,7 @@ services:
       test: curl -f http://localhost:5008 || exit 1
     depends_on:
       - swh-mirror-scheduler-db
+      - amqp-mirror
       - prometheus-statsd-exporter
     volumes:
       - "./conf/mirror/scheduler.yml:/scheduler.yml:ro"
@@ -291,6 +292,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       SWH_WORKER_INSTANCE: scheduler
+      BROKER_URL: amqp://amqp-mirror/
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10
