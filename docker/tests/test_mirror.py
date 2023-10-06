@@ -16,8 +16,8 @@ from .conftest import apiget as apiget_
 from .conftest import getdirectory as getdirectory_
 from .test_vault import test_vault_directory, test_vault_git_bare  # noqa
 
-MIRROR_API = "http://127.0.0.1:5081/api/1/"
-KAFKA_REST_API = "http://127.0.0.1:5080/kafka/v3/clusters"
+MIRROR_API = "http://localhost:5081/api/1/"
+KAFKA_REST_API = "http://localhost:5080/kafka/v3/clusters"
 
 
 @pytest.fixture(scope="module")
@@ -124,7 +124,7 @@ def test_mirror_replication(origins, mirror, api_url):
             return {
                 k: filter_obj(v)
                 for (k, v) in objd.items()
-                if not (isinstance(v, str) and v.startswith("http://127.0.0.1:"))
+                if not (isinstance(v, str) and v.startswith("http://localhost:"))
             }
         elif isinstance(objd, list):
             return [filter_obj(e) for e in objd]

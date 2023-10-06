@@ -14,7 +14,7 @@ import pytest
 import requests
 import testinfra
 
-APIURL = "http://127.0.0.1:5080/api/1/"
+APIURL = "http://localhost:5080/api/1/"
 
 
 # wait-for-it timeout
