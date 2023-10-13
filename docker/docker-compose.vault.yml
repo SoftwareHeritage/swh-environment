@@ -51,6 +51,7 @@ services:
     depends_on:
       - swh-vault
       - swh-storage
+      - nginx
     volumes:
       - "./conf/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"

@@ -257,6 +257,7 @@ services:
       - swh-storage-db
       - swh-objstorage
       - kafka
+      - nginx
       - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env
@@ -436,6 +437,7 @@ services:
       - swh-storage
       - swh-scheduler
       - amqp
+      - nginx
       - prometheus-statsd-exporter
     volumes:
       - "./conf/loader.yml:/loader.yml:ro"
