@@ -43,3 +43,18 @@ swh_start_django() {
            'django.core.wsgi:get_wsgi_application()'
   fi
 }
+
+wait-for-topic() {
+    KAFKA=$1
+    topic=$2
+    cluster=$(http --ignore-stdin GET "${KAFKA}/v3/clusters/" | jq -r ".data[0].cluster_id")
+    while :
+    do
+        if http --ignore-stdin --check-status -qq GET "${KAFKA}/v3/clusters/${cluster}/topics/${topic}" &> /dev/null ;
+        then
+            echo "Topic ${topic} found, exiting"
+            break
+        fi
+        sleep 1
+    done
+}

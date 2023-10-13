@@ -13,4 +13,3 @@ journal:
   prefix: swh.journal.indexed
   object_types:
     - origin_intrinsic_metadata
-  create_topics: true

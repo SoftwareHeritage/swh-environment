@@ -13,8 +13,15 @@ services:
       KAFKA_NUM_PARTITIONS: 16
       KAFKA_LOG_CLEANUP_POLICY: compact
 
+  kafka-create-topics:
+    # this is a short-lived service, it creates kafka topics and exits
+    image: swh/stack
     depends_on:
       - kafka
+    restart: on-failure
+    command: wait-for-it kafka:9092 -s --timeout=0 -- python /create_topics.py
+    volumes:
+      - "./utils/create_topics.py:/create_topics.py:ro"
 
   prometheus:
     image: prom/prometheus

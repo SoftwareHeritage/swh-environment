@@ -16,4 +16,3 @@ journal:
     - revision
     - skipped_content
     - snapshot
-  create_topics: true

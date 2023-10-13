@@ -43,8 +43,10 @@ EOF
 
     "journal-client")
       echo "Starting swh-search-journal client"
-	  wait-for-it -s swh-search:5010 -s --timeout=0
+      wait-for-it -s swh-search:5010 -s --timeout=0
       wait-for-it -s kafka:8082 -s --timeout=0
+      wait-for-topic http://kafka:8082 swh.journal.objects.origin_visit_status
+      wait-for-topic http://kafka:8082 swh.journal.indexed.origin_intrinsic_metadata
 
       exec swh --log-level DEBUG search \
            --config-file $SWH_CONFIG_FILENAME \

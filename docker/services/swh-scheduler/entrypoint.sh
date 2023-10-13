@@ -58,6 +58,7 @@ assert any(worker_name.startswith('loader@')
     "journal-client")
       echo "Starting swh-scheduler-journal client"
       wait-for-it kafka:8082 -s --timeout=0
+      wait-for-topic http://kafka:8082 swh.journal.objects.origin_visit_status
 
       exec swh --log-level ${LOG_LEVEL:-INFO} \
            scheduler --config-file $SWH_CONFIG_FILENAME \
