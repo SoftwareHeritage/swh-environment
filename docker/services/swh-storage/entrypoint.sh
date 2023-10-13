@@ -46,20 +46,19 @@ case "$1" in
 
         cmd=$1
         shift
+        wait-for-it kafka:9092 -s --timeout=0
+		wait-for-it kafka:8082 -s --timeout=0
         case "$cmd" in
             "rpc")
                 swh_start_rpc storage
                 ;;
             "replayer")
                 echo Starting the Kafka storage replayer
-                wait-for-it kafka:9092 -s --timeout=0
-                wait-for-it kafka-rest:8082 -s --timeout=0
                 exec swh --log-level ${LOG_LEVEL:-WARNING} storage replay $@
                 ;;
             "backfiller")
                 echo Starting the Kafka storage backfiller
-                exec wait-for-it kafka:9092 -s --timeout=0 -- \
-                     swh --log-level ${LOG_LEVEL:-WARNING} storage backfill $@
+                exec swh --log-level ${LOG_LEVEL:-WARNING} storage backfill $@
                 ;;
             *)
                 echo Unknown command ${cmd}

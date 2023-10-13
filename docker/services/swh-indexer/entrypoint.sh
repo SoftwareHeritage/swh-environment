@@ -39,10 +39,11 @@ case "$1" in
     "journal-client")
         echo "Starting swh-indexer-journal client"
         wait-for-it swh-idx-storage:5007 -s --timeout=0
-        wait-for-it kafka:9092 -s --timeout=0 -- \
-                    swh --log-level ${LOG_LEVEL:-INFO} \
-                        indexer --config-file $SWH_CONFIG_FILENAME \
-                        journal-client
+        wait-for-it kafka:8082 -s --timeout=0
+
+        exec swh --log-level ${LOG_LEVEL:-INFO} \
+             indexer --config-file $SWH_CONFIG_FILENAME \
+             journal-client
         ;;
 
 esac

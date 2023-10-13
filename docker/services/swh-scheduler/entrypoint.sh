@@ -57,8 +57,9 @@ assert any(worker_name.startswith('loader@')
 
     "journal-client")
       echo "Starting swh-scheduler-journal client"
-      exec wait-for-it kafka:9092 -s --timeout=0 -- \
-           swh --log-level ${LOG_LEVEL:-INFO} \
+      wait-for-it kafka:8082 -s --timeout=0
+
+      exec swh --log-level ${LOG_LEVEL:-INFO} \
            scheduler --config-file $SWH_CONFIG_FILENAME \
            journal-client
       ;;

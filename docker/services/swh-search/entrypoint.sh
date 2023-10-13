@@ -43,11 +43,12 @@ EOF
 
     "journal-client")
       echo "Starting swh-search-journal client"
-      exec wait-for-it -s kafka:9092 -s --timeout=0 -- \
-          wait-for-it -s swh-search:5010 -s --timeout=0 -- \
-          swh --log-level DEBUG search \
-              --config-file $SWH_CONFIG_FILENAME \
-              journal-client objects
+	  wait-for-it -s swh-search:5010 -s --timeout=0
+      wait-for-it -s kafka:8082 -s --timeout=0
+
+      exec swh --log-level DEBUG search \
+           --config-file $SWH_CONFIG_FILENAME \
+           journal-client objects
       ;;
 
 esac

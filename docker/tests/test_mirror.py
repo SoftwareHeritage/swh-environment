@@ -60,7 +60,7 @@ def mirror(docker_host, compose_cmd, origins):
     assert docker_host.check_output(f"{ps} --status running swh-mirror-storage")
     print("OK")
     print("Kafka REST proxy...", end=" ", flush=True)
-    assert docker_host.check_output(f"{ps} --status running kafka-rest")
+    assert docker_host.check_output(f"{ps} --status running kafka")
     print("OK")
 
     expected_urls = set(url for _, url in origins)
