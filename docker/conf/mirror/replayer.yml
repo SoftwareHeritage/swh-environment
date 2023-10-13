@@ -9,3 +9,15 @@ journal_client:
   prefix: swh.journal.objects
   group_id: swh.storage.mirror.replayer
   privileged: true
+  object_types:
+    - content
+    - directory
+    - extid
+    - origin
+    - origin_visit
+    - origin_visit_status
+    - raw_extrinsic_metadata
+    - release
+    - revision
+    - skipped_content
+    - snapshot
