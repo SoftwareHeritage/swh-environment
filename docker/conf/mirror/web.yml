@@ -3,9 +3,9 @@ storage:
   url: http://swh-mirror-storage:5002/
   timeout: 1
 
-indexer_storage:
-  cls: remote
-  url: http://swh-storage-idx:5007/
+#indexer_storage:
+#  cls: remote
+#  url: http://swh-storage-idx:5007/
 
 scheduler:
   cls: remote
