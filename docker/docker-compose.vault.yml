@@ -1,9 +1,6 @@
 version: "2.1"
 
 services:
-  mailhog:
-    image: mailhog/mailhog
-
   swh-vault-db:
     image: postgres:16
     environment:
