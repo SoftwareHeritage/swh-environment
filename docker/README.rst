@@ -24,12 +24,75 @@ on how to install Docker on your machine.
 
 .. _Compose: https://docs.docker.com/compose/
 
-Details
--------
 
-This runs the following services on their respectively standard ports,
-all of the following services are configured to communicate with each
-other:
+Service "packs"
+---------------
+
+The Software Heritage stack consists in many services running aong each other
+to implement the full feature set of the SWH platform.
+
+However not all these services are required all the time for someone playing
+with this toy, and launching the stack full blast can be pretty resource heavy
+on the user's machine.
+
+So we divides the services in several "sets" that can be enabled or not. Each
+of these feature sets can be started by using the corresponding compose file,
+in addition to the main one. Provided compose files are:
+
+- `docker-compose.yml`: the main compose file, firing basic (core) SWH services
+  (see below).
+
+- `docker-compose.cassandra.yml`: replace the backend of the main `swh-storage`
+  service by Cassandra (instead of postgresql).
+
+- `docker-compose.deposit.yml`: activate the swh-deposit_ feature set of the
+  SWH stack.
+
+- `docker-compose.graph.yml`: add the swh-graph_ feature.
+
+- `docker-compose.keycloak.yml`: activate the keycloak-based auhentication
+  backend for the web frontend (without it, you only have the django-based
+  authentication mechanism included in swh-web_).
+
+- `docker-compose.mirror.yml`: deploy a complete SWH mirror stack in a
+  dedicated environment: you can browse the mirror using the URL
+  http://localhost:5081 (by default).
+
+- `docker-compose.replica.yml`: deploy a partial SWH stack using a postgresal
+  storage filled using the `pglogical`_ replication mechanism. You can browse
+  the mirror using the URL http://localhost:5082 (by default).
+
+- `docker-compose.scrubber.yml`: deploy swh-scrubber_ services.
+
+- `docker-compose.search.yml`: replace the in-memory search engine backend for
+  the SWH archive by and ElasticSearch based one.
+
+- `docker-compose.vault.yml`: activate the swh-vault feature of the SWH stack.
+
+.. _`pglogical`: https://github.com/2ndQuadrant/pglogical
+.. _swh-deposit: https://docs.softwareheritage.org/devel/swh-deposit/index.html
+.. _swh-graph: https://docs.softwareheritage.org/devel/swh-graph/index.html
+.. _swh-web: https://docs.softwareheritage.org/devel/swh-web/index.html
+.. _swh-scrubber: https://docs.softwareheritage.org/devel/swh-scrubber/index.html
+
+
+Activating one (or several) of these feature "packs" is a matter of either use
+the appropriate `--file` options of the `docker compose` command, or define the
+`COMPOSE_FILE` environment variable.
+
+For example:
+
+   ~/swh-environment/docker$ export COMPOSE_FILE=docker-compose.yml:docker-compose.search.yml:docker-compose.mirror.yml
+   ~/swh-environment/docker$ docker compose up -d
+   [...]
+
+
+Details of the main service set
+-------------------------------
+
+The main `docker-compose.yml` file defines the following services on their
+respectively standard ports, all of the following services are configured to
+communicate with each other:
 
 -  swh-storage-db: a ``softwareheritage`` instance db that stores the
    Merkle DAG,
@@ -57,13 +120,25 @@ That means you can start doing the ingestion using those services using
 the same setup described in the getting-started starting directly at
 https://docs.softwareheritage.org/devel/getting-started.html#step-4-ingest-repositories
 
+Note that in addition to these core SWH services, the main compose file also
+defines all the required backend services:
+
+- nginx
+- rabbitmq
+- kafka
+- prometheus (with several helper tools)
+- grafana
+- mailhog
+- redis
+- memcache
+
+
 Exposed Ports
 ^^^^^^^^^^^^^
 
 Several services have their listening ports exposed on the host:
 
 -  amqp: 5072
--  kafka: 5092
 -  nginx: 5080
 
 And for SWH services:
@@ -305,7 +380,7 @@ from pypi. To do this you must write a
    services:
      swh-objstorage:
        volumes:
-         - "$HOME/swh-environment/swh-objstorage:/src/swh-objstorage"
+         - "$HOME/swh-environment/swh-objstorage:/src/swh-objstorage:ro"
 
 The file named ``docker-compose.override.yml`` will automatically be
 loaded by Docker Compose.
@@ -316,6 +391,7 @@ entrypoint will ensure every swh-\* package found in ``/src/`` is
 installed (using ``pip install -e`` so you can easily hack your code).
 If the application you play with has autoreload support, there is no
 need to restart the impacted container.)
+
 
 Using locally installed swh tools with docker
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
