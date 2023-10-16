@@ -8,6 +8,7 @@ storage:
         directory: 1000
         revision: 1000
     - cls: filter
+    - cls: retry
     - cls: remote
       url: http://nginx:5080/storage
 
