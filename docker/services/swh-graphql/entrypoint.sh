@@ -15,6 +15,7 @@ case "$1" in
 
         echo Starting the swh-graphql API server
         exec gunicorn --bind 0.0.0.0:${RPC_PORT:-5000} \
+         --worker-class uvicorn.workers.UvicornWorker \
          --reload \
          --log-level ${LOG_LEVEL:-INFO} \
          --access-logfile /dev/stdout \
@@ -22,7 +23,7 @@ case "$1" in
          --threads ${GUNICORN_THREADS:-2} \
          --workers ${GUNICORN_WORKERS:-2} \
          --timeout ${GUNICORN_TIMEOUT:-3600} \
-         --config 'python:swh.core.api.gunicorn_config' \
+         --config 'python:swh.graphql.gunicorn_config' \
          "swh.graphql.server:make_app_from_configfile()"
       ;;
 esac
