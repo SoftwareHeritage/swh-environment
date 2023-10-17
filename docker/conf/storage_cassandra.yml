@@ -5,5 +5,11 @@ storage:
   keyspace: swh
   objstorage:
     cls: remote
-    url: http://nginx:5080/objstorage
-
+    url: http://swh-objstorage:5003/
+  journal_writer:
+    cls: kafka
+    brokers:
+      - kafka
+    prefix: swh.journal.objects
+    client_id: swh.storage.master
+    anonymize: true

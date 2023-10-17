@@ -49,10 +49,12 @@ services:
       - "./conf/storage_cassandra.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
     depends_on:
-      - swh-storage-db
+      # beware swh-storage-db will remains a dependency; since compose does not
+      # support !reset with replacement value, we cannot easily remove this
+      # dependency from here...
       - cassandra-seed
       - swh-objstorage
-      - kafka
+      - kafka-create-topics
       - prometheus-statsd-exporter
       - nginx
     environment:
