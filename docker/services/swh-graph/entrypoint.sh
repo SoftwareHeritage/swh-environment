@@ -10,7 +10,7 @@ DATADIR=/srv/softwareheritage/graph
 update_graph() {
   mkdir -p $DATADIR/
   rm -rf $DATADIR/*  # cleanup results from previous runs
-  mkdir $DATADIR/g/
+  mkdir -p $DATADIR/g/edges/
   echo "Exporting edges and nodes"
   swh dataset -C $SWH_CONFIG_FILENAME graph export $DATADIR/g --processes=8 --formats=orc
   echo "Sorting edges and nodes"

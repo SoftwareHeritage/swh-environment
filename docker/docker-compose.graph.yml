@@ -17,5 +17,8 @@ services:
     volumes:
       - "./conf/graph.yml:/graph.yml:ro"
       - "./services/swh-graph/entrypoint.sh:/entrypoint.sh:ro"
-      - "../swh-graph:/src/swh-graph"
-      - "../swh-dataset:/src/swh-dataset"
+      - swh-graph-data:/srv/softwareheritage/graph
+
+
+volumes:
+  swh-graph-data:
