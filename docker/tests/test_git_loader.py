@@ -7,9 +7,8 @@ from urllib.parse import quote_plus
 
 from dulwich import porcelain
 from dulwich.repo import MemoryRepo
-from swh.core.utils import grouper
 
-from .conftest import apiget
+from .utils import api_get, grouper
 
 
 def test_git_loader(scheduler_host, origins):
@@ -23,19 +22,19 @@ def test_git_loader(scheduler_host, origins):
         print(f"Look for origin {url}")
         # use quote_plus to prevent urljoin from messing with the 'http://' part of
         # the url
-        origin = apiget(f"origin/{quote_plus(url)}/get")
+        origin = api_get(f"origin/{quote_plus(url)}/get")
         assert origin["url"] == url
 
-        visit = apiget(f"origin/{quote_plus(url)}/visit/latest")
+        visit = api_get(f"origin/{quote_plus(url)}/visit/latest")
         assert visit["status"] == "full"
 
         print("Check every identified git ref has been loaded")
-        snapshot = apiget(f'snapshot/{visit["snapshot"]}')
+        snapshot = api_get(f'snapshot/{visit["snapshot"]}')
 
         branches = snapshot["branches"]
 
         while snapshot["next_branch"] is not None:
-            snapshot = apiget(
+            snapshot = api_get(
                 f'snapshot/{visit["snapshot"]}?branches_from={snapshot["next_branch"]}'
             )
             branches.update(snapshot["branches"])
@@ -49,7 +48,7 @@ def test_git_loader(scheduler_host, origins):
                 b"^{}"
             ):
                 continue
-            rev_desc = apiget(f"revision/{rev.decode()}")
+            rev_desc = api_get(f"revision/{rev.decode()}")
             assert rev_desc["type"] == "git"
 
         tag_revision = {}
@@ -67,7 +66,7 @@ def test_git_loader(scheduler_host, origins):
             # check that every release tag listed in the snapshot is known by the
             # archive and consistent
             release_id = tag_release[tag]
-            release = apiget(f"release/{release_id}")
+            release = api_get(f"release/{release_id}")
             assert release["id"] == release_id
             assert release["target_type"] == "revision"
             assert release["target"] == revision
@@ -90,5 +89,5 @@ def test_git_loader(scheduler_host, origins):
                     swhids.append(f"swh:1:dir:{sha1_str}")
                 elif obj.type_name == b"tag":
                     swhids.append(f"swh:1:rel:{sha1_str}")
-            known = apiget("known/", verb="post", json=swhids)
+            known = api_get("known/", verb="post", json=swhids)
             assert all(v["known"] for k, v in known.items())

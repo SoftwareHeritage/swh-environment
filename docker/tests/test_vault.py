@@ -13,9 +13,9 @@ from urllib.parse import quote_plus
 
 import pytest
 
-from .conftest import apiget as apiget_
-from .conftest import getdirectory as getdirectory_
-from .conftest import pollapi as pollapi_
+from .utils import api_get as api_get_
+from .utils import api_get_directory as api_get_directory_
+from .utils import api_poll as api_poll_
 
 
 @pytest.fixture(scope="module")
@@ -26,13 +26,13 @@ def compose_files() -> List[str]:
 def test_vault_directory(origins, api_url):
     # retrieve the root directory of the master branch of the ingested git
     # repository (by the git_origin fixture)
-    apiget = partial(apiget_, baseurl=api_url)
-    pollapi = partial(pollapi_, baseurl=api_url)
-    getdirectory = partial(getdirectory_, apiurl=api_url)
+    api_get = partial(api_get_, baseurl=api_url)
+    api_poll = partial(api_poll_, baseurl=api_url)
+    api_get_directory = partial(api_get_directory_, apiurl=api_url)
 
     for _, origin_url in origins:
-        visit = apiget(f"origin/{quote_plus(origin_url)}/visit/latest")
-        snapshot = apiget(f'snapshot/{visit["snapshot"]}')
+        visit = api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
+        snapshot = api_get(f'snapshot/{visit["snapshot"]}')
 
         assert snapshot["branches"]["HEAD"]["target_type"] == "alias"
         tgt_name = snapshot["branches"]["HEAD"]["target"]
@@ -40,20 +40,20 @@ def test_vault_directory(origins, api_url):
         assert target["target_type"] == "revision"
         rev_id = target["target"]
 
-        revision = apiget(f"revision/{rev_id}")
+        revision = api_get(f"revision/{rev_id}")
         dir_id = revision["directory"]
         swhid = f"swh:1:dir:{dir_id}"
 
         # now cook it
-        cook = apiget(f"vault/flat/{swhid}/", "POST")
+        cook = api_get(f"vault/flat/{swhid}/", "POST")
         assert cook["swhid"] == swhid
         assert cook["fetch_url"].endswith(f"vault/flat/{swhid}/raw/")
 
         # while it's cooking, get the directory tree from the archive
-        directory = getdirectory(dir_id)
+        directory = api_get_directory(dir_id)
 
         # retrieve the cooked tar file
-        resp = pollapi(f"vault/flat/{swhid}/raw")
+        resp = api_poll(f"vault/flat/{swhid}/raw")
         tarf = tarfile.open(fileobj=io.BytesIO(resp.content))
 
         # and check the tarfile seems ok wrt. 'directory'
@@ -85,7 +85,7 @@ def test_vault_directory(origins, api_url):
 
         # check that if we ask a second time this directory, it returns the same
         # and does not cook it again
-        recook = apiget(f"vault/flat/{swhid}/", "POST")
+        recook = api_get(f"vault/flat/{swhid}/", "POST")
         assert recook["swhid"] == swhid
         assert recook["id"] == cook["id"]
         assert recook["status"] == "done"  # no need to wait for this to be true
@@ -94,13 +94,13 @@ def test_vault_directory(origins, api_url):
 def test_vault_git_bare(host, origins, api_url, tmp_path, monkeypatch):
     # retrieve the revision of the master branch of the ingested git
     # repository (by the git_origin fixture)
-    apiget = partial(apiget_, baseurl=api_url)
-    pollapi = partial(pollapi_, baseurl=api_url)
-    getdirectory = partial(getdirectory_, apiurl=api_url)
+    api_get = partial(api_get_, baseurl=api_url)
+    api_poll = partial(api_poll_, baseurl=api_url)
+    api_get_directory = partial(api_get_directory_, apiurl=api_url)
     for _, origin_url in origins:
-        visit = apiget(f"origin/{quote_plus(origin_url)}/visit/latest")
+        visit = api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
 
-        snapshot = apiget(f'snapshot/{visit["snapshot"]}')
+        snapshot = api_get(f'snapshot/{visit["snapshot"]}')
         assert snapshot["branches"]["HEAD"]["target_type"] == "alias"
         tgt_name = snapshot["branches"]["HEAD"]["target"]
         target = snapshot["branches"][tgt_name]
@@ -108,19 +108,19 @@ def test_vault_git_bare(host, origins, api_url, tmp_path, monkeypatch):
         rev_id = target["target"]
 
         swhid = f"swh:1:rev:{rev_id}"
-        revision = apiget(f"revision/{rev_id}")
+        revision = api_get(f"revision/{rev_id}")
         dir_id = revision["directory"]
 
         # now cook it
-        cook = apiget(f"vault/git-bare/{swhid}/", "POST")
+        cook = api_get(f"vault/git-bare/{swhid}/", "POST")
         assert cook["swhid"] == swhid
         assert cook["fetch_url"].endswith(f"vault/git-bare/{swhid}/raw/")
 
         # while it's cooking, get the directory tree from the archive
-        directory = getdirectory(dir_id)
+        directory = api_get_directory(dir_id)
 
         # retrieve the cooked tar file
-        resp = pollapi(f"vault/git-bare/{swhid}/raw")
+        resp = api_poll(f"vault/git-bare/{swhid}/raw")
         tarf = tarfile.open(fileobj=io.BytesIO(resp.content))
         assert tarf.getnames()[0] == f"{swhid}.git"
 
@@ -164,7 +164,7 @@ def test_vault_git_bare(host, origins, api_url, tmp_path, monkeypatch):
 
         # check that if we ask a second time this directory, it returns the same
         # and does not cook it again
-        recook = apiget(f"vault/git-bare/{swhid}/", "POST")
+        recook = api_get(f"vault/git-bare/{swhid}/", "POST")
         assert recook["swhid"] == swhid
         assert recook["id"] == cook["id"]
         assert recook["status"] == "done"  # no need to wait for this to be true

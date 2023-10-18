@@ -3,15 +3,12 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from os.path import join
 import re
 import time
-from typing import Generator, List, Mapping, Tuple
-from urllib.parse import urljoin
+from typing import List, Tuple
 from uuid import uuid4 as uuid
 
 import pytest
-import requests
 import testinfra
 
 APIURL = "http://localhost:5080/api/1/"
@@ -77,7 +74,7 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
         containers = docker_host.check_output(f"{compose_cmd} ps -q").replace("\n", " ")
         docker_host.check_output(f"docker kill {containers}")
         # and gently stop the cluster
-        docker_host.check_output(f"{compose_cmd} down -v")
+        docker_host.check_output(f"{compose_cmd} down --volumes --remove-orphans")
         print("OK")
         for _ in range(30):
             if not docker_host.check_output(f"{compose_cmd} ps -q"):
@@ -164,43 +161,3 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
                     f"Loading execution failed, task status is {status}"
                 )
     return origin_urls
-
-
-# Utility functions
-def apiget(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
-    """Query the API at path and return the json result or raise an
-    AssertionError"""
-    assert path[0] != "/", "you probably do not want that..."
-    url = urljoin(baseurl, path)
-    resp = requests.request(verb, url, **kwargs)
-    assert resp.status_code == 200, f"failed to retrieve {url}: {resp.text}"
-    if verb.lower() == "head":
-        return resp
-    else:
-        return resp.json()
-
-
-def pollapi(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
-    """Poll the API at path until it returns an OK result"""
-    url = urljoin(baseurl, path)
-    for _ in range(60):
-        resp = requests.request(verb, url, **kwargs)
-        if resp.ok:
-            break
-        time.sleep(1)
-    else:
-        raise AssertionError(f"Polling {url} failed")
-    return resp
-
-
-def getdirectory(
-    dirid: str, currentpath: str = "", apiurl: str = APIURL
-) -> Generator[Tuple[str, Mapping], None, None]:
-    """Recursively retrieve directory description from the archive"""
-    directory = apiget(f"directory/{dirid}", baseurl=apiurl)
-    for direntry in directory:
-        path = join(currentpath, direntry["name"])
-        if direntry["type"] != "dir":
-            yield (path, direntry)
-        else:
-            yield from getdirectory(direntry["target"], path, apiurl)
