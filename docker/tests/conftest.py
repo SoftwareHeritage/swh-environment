@@ -262,6 +262,11 @@ def api_get(api_url):
 
 
 @pytest.fixture(scope="module")
+def nginx_get(nginx_url):
+    return partial(api_get_func, nginx_url)
+
+
+@pytest.fixture(scope="module")
 def api_poll(api_url):
     return partial(api_poll_func, api_url)
 
