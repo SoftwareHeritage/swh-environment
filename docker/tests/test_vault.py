@@ -147,8 +147,6 @@ def test_vault_git_bare(host, origins, api_url, tmp_path, monkeypatch):
                     if algo not in hashlib.algorithms_available:
                         continue
                     hash = hashlib.new(algo, fdata).hexdigest()
-                    if hash != fdesc["checksums"][algo]:
-                        breakpoint()
                     assert (
                         hash == fdesc["checksums"][algo]
                     ), f"File {fname}: {algo} mismatch"

@@ -82,7 +82,6 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
                 break
             time.sleep(1)
         else:
-            breakpoint()
             assert not docker_host.check_output(
                 f"{compose_cmd} ps -q"
             ), "Failed to shut compose down"
