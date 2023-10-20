@@ -3,7 +3,7 @@ storage:
   url: http://nginx:5080/storage
 vault:
   cls: remote
-  url: http://swh-vault:5005/
+  url: http://nginx:5080/vault
 celery:
   broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp//

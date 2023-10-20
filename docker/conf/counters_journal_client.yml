@@ -1,6 +1,6 @@
 counters:
   cls: remote
-  url: http://swh-counters:5011/
+  url: http://nginx:5080/counters
 journal:
   brokers:
     - kafka

@@ -5,6 +5,6 @@ storage:
     cls: filtered
     storage_conf:
       cls: remote
-      url: http://swh-mirror-objstorage:5003/
+      url: http://nginx-mirror/objstorage
     filters_conf:
       - type: readonly

@@ -1,27 +1,27 @@
 storage:
   cls: remote
-  url: http://swh-storage:5002/
+  url: http://nginx:5080/storage
   timeout: 1
 
 objstorage:
   cls: remote
-  url: http://swh-objstorage:5003/
+  url: http://nginx:5080/objstorage
 
 indexer_storage:
   cls: remote
-  url: http://swh-idx-storage:5007/
+  url: http://nginx:5080/indexer-storage
 
 scheduler:
   cls: remote
-  url: http://swh-scheduler:5008/
+  url: http://nginx:5080/scheduler
 
 vault:
   cls: remote
   args:
-    url: http://swh-vault:5005/
+    url: http://nginx:5080/vault
 
 deposit:
-  private_api_url: http://swh-deposit:5006/1/private/
+  private_api_url: http://nginx:5080/deposit/1/private/
   private_api_user: swhworker
   private_api_password: ""
 
@@ -62,12 +62,12 @@ throttling:
 
 search:
   cls: remote
-  url: http://swh-search:5010/
+  url: http://nginx:5080/search
 
 search_config:
   metadata_backend: swh-search
 
 keycloak:
-  server_url: http://keycloak:8080/keycloak/auth/
+  server_url: http://nginx:5080/keycloak/auth/
   realm_name: SoftwareHeritage
 instance_name: archive-docker.softwareheritage.org

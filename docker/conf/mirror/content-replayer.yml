@@ -1,10 +1,10 @@
 objstorage:
   cls: remote
-  url: http://swh-objstorage:5003
+  url: http://nginx:5080/objstorage
 
 objstorage_dst:
   cls: remote
-  url: http://swh-mirror-objstorage:5003
+  url: http://nginx-mirror/objstorage
 
 journal_client:
   cls: kafka

@@ -1,9 +1,9 @@
 storage:
   cls: remote
-  url: http://swh-replica-storage:5002/
+  url: http://nginx-replica/objstorage
 vault:
   cls: remote
-  url: http://swh-replica-vault:5005/
+  url: http://nginx-replica/vault
 celery:
   broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp-replica//

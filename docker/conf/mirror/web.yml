@@ -1,20 +1,20 @@
 storage:
   cls: remote
-  url: http://swh-mirror-storage:5002/
+  url: http://nginx-mirror/storage
   timeout: 1
 
 #indexer_storage:
 #  cls: remote
-#  url: http://swh-storage-idx:5007/
+#  url: http://nginx:5080/indexer-storage
 
 scheduler:
   cls: remote
-  url: http://swh-mirror-scheduler:5008/
+  url: http://nginx-mirror/scheduler
 
 vault:
   cls: remote
   args:
-    url: http://swh-mirror-vault:5005/
+    url: http://nginx-mirror/vault
 
 allowed_hosts:
   - "*"
@@ -64,7 +64,7 @@ throttling:
 # for now we use the main search service
 search:
   cls: remote
-  url: http://swh-search:5010/
+  url: http://nginx:5080/search
 
 search_config:
   metadata_backend: swh-search

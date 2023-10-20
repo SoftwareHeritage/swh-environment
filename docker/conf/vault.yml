@@ -1,9 +1,9 @@
 storage:
   cls: remote
-  url: http://swh-storage:5002/
+  url: http://nginx:5080/storage
 scheduler:
   cls: remote
-  url: http://swh-scheduler:5008/
+  url: http://nginx:5080/scheduler
 vault:
   cls: postgresql
   db: postgresql:///?service=swh-vault

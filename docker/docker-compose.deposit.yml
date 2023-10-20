@@ -18,6 +18,7 @@ services:
       - swh-deposit-db
       - swh-scheduler
       - prometheus-statsd-exporter
+      - nginx
     env_file:
       - ./env/common_python.env
     environment:
@@ -43,7 +44,7 @@ services:
     environment:
       SWH_WORKER_INSTANCE: loader-deposit
       SWH_CONFIG_FILENAME: /loader-deposit.yml
-      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
+      SWH_SCHEDULER_INSTANCE: http://nginx:5080/scheduler
     entrypoint: /entrypoint.sh
     command: worker
     depends_on:
@@ -52,6 +53,7 @@ services:
       - swh-deposit
       - amqp
       - prometheus-statsd-exporter
+      - nginx
     volumes:
       - "./conf/loader-deposit.yml:/loader-deposit.yml:ro"
       - "./services/swh-worker/entrypoint.sh:/entrypoint.sh:ro"

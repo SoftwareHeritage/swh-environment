@@ -1,10 +1,10 @@
 search:
   cls: remote
-  url: http://swh-search:5010/
+  url: http://nginx:5080/search
 
 storage:
   cls: remote
-  url: http://swh-storage:5002/
+  url: http://nginx:5080/storage
 
 journal:
   brokers:

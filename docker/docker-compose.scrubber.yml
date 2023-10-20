@@ -17,6 +17,7 @@ services:
       - prometheus-statsd-exporter
       - swh-scrubber-db
       - swh-storage
+      - nginx
     env_file:
       - ./env/common_python.env
       - ./env/scrubber.env

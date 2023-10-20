@@ -1,23 +1,23 @@
 storage:
   cls: remote
-  url: http://swh-replica-storage:5002/
+  url: http://nginx-replica/storage
   timeout: 1
 
 indexer_storage:
   cls: remote
-  url: http://swh-idx-storage:5007/
+  url: http://nginx:5080/indexer-storage
 
 scheduler:
   cls: remote
-  url: http://swh-replica-scheduler:5008/
+  url: http://nginx-replica/scheduler
 
 vault:
   cls: remote
   args:
-    url: http://swh-replica-vault:5005/
+    url: http://nginx-replica/vault
 
 deposit:
-  private_api_url: http://swh-deposit:5006/1/private/
+  private_api_url: http://nginx:5080/deposit/1/private/
   private_api_user: swhworker
   private_api_password: ""
 
@@ -68,7 +68,7 @@ throttling:
 
 search:
   cls: remote
-  url: http://swh-search:5010/
+  url: http://nginx:5080/search
 
 search_config:
   metadata_backend: swh-search

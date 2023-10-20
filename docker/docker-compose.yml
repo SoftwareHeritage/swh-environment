@@ -353,6 +353,7 @@ services:
       - swh-search
       - memcache
       - prometheus-statsd-exporter
+      - nginx
     env_file:
       - ./env/common_python.env
     environment:
@@ -372,6 +373,7 @@ services:
     image: swh/stack
     depends_on:
       - swh-web
+      - nginx
     env_file:
       - ./env/common_python.env
     environment:
@@ -398,13 +400,14 @@ services:
     environment:
       SWH_WORKER_INSTANCE: listers
       SWH_CONFIG_FILENAME: /lister.yml
-      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
+      SWH_SCHEDULER_INSTANCE: http://nginx:5080/scheduler
     depends_on:
       - swh-scheduler
       - swh-scheduler-runner
       - amqp
       - swh-lister-maven-nginx
       - prometheus-statsd-exporter
+      - nginx
     entrypoint: /entrypoint.sh
     command: worker
     volumes:
@@ -432,7 +435,7 @@ services:
     environment:
       SWH_WORKER_INSTANCE: loader
       SWH_CONFIG_FILENAME: /loader.yml
-      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
+      SWH_SCHEDULER_INSTANCE: http://nginx:5080/scheduler
     entrypoint: /entrypoint.sh
     command: worker
     depends_on:
@@ -459,7 +462,7 @@ services:
       SWH_CONFIG_FILENAME: /indexer.yml
       CONCURRENCY: 4
       POSTGRES_DB: swh-idx-storage
-      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
+      SWH_SCHEDULER_INSTANCE: http://nginx:5080/scheduler
     entrypoint: /entrypoint.sh
     command: worker
     depends_on:
@@ -468,6 +471,7 @@ services:
       - swh-storage
       - swh-objstorage
       - amqp
+      - nginx
     volumes:
       - "./conf/indexer.yml:/indexer.yml:ro"
       - "./services/swh-indexer/entrypoint.sh:/entrypoint.sh:ro"
@@ -484,7 +488,7 @@ services:
       SWH_CONFIG_FILENAME: /indexer.yml
       CONCURRENCY: 4
       POSTGRES_DB: swh-idx-storage
-      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
+      SWH_SCHEDULER_INSTANCE: http://nginx:5080/scheduler
     entrypoint: /entrypoint.sh
     command: journal-client
     depends_on:
@@ -492,6 +496,7 @@ services:
       - swh-storage
       - swh-idx-storage
       - swh-objstorage
+      - nginx
     volumes:
       - "./conf/indexer.yml:/indexer.yml:ro"
       - "./services/swh-indexer/entrypoint.sh:/entrypoint.sh:ro"
@@ -510,6 +515,7 @@ services:
     depends_on:
       - kafka
       - swh-scheduler
+      - nginx
     volumes:
       - "./conf/scheduler_journal_client.yml:/scheduler.yml:ro"
       - "./services/swh-scheduler/entrypoint.sh:/entrypoint.sh:ro"
@@ -552,6 +558,7 @@ services:
       - redis
       - swh-counters
       - prometheus-statsd-exporter
+      - nginx
     volumes:
       - "./conf/counters_journal_client.yml:/counters_journal_client.yml:ro"
       - "./services/swh-counters/entrypoint.sh:/entrypoint.sh:ro"
@@ -588,6 +595,7 @@ services:
     depends_on:
       - kafka
       - swh-search
+      - nginx
     volumes:
       - "./conf/search_journal_client_objects.yml:/search_journal_client.yml:ro"
       - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
@@ -602,6 +610,7 @@ services:
     depends_on:
       - kafka
       - swh-search
+      - nginx
     volumes:
       - "./conf/search_journal_client_indexed.yml:/search_journal_client.yml:ro"
       - "./services/swh-search/entrypoint.sh:/entrypoint.sh:ro"
@@ -614,6 +623,7 @@ services:
     depends_on:
       - swh-storage
       - prometheus-statsd-exporter
+      - nginx
     ports:
       - 5013:5013
     environment:

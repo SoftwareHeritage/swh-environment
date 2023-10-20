@@ -10,7 +10,7 @@ storage:
         revision: 1000
     - cls: filter
     - cls: remote
-      url: http://swh-storage:5002/
+      url: http://nginx:5080/storage
 
 celery:
   broker_heartbeat: null
@@ -20,9 +20,9 @@ celery:
     - swh.deposit.loader.tasks.ChecksDepositTsk
 
 deposit:
-  url: http://swh-deposit:5006/1/private
+  url: http://nginx:5080/deposit/1/private
   auth:
     username: test
     password: test
 
-url: "http://swh-deposit:5006"
+url: http://nginx:5080/deposit

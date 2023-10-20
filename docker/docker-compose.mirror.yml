@@ -24,6 +24,7 @@ services:
       - swh-mirror-storage-db
       - swh-mirror-objstorage
       - prometheus-statsd-exporter
+      - nginx-mirror
     env_file:
       - ./env/common_python.env
     environment:
@@ -77,6 +78,7 @@ services:
       - swh-mirror-storage
       - swh-mirror-web-db
       - prometheus-statsd-exporter
+      - nginx-mirror
     env_file:
       - ./env/common_python.env
     environment:
@@ -99,8 +101,9 @@ services:
     build: ./
     depends_on:
       - kafka
-      - swh-mirror-storage-db
+      - swh-mirror-storage
       - prometheus-statsd-exporter
+      - nginx-mirror
     env_file:
       - ./env/common_python.env
     environment:
@@ -123,6 +126,8 @@ services:
       - prometheus-statsd-exporter
       - swh-objstorage
       - swh-mirror-objstorage
+      - nginx
+      - nginx-mirror
     env_file:
       - ./env/common_python.env
     environment:
@@ -165,6 +170,7 @@ services:
       - swh-mirror-storage
       - swh-mirror-scheduler
       - prometheus-statsd-exporter
+      - nginx-mirror
     volumes:
       - "./conf/mirror/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
@@ -179,11 +185,12 @@ services:
       - ./env/workers.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
-      SWH_SCHEDULER_INSTANCE: http://swh-mirror-scheduler:5008
+      SWH_SCHEDULER_INSTANCE: http://nginx-mirror/scheduler
     depends_on:
       - swh-mirror-vault
       - swh-mirror-storage
       - prometheus-statsd-exporter
+      - nginx-mirror
     volumes:
       - "./conf/mirror/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"

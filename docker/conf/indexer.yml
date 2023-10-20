@@ -1,15 +1,15 @@
 storage:
   cls: remote
-  url: http://swh-storage:5002/
+  url: http://nginx:5080/storage
 objstorage:
   cls: remote
-  url: http://swh-objstorage:5003/
+  url: http://nginx:5080/objstorage
 indexer_storage:
   cls: remote
-  url: http://swh-idx-storage:5007/
+  url: http://nginx:5080/indexer-storage
 scheduler:
   cls: remote
-  url: http://swh-scheduler:5008/
+  url: http://nginx:5080/scheduler
 celery:
   broker_heartbeat: null
   task_broker: amqp://guest:guest@amqp//

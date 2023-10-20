@@ -30,6 +30,7 @@ services:
       - swh-storage
       - swh-scheduler
       - prometheus-statsd-exporter
+      - nginx
     volumes:
       - "./conf/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
@@ -44,7 +45,7 @@ services:
       - ./env/workers.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
-      SWH_SCHEDULER_INSTANCE: http://swh-scheduler:5008
+      SWH_SCHEDULER_INSTANCE: http://nginx:5080/scheduler
     depends_on:
       - swh-vault
       - swh-storage

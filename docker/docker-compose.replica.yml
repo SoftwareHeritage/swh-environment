@@ -7,7 +7,7 @@ services:
     volumes:
       - "./conf/replica/nginx.conf:/etc/nginx/nginx.conf:ro"
     ports:
-      - 5082:80
+      - 5082:5082
 
   swh-replica-storage-db:
     image: postgres:16
@@ -23,6 +23,7 @@ services:
       - swh-replica-storage-db
       - swh-objstorage
       - prometheus-statsd-exporter
+      - nginx
     env_file:
       - ./env/common_python.env
       - ./env/storage-replica.env
@@ -58,6 +59,7 @@ services:
       - swh-replica-storage
       - swh-replica-web-db
       - prometheus-statsd-exporter
+      - nginx-replica
     env_file:
       - ./env/common_python.env
     environment:
@@ -96,6 +98,8 @@ services:
       - swh-replica-storage
       - swh-replica-scheduler
       - prometheus-statsd-exporter
+      - nginx
+      - nginx-replica
     volumes:
       - "./conf/replica/vault.yml:/vault.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
@@ -110,11 +114,12 @@ services:
       - ./env/workers.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
-      SWH_SCHEDULER_INSTANCE: http://swh-replica-scheduler:5008
+      SWH_SCHEDULER_INSTANCE: http://nginx-replica/scheduler
     depends_on:
       - swh-replica-vault
       - swh-replica-storage
       - prometheus-statsd-exporter
+      - nginx-replica
     volumes:
       - "./conf/replica/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
