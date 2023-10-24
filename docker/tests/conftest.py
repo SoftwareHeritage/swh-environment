@@ -1,8 +1,9 @@
-# Copyright (C) 2019-2021  The Software Heritage developers
+# Copyright (C) 2019-2023  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+import os
 import re
 import time
 from typing import List, Tuple
@@ -67,8 +68,26 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
         docker_host.check_compose_output = lambda command: docker_host.check_output(
             f"{compose_cmd} {command}"
         )
+        failed_tests_count = request.node.session.testsfailed
+
         yield docker_host
     finally:
+        if request.node.session.testsfailed != failed_tests_count:
+            session_short_id = project_name.replace("swh_test_", "").split("-")[0]
+            logs_filename = request.node.name.replace(
+                ".py", f"_{session_short_id}.logs"
+            )
+            logs_dir = os.path.join(os.path.dirname(__file__), "logs")
+            os.makedirs(logs_dir, exist_ok=True)
+            logs_filepath = os.path.join(logs_dir, logs_filename)
+            print(
+                f"Tests failed in {request.node.name}, "
+                f"dumping logs to {logs_filepath}"
+            )
+            logs = docker_host.check_output(f"{compose_cmd} logs")
+            with open(logs_filepath, "a") as logs_file:
+                logs_file.write(logs)
+
         print(f"\nStopping the compose session {project_name}...", end=" ", flush=True)
         # first kill all the containers (brutal but much faster than a proper shutdown)
         containers = docker_host.check_output(f"{compose_cmd} ps -q").replace("\n", " ")
