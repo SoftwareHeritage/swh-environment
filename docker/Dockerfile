@@ -2,6 +2,10 @@ ARG REGISTRY=container-registry.softwareheritage.org/swh/infra/swh-apps/
 ARG RSVNDUMP=/usr/local/bin/rsvndump
 FROM ${REGISTRY}rsvndump-base:latest AS rsvndump_image
 
+# build rage (for swh-alter)
+FROM rust:slim-bookworm as build_rage
+RUN cargo install rage
+
 FROM python:3.11
 
 ARG PGDG_REPO=http://apt.postgresql.org/pub/repos/apt
@@ -62,6 +66,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 # Install rsvndump (svn loader related)
 COPY --from=rsvndump_image /usr/local/bin/rsvndump /usr/local/bin/rsvndump
 
+# Install rage (for swh-alter)
+COPY --from=build_rage /usr/local/cargo/bin/rage /usr/local/cargo/bin/rage-keygen /usr/local/bin
+
 ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=eclipse-temurin:11 $JAVA_HOME $JAVA_HOME
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
@@ -78,6 +85,7 @@ RUN pip install gunicorn httpie yq
 RUN pip install cython configobj
 
 RUN pip install \
+  swh-alter \
   swh-core[db,http] \
   swh-counters \
   swh-deposit[server] \

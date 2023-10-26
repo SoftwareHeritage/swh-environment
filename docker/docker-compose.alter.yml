@@ -1,0 +1,81 @@
+version: "3"
+
+services:
+  swh-alter:
+    image: swh/stack
+    build: ./
+    environment:
+      SWH_CONFIG_FILENAME: /alter.yml
+    entrypoint: /entrypoint.sh
+    command: mock-graph
+    volumes:
+      - "./tests/alter_companion.py:/src/alter_companion.py:ro"
+      - "./services/swh-alter/entrypoint.sh:/entrypoint.sh:ro"
+      - "./conf/alter.yml:/alter.yml:ro"
+      - "./conf/alter/age-identities.txt:/age-identities.txt:ro"
+
+  cassandra-seed:
+    # This container starts a Cassandra instance that must be used as the
+    # contact-point for clients. This container will then make the client
+    # discover other cassandra containers.
+    # This container must not be scaled up; scale up th 'cassandra'
+    # container instead.
+    image: cassandra
+    env_file:
+      - ./env/cassandra.env
+    entrypoint: /swh_entrypoint.sh
+    volumes:
+      - "./services/cassandra/swh_entrypoint.sh:/swh_entrypoint.sh:ro"
+      - "./conf/cassandra.yaml:/cassandra.yaml:ro"
+
+  cassandra:
+    # Additional Cassandra instance(s), which may be scaled up, but not
+    # down. They will automatically connect to 'cassandra-seed', and
+    # 'cassandra-seed' will tell clients to connect to these 'cassandra'
+    # containers to load-balance.
+    image: cassandra
+    entrypoint: /swh_entrypoint.sh
+    volumes:
+      - "./services/cassandra/swh_entrypoint.sh:/swh_entrypoint.sh:ro"
+      - "./conf/cassandra.yaml:/cassandra.yaml:ro"
+    env_file:
+      - ./env/cassandra.env
+
+  swh-cassandra-storage:
+    image: swh/stack
+    build: ./
+    depends_on:
+      - cassandra-seed
+      - swh-objstorage
+      - kafka
+      - prometheus-statsd-exporter
+    env_file:
+      - ./env/common_python.env
+    environment:
+      SWH_CONFIG_FILENAME: /storage.yml
+      RPC_PORT: 5002
+      CASSANDRA_SEED: cassandra-seed
+      PYTHONUNBUFFERED: 1
+    entrypoint: /entrypoint.sh
+    command: rpc
+    volumes:
+      - "./conf/storage_cassandra.yml:/storage.yml:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-storage-replayer:
+    image: swh/stack
+    build: ./
+    depends_on:
+      - kafka
+      - swh-storage-db
+      - prometheus-statsd-exporter
+    env_file:
+      - ./env/common_python.env
+    environment:
+      SWH_CONFIG_FILENAME: /replayer.yml
+      LOG_LEVEL: DEBUG
+    entrypoint: /entrypoint.sh
+    command: replayer
+    volumes:
+      - "./conf/alter/replayer.yml:/replayer.yml:ro"
+      - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
