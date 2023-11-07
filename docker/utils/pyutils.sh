@@ -1,18 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 
-setup_pip () {
+setup_pip() {
   echo Using pip from $(which pip)
 
-  if [[ -d /src ]] ; then
+  if [ -d /src ] ; then
     tmpdir=`mktemp -d`
-    pushd /src
-    for srcrepo in swh-* ; do
+    find /src -maxdepth 1 -name 'swh-*' -type d | while read srcrepo; do
       pushd $srcrepo
       # Install package in editable mode if source directory is writable
       pip install -e .
       popd
     done
-    popd
   fi
 
   echo Installed Python packages:
