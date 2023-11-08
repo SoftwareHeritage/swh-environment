@@ -23,10 +23,24 @@ TOPICS = [
 def create_topics(topics):
     c = AdminClient({"bootstrap.servers": "kafka:9092"})
     m = c.list_topics()
-    new_topics = set(topics) - set(m.topics.keys())
-    if new_topics:
-        print("Topics to create", sorted(new_topics))
-        ft = c.create_topics([NewTopic(t) for t in new_topics])
+    topics_to_create = set(topics) - set(m.topics.keys())
+    if topics_to_create:
+        print("Topics to create", sorted(topics_to_create))
+        new_topics = []
+        for topic in topics_to_create:
+            config = {}
+            if topic.startswith("swh.journal.objects"):
+                config.update(
+                    {
+                        "cleanup.policy": "compact",
+                        # delete old events after 1 second
+                        "max.compaction.lag.ms": 1_000,
+                        # delete tombstones after 1 hour
+                        "delete.retention.ms": 3_600_000,
+                    }
+                )
+            new_topics.append(NewTopic(topic, config=config))
+        ft = c.create_topics(new_topics)
         while any(f.running() for t, f in ft.items()):
             time.sleep(0.1)
     else:

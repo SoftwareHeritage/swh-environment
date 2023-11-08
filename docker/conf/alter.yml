@@ -9,7 +9,7 @@ storage:
     brokers:
       - kafka
     prefix: swh.journal.objects
-    client_id: swh.storage.master
+    client_id: swh.alter.additions
     anonymize: true
 
 extra_storages:
@@ -24,8 +24,7 @@ journal_writer:
   brokers:
     - kafka
   prefix: swh.journal.objects
-  # XXX: is this needed?
-  client_id: swh.alter
+  client_id: swh.alter.removals
 
 graph:
   url: http://swh-alter:5009/

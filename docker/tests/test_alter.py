@@ -70,9 +70,15 @@ def verified_origins(alter_host, docker_compose, origins, kafka_api_url):
         "exec swh-alter python /src/alter_companion.py "
         f"query-postgresql --presence {' '.join(origin_swhids)}"
     )
+
     # wait until the replayer is done
     print("Waiting for the replayer to be done")
     cluster = requests.get(kafka_api_url).json()["data"][0]["cluster_id"]
+
+    docker_compose.check_compose_output(
+        "exec swh-alter python /src/alter_companion.py "
+        f"query-kafka --presence {' '.join(origin_swhids)}"
+    )
 
     def kget(path):
         url = f"{kafka_api_url}/{cluster}/{path}"
@@ -149,6 +155,14 @@ def test_fork_removed_in_cassandra(docker_compose, fork_removed):
     )
 
 
+def test_fork_removed_in_kafka(docker_compose, fork_removed):
+    # Ensure the SWHIDs have been removed from Kafka
+    docker_compose.check_compose_output(
+        "exec swh-alter python /src/alter_companion.py "
+        f"query-kafka {' '.join(fork_removed.removed_swhids)}"
+    )
+
+
 @pytest.fixture(scope="module")
 def fork_restored(fork_removed, alter_host):
     alter_host.check_output(
@@ -171,4 +185,12 @@ def test_fork_restored_in_cassandra(docker_compose, fork_restored):
     docker_compose.check_compose_output(
         "exec swh-alter python /src/alter_companion.py "
         f"query-cassandra --presence {' '.join(fork_restored.removed_swhids)}"
+    )
+
+
+def test_fork_restored_in_kafka(docker_compose, fork_restored):
+    # Ensure the SWHIDs are back in Kafka
+    docker_compose.check_compose_output(
+        "exec swh-alter python /src/alter_companion.py "
+        f"query-kafka --presence {' '.join(fork_restored.removed_swhids)}"
     )
