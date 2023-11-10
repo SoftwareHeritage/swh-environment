@@ -1,27 +1,53 @@
 #!/usr/bin/env bash
 
-TEMPLATE_DIR="swh-py-template"
+TEMPLATE_REPO="https://gitlab.softwareheritage.org/swh/devel/swh-py-template.git"
 
 usage () {
-   echo "Usage: init-py-repo REPO_NAME"
-   echo
-   echo "Note: the repo should have already been created on the forge."
-   echo "and cloned to the local directory REPO_NAME."
+   echo "Usage: init-py-repo [-G|--no-create-gitlab-project] REPO_NAME"
    exit 1
 }
 
-if [ -z "$1" -o ! -d "$1" ] ; then
+create_gitlab="yes"
+while (( "$#" )); do
+    case "$1" in
+        -G|--no-create-gitlab-project) create_gitlab="no";;
+        *) repo_dir="$1";;
+    esac
+    shift
+done
+if [ -z "$repo_dir" -o ! -d "$repo_dir" ] ; then
     usage
 fi
-repo_dir="$1"
-shift 1
 
-if ! [ -d "$TEMPLATE_DIR" ] ; then
-    echo "can't find template directory: $TEMPLATE_DIR. Abort"
-    exit 2
-fi
-
-rsync -rv --links --exclude='**/.git/**' "$TEMPLATE_DIR/" "$repo_dir/"
+copier copy $TEMPLATE_REPO $repo_dir
 cd "$repo_dir"
+git init .
 git add .
-git commit -m "import template from $TEMPLATE_DIR (init-py-repo)"
+git commit -m "import template from $TEMPLATE_REPO (init-py-repo)"
+
+if [ "$create_gitlab" = "yes" ]; then
+  echo "Create the project on gitlab"
+  PROJECT_NAME="$(yq -r .distribution_name .copier-answers.yml)"
+  DESCRIPTION="$(yq -r .description .copier-answers.yml)"
+  NAMESPACE_ID="$(gitlab --output json namespace get --id 'swh/devel' | jq .id)"
+  echo "  Project name: $PROJECT_NAME"
+  echo "  Description: $DESCRIPTION"
+  echo "  Namespace: $NAMESPACE_ID"
+  PROJECT="$(gitlab --output json \
+       project create \
+       --name "$PROJECT_NAME" \
+       --path "$PROJECT_NAME" \
+       --namespace "$NAMESPACE_ID" \
+       --description "$DESCRIPTION" \
+       --issues-access-level enabled \
+       --auto-devops-enabled false \
+       --wiki-access-level disabled \
+       --requirements-access-level disabled \
+       --pages-access-level disabled \
+       --operations-access-level disabled \
+       --container-registry-access-level disabled \
+       --visibility public)"
+
+  REMOTE_URL=$(jq <<< "$PROJECT" .http_url_to_repo)
+  git remote add origin $REMOTE_URL
+fi

@@ -1,2 +1,5 @@
 click
+copier
+jq
 python-gitlab
+yq
