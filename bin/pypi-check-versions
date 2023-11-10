@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 mr -m run bash -c '
 if [[ $(basename $PWD) =~ ^(swh-docs|swh-py-template)$ ]]; then
-echo SKIP $(basename $PWD)
+  echo SKIP $(basename $PWD)
 else
-if [ -f setup.py ] ; then
-PKG=$(python3 setup.py --name)
-if [ -n "$PKG" ]; then
-PYPI=v$(http https://pypi.org/pypi/$PKG/json | jq -r .info.version)
-LASTTAG=$(git tag --sort v:refname | tail -n1)
-if [ v"$LASTTAG" == v"$PYPI" ]; then
-  echo "OK $PKG $LASTTAG"
-else
-  (>&2 echo "$PKG $LASTTAG (git) != $PYPI (pypi)")
-fi
-fi
-fi
+  if [ -f pyproject.toml ]; then
+    PKG=$(pip inspect --path . | jq -r .installed[0].metadata.name)
+  elif [ -f setup.py ]; then
+    PKG=$(python3 setup.py --name)
+  fi
+  if [ -n "$PKG" ]; then
+    PYPI=v$(http https://pypi.org/pypi/$PKG/json | jq -r .info.version)
+    LASTTAG=$(git tag --sort v:refname | tail -n1)
+    if [ "$LASTTAG" == "$PYPI" ]; then
+      echo -n "OK $PKG $LASTTAG"
+    else
+      echo -n "$PKG $LASTTAG (git) != $PYPI (pypi)" >&2
+    fi
+  fi
 fi
 ' | grep -v 'mr run'
