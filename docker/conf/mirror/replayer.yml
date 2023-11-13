@@ -1,6 +1,16 @@
 storage:
-  cls: remote
-  url: http://swh-mirror-storage:5002
+  cls: pipeline
+  steps:
+    - cls: buffer
+      min_batch_size:
+        content: 10000
+        content_bytes: 104857600
+        directory: 1000
+        revision: 1000
+    - cls: filter
+    - cls: retry
+    - cls: remote
+      url: http://nginx-mirror/storage
 
 journal_client:
   cls: kafka
