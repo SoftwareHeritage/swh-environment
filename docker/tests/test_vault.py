@@ -3,7 +3,6 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
-from functools import partial
 import hashlib
 import io
 from os.path import join
@@ -13,22 +12,15 @@ from urllib.parse import quote_plus
 
 import pytest
 
-from .utils import api_get as api_get_
-from .utils import api_get_directory as api_get_directory_
-from .utils import api_poll as api_poll_
-
 
 @pytest.fixture(scope="module")
 def compose_files() -> List[str]:
     return ["docker-compose.yml", "docker-compose.vault.yml"]
 
 
-def test_vault_directory(origins, api_url):
+def test_vault_directory(origins, api_get, api_poll, api_get_directory):
     # retrieve the root directory of the master branch of the ingested git
     # repository (by the git_origin fixture)
-    api_get = partial(api_get_, baseurl=api_url)
-    api_poll = partial(api_poll_, baseurl=api_url)
-    api_get_directory = partial(api_get_directory_, apiurl=api_url)
 
     for _, origin_url in origins:
         visit = api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
@@ -91,12 +83,10 @@ def test_vault_directory(origins, api_url):
         assert recook["status"] == "done"  # no need to wait for this to be true
 
 
-def test_vault_git_bare(host, origins, api_url, tmp_path, monkeypatch):
+def test_vault_git_bare(host, origins, tmp_path, api_get, api_poll, api_get_directory):
     # retrieve the revision of the master branch of the ingested git
     # repository (by the git_origin fixture)
-    api_get = partial(api_get_, baseurl=api_url)
-    api_poll = partial(api_poll_, baseurl=api_url)
-    api_get_directory = partial(api_get_directory_, apiurl=api_url)
+
     for _, origin_url in origins:
         visit = api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
 

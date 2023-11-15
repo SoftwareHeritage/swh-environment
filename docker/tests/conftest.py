@@ -3,6 +3,7 @@
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+from functools import partial
 import os
 import re
 import shutil
@@ -13,9 +14,13 @@ from uuid import uuid4 as uuid
 
 import pytest
 import testinfra
+import yaml
 
-APIURL = "http://localhost:5080/api/1/"
+from .utils import api_get as api_get_func
+from .utils import api_get_directory as api_get_directory_func
+from .utils import api_poll as api_poll_func
 
+DOCKER_BRIDGE_NETWORK_GATEWAY_IP = "172.17.0.1"
 
 # wait-for-it timeout
 WFI_TIMEOUT = 120
@@ -63,15 +68,59 @@ def project_name() -> str:
     return f"swh_test_{uuid()}"
 
 
-@pytest.fixture(scope="module")
-def api_url() -> str:
-    return APIURL
+def _patch_compose_files(compose_files, compose_files_tmpdir):
+    """Patch original compose files to modify the way service ports are bound
+    by picking free ports on the docker host."""
+    tmp_compose_files = []
+    for compose_file in compose_files:
+        tmp_compose_file = compose_files_tmpdir.join(compose_file)
+        if os.path.exists(tmp_compose_file):
+            # compose file already patched, nothing to do
+            tmp_compose_files.append(tmp_compose_file)
+            continue
+        with open(compose_file, "r") as compose_file_stream:
+            compose_file_data = yaml.load(compose_file_stream, Loader=yaml.Loader)
+            for service in compose_file_data.get("services", {}).values():
+                ports_conf = service.get("ports")
+                if not ports_conf:
+                    continue
+                new_ports = []
+                for ports_bindings in ports_conf:
+                    ports = str(ports_bindings).split(":")
+                    if len(ports) > 1:
+                        new_ports.append(f"0:{ports[1]}")
+                    else:
+                        new_ports.append(ports_bindings)
+                service["ports"] = new_ports
+            with open(tmp_compose_file, "w") as tmp_compose_file_stream:
+                yaml.dump(compose_file_data, tmp_compose_file_stream)
+            tmp_compose_files.append(tmp_compose_file)
+    return tmp_compose_files
+
+
+@pytest.fixture(scope="session")
+def compose_files_tmpdir(tmpdir_factory):
+    # create a temporary directory to store patched compose files
+    tmpdir = tmpdir_factory.mktemp("compose_files", numbered=False)
+    compose_files_dir = os.path.join(os.path.dirname(__file__), "..")
+    # create symlinks in that directory to the paths referenced in compose files
+    for _, dirs, _ in os.walk(compose_files_dir):
+        for dir_ in (d for d in dirs if not d.startswith(".")):
+            os.symlink(
+                os.path.join(compose_files_dir, dir_),
+                os.path.join(tmpdir, dir_),
+                target_is_directory=True,
+            )
+        break
+    return tmpdir
 
 
 @pytest.fixture(scope="module")
-def compose_cmd(docker_host, project_name, compose_files):
+def compose_cmd(docker_host, project_name, compose_files, compose_files_tmpdir):
+    print(f"patching compose files: {', '.join(compose_files)}")
+    tmp_compose_files = _patch_compose_files(compose_files, compose_files_tmpdir)
     print(f"compose project is {project_name}")
-    compose_file_cmd = "".join(f" -f {fname} " for fname in compose_files)
+    compose_file_cmd = "".join(f" -f {fname} " for fname in tmp_compose_files)
     try:
         docker_host.check_output("docker compose version")
         return f"docker compose -p {project_name} {compose_file_cmd} "
@@ -83,6 +132,7 @@ def compose_cmd(docker_host, project_name, compose_files):
 # scope='module' so we use the same container for all the tests in a test file
 @pytest.fixture(scope="module")
 def docker_compose(request, docker_host, project_name, compose_cmd):
+    failed_tests_count = request.node.session.testsfailed
     print(f"Starting the compose session {project_name}...", end=" ", flush=True)
     try:
         # start the whole cluster
@@ -94,7 +144,6 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
         docker_host.check_compose_output = lambda command: docker_host.check_output(
             f"{compose_cmd} {command}"
         )
-        failed_tests_count = request.node.session.testsfailed
 
         yield docker_host
     finally:
@@ -133,6 +182,25 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
 
 
 @pytest.fixture(scope="module")
+def nginx_url(docker_compose, compose_cmd) -> str:
+    port_output = docker_compose.check_output(f"{compose_cmd} port nginx 5080")
+    bound_port = port_output.split(":")[1]
+    # as tests could be executed inside a container, we use the docker bridge
+    # network gateway ip instead of localhost domain name
+    return f"http://{DOCKER_BRIDGE_NETWORK_GATEWAY_IP}:{bound_port}"
+
+
+@pytest.fixture(scope="module")
+def api_url(nginx_url) -> str:
+    return f"{nginx_url}/api/1/"
+
+
+@pytest.fixture(scope="module")
+def kafka_api_url(nginx_url) -> str:
+    return f"{nginx_url}/kafka/v3/clusters"
+
+
+@pytest.fixture(scope="module")
 def scheduler_host(request, docker_compose):
     # run a container in which test commands are executed
     docker_id = docker_compose.check_compose_output(
@@ -147,6 +215,21 @@ def scheduler_host(request, docker_compose):
 
     # at the end of the test suite, destroy the container
     docker_compose.check_output(f"docker rm -f {docker_id}")
+
+
+@pytest.fixture(scope="module")
+def api_get(api_url):
+    return partial(api_get_func, api_url)
+
+
+@pytest.fixture(scope="module")
+def api_poll(api_url):
+    return partial(api_poll_func, api_url)
+
+
+@pytest.fixture(scope="module")
+def api_get_directory(api_url):
+    return partial(api_get_directory_func, api_url)
 
 
 @pytest.fixture(scope="module")

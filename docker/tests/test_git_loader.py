@@ -8,10 +8,10 @@ from urllib.parse import quote_plus
 from dulwich import porcelain
 from dulwich.repo import MemoryRepo
 
-from .utils import api_get, grouper
+from .utils import grouper
 
 
-def test_git_loader(scheduler_host, origins):
+def test_git_loader(scheduler_host, origins, api_get):
     # check the loaded repos from origins are OK, and nothing is missing
     for origin_type, url in origins:
         assert origin_type == "git"

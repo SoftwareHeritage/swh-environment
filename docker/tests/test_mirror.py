@@ -11,18 +11,54 @@ from urllib.parse import quote_plus
 import pytest
 import requests
 
-from .conftest import APIURL
+from .conftest import DOCKER_BRIDGE_NETWORK_GATEWAY_IP
 from .test_vault import test_vault_directory, test_vault_git_bare  # noqa
-from .utils import api_get as api_get_
-from .utils import api_get_directory as api_get_directory_
-
-MIRROR_API = "http://localhost:5081/api/1/"
-KAFKA_REST_API = "http://localhost:5080/kafka/v3/clusters"
+from .utils import api_get as api_get_func
+from .utils import api_get_directory as api_get_directory_func
 
 
 @pytest.fixture(scope="module")
-def api_url(mirror) -> str:
-    return MIRROR_API
+def nginx_mirror_url(docker_compose, compose_cmd) -> str:
+    port_output = docker_compose.check_output(f"{compose_cmd} port nginx-mirror 80")
+    bound_port = port_output.split(":")[1]
+    # as tests could be executed inside a container, we use the docker bridge
+    # network gateway ip instead of localhost domain name
+    return f"http://{DOCKER_BRIDGE_NETWORK_GATEWAY_IP}:{bound_port}"
+
+
+@pytest.fixture(scope="module")
+def mirror_api_url(nginx_mirror_url) -> str:
+    return f"{nginx_mirror_url}/api/1/"
+
+
+@pytest.fixture(scope="module")
+def api_url(mirror_api_url):
+    return mirror_api_url
+
+
+@pytest.fixture(scope="module")
+def base_api_url(nginx_url) -> str:
+    return f"{nginx_url}/api/1/"
+
+
+@pytest.fixture(scope="module")
+def base_api_get(base_api_url):
+    return partial(api_get_func, base_api_url)
+
+
+@pytest.fixture(scope="module")
+def mirror_api_get(mirror_api_url):
+    return partial(api_get_func, mirror_api_url)
+
+
+@pytest.fixture(scope="module")
+def base_api_get_directory(base_api_url):
+    return partial(api_get_directory_func, base_api_url)
+
+
+@pytest.fixture(scope="module")
+def mirror_api_get_directory(mirror_api_url):
+    return partial(api_get_directory_func, mirror_api_url)
 
 
 @pytest.fixture(scope="module")
@@ -40,9 +76,9 @@ def compose_files() -> List[str]:
 
 
 @pytest.fixture(scope="module")
-def mirror(docker_host, compose_cmd, origins):
-    api_get = partial(api_get_, baseurl=APIURL)
-    mirror_api_get = partial(api_get_, baseurl=MIRROR_API)
+def mirror(
+    docker_host, compose_cmd, origins, base_api_get, mirror_api_get, kafka_api_url
+):
     # this fixture ensures the origins have been loaded in the prinmary
     # storage, the mirror is up, and the replayers are done
     ps = f"{compose_cmd} ps --quiet "
@@ -67,13 +103,13 @@ def mirror(docker_host, compose_cmd, origins):
 
     print("Checking origins exists in the main storage")
     # ensure all the origins have been loaded, should not be needed but...
-    m_origins = set(x["url"] for x in api_get("origins/"))
+    m_origins = set(x["url"] for x in base_api_get("origins/"))
     assert m_origins == expected_urls, "not all origins have been loaded"
 
-    cluster = requests.get(KAFKA_REST_API).json()["data"][0]["cluster_id"]
+    cluster = requests.get(kafka_api_url).json()["data"][0]["cluster_id"]
 
     def kget(path):
-        url = f"{KAFKA_REST_API}/{cluster}/{path}"
+        url = f"{kafka_api_url}/{cluster}/{path}"
         resp = requests.get(url)
         if resp.status_code == 200:
             return resp.json()
@@ -114,17 +150,23 @@ def mirror(docker_host, compose_cmd, origins):
         )
 
 
-def test_mirror_replication(origins, mirror, api_url):
-    api_get = partial(api_get_, baseurl=APIURL)
-    api_get_directory = partial(api_get_directory_, apiurl=APIURL)
-    mirror_api_get = partial(api_get_, baseurl=api_url)
-
+def test_mirror_replication(
+    origins,
+    mirror,
+    base_api_get,
+    base_api_get_directory,
+    mirror_api_get,
+    mirror_api_get_directory,
+):
     def filter_obj(objd):
         if isinstance(objd, dict):
             return {
                 k: filter_obj(v)
                 for (k, v) in objd.items()
-                if not (isinstance(v, str) and v.startswith("http://localhost:"))
+                if not (
+                    isinstance(v, str)
+                    and v.startswith(f"http://{DOCKER_BRIDGE_NETWORK_GATEWAY_IP}:")
+                )
             }
         elif isinstance(objd, list):
             return [filter_obj(e) for e in objd]
@@ -135,11 +177,11 @@ def test_mirror_replication(origins, mirror, api_url):
     # check all the objects are present in the mirror...
     for _, origin_url in origins:
         print(f"... for {origin_url}")
-        visit1 = api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
+        visit1 = base_api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
         visit2 = mirror_api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
         assert filter_obj(visit1) == filter_obj(visit2)
 
-        snapshot1 = api_get(f'snapshot/{visit1["snapshot"]}')
+        snapshot1 = base_api_get(f'snapshot/{visit1["snapshot"]}')
         snapshot2 = mirror_api_get(f'snapshot/{visit2["snapshot"]}')
         assert filter_obj(snapshot1) == filter_obj(snapshot2)
 
@@ -148,14 +190,14 @@ def test_mirror_replication(origins, mirror, api_url):
         target = snapshot1["branches"][tgt_name]
         assert target["target_type"] == "revision"
         rev_id = target["target"]
-        revision1 = api_get(f"revision/{rev_id}")
+        revision1 = base_api_get(f"revision/{rev_id}")
         revision2 = mirror_api_get(f"revision/{rev_id}")
         assert filter_obj(revision1) == filter_obj(revision2)
 
         dir_id = revision1["directory"]
 
-        directory = api_get_directory(dir_id)
-        mirror_directory = api_get_directory(dir_id, apiurl=MIRROR_API)
+        directory = base_api_get_directory(dir_id)
+        mirror_directory = mirror_api_get_directory(dir_id)
 
         for (p1, e1), (p2, e2) in zip(directory, mirror_directory):
             assert p1 == p2
@@ -163,5 +205,5 @@ def test_mirror_replication(origins, mirror, api_url):
             if e1["type"] == "file":
                 # here we check the content object is known by both the objstorages
                 target = e1["target"]
-                api_get(f"content/sha1_git:{target}/raw/", verb="HEAD")
+                base_api_get(f"content/sha1_git:{target}/raw/", verb="HEAD")
                 mirror_api_get(f"content/sha1_git:{target}/raw/", verb="HEAD")

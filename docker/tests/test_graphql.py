@@ -6,7 +6,10 @@
 import pytest
 import requests
 
-from .utils import api_get
+
+@pytest.fixture(scope="module")
+def graphql_url(nginx_url) -> str:
+    return f"{nginx_url}/graphql/"
 
 
 @pytest.fixture(scope="module")
@@ -18,7 +21,7 @@ def origin_urls():
     ]
 
 
-def test_graphql(origins):
+def test_graphql(origins, api_get, graphql_url):
     # a very minimal test for graphql
     print("Checking origins exists in the main storage")
     # ensure all the origins have been loaded, should not be needed but...
@@ -28,7 +31,7 @@ def test_graphql(origins):
 
     # get 2 of the 3 origins
     query = {"query": "query {origins(first: 2) {nodes {url}}}"}
-    resp = requests.post("http://localhost:5080/graphql/", json=query)
+    resp = requests.post(graphql_url, json=query)
     assert resp.status_code == 200
     result = resp.json()
     origins = set(n["url"] for n in result["data"]["origins"]["nodes"])
@@ -37,7 +40,7 @@ def test_graphql(origins):
 
     # get all the 3 origins
     query = {"query": "query {origins(first: 10) {nodes {url}}}"}
-    resp = requests.post("http://localhost:5080/graphql/", json=query)
+    resp = requests.post(graphql_url, json=query)
     assert resp.status_code == 200
     result = resp.json()
     origins = set(n["url"] for n in result["data"]["origins"]["nodes"])

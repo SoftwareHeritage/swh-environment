@@ -11,8 +11,6 @@ from urllib.parse import urljoin
 
 import requests
 
-from .conftest import APIURL
-
 
 def grouper(iterable, n):
     # copied from swh.core.utils
@@ -23,7 +21,7 @@ def grouper(iterable, n):
 
 
 # Utility functions
-def api_get(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
+def api_get(baseurl: str, path: str, verb: str = "GET", **kwargs):
     """Query the API at path and return the json result or raise an
     AssertionError"""
     assert path[0] != "/", "you probably do not want that..."
@@ -36,7 +34,7 @@ def api_get(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
         return resp.json()
 
 
-def api_poll(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
+def api_poll(baseurl: str, path: str, verb: str = "GET", **kwargs):
     """Poll the API at path until it returns an OK result"""
     url = urljoin(baseurl, path)
     for _ in range(60):
@@ -50,13 +48,13 @@ def api_poll(path: str, verb: str = "GET", baseurl: str = APIURL, **kwargs):
 
 
 def api_get_directory(
-    dirid: str, currentpath: str = "", apiurl: str = APIURL
+    apiurl: str, dirid: str, currentpath: str = ""
 ) -> Generator[Tuple[str, Mapping], None, None]:
     """Recursively retrieve directory description from the archive"""
-    directory = api_get(f"directory/{dirid}", baseurl=apiurl)
+    directory = api_get(apiurl, f"directory/{dirid}")
     for direntry in directory:
         path = join(currentpath, direntry["name"])
         if direntry["type"] != "dir":
             yield (path, direntry)
         else:
-            yield from api_get_directory(direntry["target"], path, apiurl)
+            yield from api_get_directory(apiurl, direntry["target"], path)
