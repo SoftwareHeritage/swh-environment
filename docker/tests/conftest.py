@@ -5,6 +5,8 @@
 
 import os
 import re
+import shutil
+from subprocess import CalledProcessError, check_output
 import time
 from typing import List, Tuple
 from uuid import uuid4 as uuid
@@ -17,6 +19,31 @@ APIURL = "http://localhost:5080/api/1/"
 
 # wait-for-it timeout
 WFI_TIMEOUT = 120
+
+
+def pytest_collection_modifyitems(config, items):
+    """Tests for swh-environment require docker compose (v2 or v1) so skip them
+    if it is not installed on host."""
+    skipper = None
+    if shutil.which("docker") is None:
+        skipper = pytest.mark.skip(reason="skipping test as docker command is missing")
+    else:
+        docker_compose_available = False
+        try:
+            # check if docker compose v2 if available
+            check_output(["docker", "compose", "version"])
+            docker_compose_available = True
+        except CalledProcessError:
+            # check if docker compose v1 if available
+            docker_compose_available = shutil.which("docker-compose") is not None
+        finally:
+            if not docker_compose_available:
+                skipper = pytest.mark.skip(
+                    reason="skipping test as docker compose is missing"
+                )
+    if skipper is not None:
+        for item in items:
+            item.add_marker(skipper)
 
 
 @pytest.fixture(scope="module")
@@ -43,7 +70,6 @@ def api_url() -> str:
 
 @pytest.fixture(scope="module")
 def compose_cmd(docker_host, project_name, compose_files):
-
     print(f"compose project is {project_name}")
     compose_file_cmd = "".join(f" -f {fname} " for fname in compose_files)
     try:
