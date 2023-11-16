@@ -129,9 +129,44 @@ def compose_cmd(docker_host, project_name, compose_files, compose_files_tmpdir):
         return f"docker-compose -p {project_name} {compose_file_cmd} "
 
 
+_current_compose_context = None
+
+
+def stop_compose_session(docker_host, project_name, compose_cmd):
+    global _current_compose_context
+    print(f"\nStopping the compose session {project_name}...", end=" ", flush=True)
+    # first kill all the containers (brutal but much faster than a proper shutdown)
+    containers = docker_host.check_output(f"{compose_cmd} ps -q").replace("\n", " ")
+    if containers:
+        docker_host.check_output(f"docker kill {containers}")
+        # and gently stop the cluster
+        docker_host.check_output(f"{compose_cmd} down --volumes --remove-orphans")
+        print("OK")
+        for _ in range(30):
+            if not docker_host.check_output(f"{compose_cmd} ps -q"):
+                _current_compose_context = None
+                print("... All the services are stopped")
+                break
+            time.sleep(1)
+        else:
+            assert not docker_host.check_output(
+                f"{compose_cmd} ps -q"
+            ), "Failed to shut compose down"
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_keyboard_interrupt(excinfo):
+    """Ensure to not leak containers when stopping tests with a keyboard interrupt."""
+    if _current_compose_context:
+        docker_host, project_name, compose_cmd = _current_compose_context
+        stop_compose_session(docker_host, project_name, compose_cmd)
+
+
 # scope='module' so we use the same container for all the tests in a test file
 @pytest.fixture(scope="module")
 def docker_compose(request, docker_host, project_name, compose_cmd):
+    global _current_compose_context
+    _current_compose_context = (docker_host, project_name, compose_cmd)
     failed_tests_count = request.node.session.testsfailed
     print(f"Starting the compose session {project_name}...", end=" ", flush=True)
     try:
@@ -163,22 +198,7 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
             with open(logs_filepath, "a") as logs_file:
                 logs_file.write(logs)
 
-        print(f"\nStopping the compose session {project_name}...", end=" ", flush=True)
-        # first kill all the containers (brutal but much faster than a proper shutdown)
-        containers = docker_host.check_output(f"{compose_cmd} ps -q").replace("\n", " ")
-        docker_host.check_output(f"docker kill {containers}")
-        # and gently stop the cluster
-        docker_host.check_output(f"{compose_cmd} down --volumes --remove-orphans")
-        print("OK")
-        for _ in range(30):
-            if not docker_host.check_output(f"{compose_cmd} ps -q"):
-                print("... All the services are stopped")
-                break
-            time.sleep(1)
-        else:
-            assert not docker_host.check_output(
-                f"{compose_cmd} ps -q"
-            ), "Failed to shut compose down"
+        stop_compose_session(docker_host, project_name, compose_cmd)
 
 
 @pytest.fixture(scope="module")
