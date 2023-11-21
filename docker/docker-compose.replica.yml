@@ -162,8 +162,8 @@ services:
       POSTGRES_DB: swh-replica-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
-      SWH_WORKER_INSTANCE: scheduler
       BROKER_URL: amqp://amqp-replica/
+      WORKER_INSTANCES: vault
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-listener
@@ -184,8 +184,8 @@ services:
       POSTGRES_DB: swh-replica-scheduler
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
-      SWH_WORKER_INSTANCE: scheduler
       BROKER_URL: amqp://amqp-replica/
+      WORKER_INSTANCES: vault
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10

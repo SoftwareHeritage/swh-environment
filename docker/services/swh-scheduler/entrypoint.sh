@@ -44,9 +44,10 @@ case "$1" in
         echo "Waiting for loader task types to be registered in scheduler db"
         until python3 -c "
 from celery import Celery
-app = Celery('swh', broker='amqp://guest:guest@amqp/')
-assert any(worker_name.startswith('loader@')
-           for worker_name in app.control.inspect().active())" 2>/dev/null
+app = Celery('swh', broker='$BROKER_URL')
+for worker_instance in '$WORKER_INSTANCES'.split(','):
+    assert any(worker_name.startswith(f'{worker_instance.strip()}@')
+               for worker_name in app.control.inspect().active())" 2>/dev/null
         do
             sleep 1
         done

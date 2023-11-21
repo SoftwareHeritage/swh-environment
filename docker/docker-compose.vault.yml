@@ -53,3 +53,11 @@ services:
     volumes:
       - "./conf/vault-worker.yml:/cooker.yml:ro"
       - "./services/swh-vault/entrypoint.sh:/entrypoint.sh:ro"
+
+  swh-scheduler-runner:
+    environment:
+      WORKER_INSTANCES: indexer, listers, loader, vault
+
+  swh-scheduler-runner-priority:
+    environment:
+      WORKER_INSTANCES: indexer, listers, loader, vault
