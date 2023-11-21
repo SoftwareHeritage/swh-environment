@@ -15,6 +15,10 @@ case "$1" in
         ;;
 
     "worker")
+        echo Register task types in scheduler database
+        wait-for-it $SWH_SCHEDULER_HOST:5008 -s --timeout=0
+        swh scheduler --url ${SWH_SCHEDULER_INSTANCE} task-type register
+
         echo Starting the swh-vault Celery worker
         exec python -m celery \
                     --app=swh.scheduler.celery_backend.config.app \

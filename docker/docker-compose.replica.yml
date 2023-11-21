@@ -114,6 +114,7 @@ services:
       - ./env/workers.env
     environment:
       SWH_CONFIG_FILENAME: /cooker.yml
+      SWH_SCHEDULER_HOST: swh-replica-scheduler
       SWH_SCHEDULER_INSTANCE: http://nginx-replica/scheduler
     depends_on:
       - swh-replica-vault
