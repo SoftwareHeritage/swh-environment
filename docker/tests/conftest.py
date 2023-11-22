@@ -200,9 +200,11 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
                 f"Tests failed in {request.node.name}, "
                 f"dumping logs to {logs_filepath}"
             )
-            logs = docker_host.check_output(f"{compose_cmd} logs")
-            with open(logs_filepath, "a") as logs_file:
-                logs_file.write(logs)
+            services = docker_host.check_output(f"{compose_cmd} ps --services")
+            for service in services.split("\n"):
+                logs = docker_host.check_output(f"{compose_cmd} logs {service}")
+                with open(logs_filepath, "a") as logs_file:
+                    logs_file.write(logs)
 
         stop_compose_session(docker_host, project_name, compose_cmd)
 
