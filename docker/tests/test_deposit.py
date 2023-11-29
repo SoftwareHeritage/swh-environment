@@ -19,8 +19,6 @@ SAMPLE_METADATA = """\
        xmlns:codemeta="https://doi.org/10.5063/SCHEMA/CODEMETA-2.0"
        xmlns:schema="http://schema.org/">
   <title>Test Software</title>
-  <client>swh</client>
-  <external_identifier>test-software</external_identifier>
   <codemeta:author>
     <codemeta:name>No One</codemeta:name>
   </codemeta:author>
