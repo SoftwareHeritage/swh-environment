@@ -213,13 +213,6 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
-[swh-spdx]
-checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-spdx.git' 'swh-spdx'
-fixups =
-  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-spdx.git
-  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
-  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
-
 [swh-storage]
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-storage.git' 'swh-storage'
 fixups =
