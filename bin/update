@@ -25,6 +25,11 @@ mr -j 4 update
 
 mr run pre-commit install
 
+# create symlinks to swh-docs/Makefile.sphinx to make it easy to build the
+# documentation of a swh package standalone (otherwise one has to think about
+# using the command 'make -I ../../swh-docs' which is not very nice).
+mr -q run sh -c 'cd docs ; if [ ! -f Makefile.sphinx ] ; then ln -s ../../swh-docs/Makefile.sphinx ; fi'
+
 if [ "$1" = "-i" -o "$1" = "--install" ] ; then
     ./bin/install
 fi
