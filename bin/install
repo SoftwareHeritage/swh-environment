@@ -6,20 +6,9 @@ PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy==1.0.1"
 PIP_FLAGS="--disable-pip-version-check"
 PIP="python3 -m pip $PIP_FLAGS"
 
-# pip 21.3 added support to editable installs for projects that have a
-# pyproject.toml and use a build backend that supports PEP 660, but mypy
-# does not support such editable installs and following errors are
-# reported when type checking swh modules :
-#
-#  Cannot find implementation or library stub for module named swh....
-#
-# As a workaround, we force the legacy behavior of editable installs
-# by passing the "editable_mode=compat" configuration settings to the
-# PEP 517 build backend
-#
-# See https://github.com/python/mypy/issues/13392
-
-$PIP config --site set install.config-settings editable_mode=compat
+# We use strict editable_mode now that we have PEP420 (implicit namespace)
+# swh packages; ideally you should have this in your venv 'pip config'...
+$PIP config --site set install.config-settings editable_mode=strict
 
 $PIP install $PREREQUISITES "$@"
 
