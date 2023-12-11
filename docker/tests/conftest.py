@@ -167,7 +167,7 @@ def pytest_keyboard_interrupt(excinfo):
 
 # scope='module' so we use the same container for all the tests in a test file
 @pytest.fixture(scope="module")
-def docker_compose(request, docker_host, project_name, compose_cmd):
+def docker_compose(request, docker_host, project_name, compose_cmd, tmp_path_factory):
     global _current_compose_context
     _current_compose_context = (docker_host, project_name, compose_cmd)
     failed_tests_count = request.node.session.testsfailed
@@ -189,11 +189,8 @@ def docker_compose(request, docker_host, project_name, compose_cmd):
         yield docker_host
     finally:
         if request.node.session.testsfailed != failed_tests_count:
-            session_short_id = project_name.replace("swh_test_", "").split("-")[0]
-            logs_filename = request.node.name.replace(
-                ".py", f"_{session_short_id}.logs"
-            )
-            logs_dir = os.path.join(os.path.dirname(__file__), "logs")
+            logs_filename = request.node.name.replace(".py", ".logs")
+            logs_dir = tmp_path_factory.mktemp("docker", numbered=False)
             os.makedirs(logs_dir, exist_ok=True)
             logs_filepath = os.path.join(logs_dir, logs_filename)
             print(
