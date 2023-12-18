@@ -33,6 +33,7 @@ celery:
     - swh.lister.gogs.tasks.FullGogsRelister
     - swh.lister.golang.tasks.FullGolangLister
     - swh.lister.hackage.tasks.HackageListerTask
+    - swh.lister.julia.tasks.JuliaListerTask
     - swh.lister.launchpad.tasks.IncrementalLaunchpadLister
     - swh.lister.launchpad.tasks.FullLaunchpadLister
     - swh.lister.maven.tasks.FullMavenLister
