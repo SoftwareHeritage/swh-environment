@@ -209,6 +209,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       BROKER_URL: amqp://amqp/
+      WORKER_INSTANCES: indexer, listers, loader
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker schedule-recurrent
