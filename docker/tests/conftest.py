@@ -217,21 +217,23 @@ def kafka_api_url(nginx_url) -> str:
     return f"{nginx_url}/kafka/v3/clusters"
 
 
+def compose_host_for_service(docker_compose, service):
+    docker_id = docker_compose.check_compose_output(
+        f"ps {service} --format '{{{{.ID}}}}'"
+    )
+    if docker_id:
+        return testinfra.get_host("docker://" + docker_id)
+
+
 @pytest.fixture(scope="module")
 def scheduler_host(request, docker_compose):
     # run a container in which test commands are executed
-    docker_id = docker_compose.check_compose_output(
-        "run -d swh-scheduler shell sleep 1h"
-    ).strip()
-    scheduler_host = testinfra.get_host("docker://" + docker_id)
-    scheduler_host.check_output(f"wait-for-it swh-scheduler:5008 -t {WFI_TIMEOUT}")
+    scheduler_host = compose_host_for_service(docker_compose, "swh-scheduler")
+    assert scheduler_host
     scheduler_host.check_output(f"wait-for-it swh-storage:5002 -t {WFI_TIMEOUT}")
 
     # return a testinfra connection to the container
     yield scheduler_host
-
-    # at the end of the test suite, destroy the container
-    docker_compose.check_output(f"docker rm -f {docker_id}")
 
 
 @pytest.fixture(scope="module")
@@ -251,19 +253,12 @@ def api_get_directory(api_url):
 
 @pytest.fixture(scope="module")
 def webapp_host(docker_compose):
-    # run a container in which test commands are executed
-    docker_id = docker_compose.check_compose_output(
-        "run -d swh-web shell sleep 1h"
-    ).strip()
-    webapp_host = testinfra.get_host("docker://" + docker_id)
+    webapp_host = compose_host_for_service(docker_compose, "swh-web")
+    assert webapp_host
     webapp_host.check_output(f"wait-for-it swh-storage:5002 -t {WFI_TIMEOUT}")
-    webapp_host.check_output(f"wait-for-it swh-web:5004 -t {WFI_TIMEOUT}")
 
     # return a testinfra connection to the container
     yield webapp_host
-
-    # at the end of the test suite, destroy the container
-    docker_compose.check_output(f"docker rm -f {docker_id}")
 
 
 @pytest.fixture(scope="module")
