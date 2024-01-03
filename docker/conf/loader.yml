@@ -18,7 +18,7 @@ celery:
   task_queues:
     - swh.loader.bzr.tasks.LoadBazaar
     - swh.loader.core.tasks.LoadContent
-    - swh.loader.core.tasks.LoadDirectory
+    - swh.loader.core.tasks.LoadTarballDirectory
     - swh.loader.cvs.tasks.LoadCvsRepository
     - swh.loader.dir.tasks.LoadDirRepository
     - swh.loader.git.tasks.LoadDiskGitRepository
