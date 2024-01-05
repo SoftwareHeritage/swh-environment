@@ -42,9 +42,14 @@ case "$1" in
         wait-for-it kafka:8082 -s --timeout=0
 		wait-for-topic http://kafka:8082 swh.journal.objects.origin_visit_status
 
+        # note that specifying the 'indexer' argument of the 'swh indexer
+        # journal-client' command makes it behave differently, indexing objects
+        # directly rather than spawning scheduler tasks to do the actual
+        # indexing job.
+        # This later behaviour should be now considered as deprecated.
         exec swh --log-level ${LOG_LEVEL:-INFO} \
              indexer --config-file $SWH_CONFIG_FILENAME \
-             journal-client '*'
+             journal-client 'origin_intrinsic_metadata'
         ;;
 
 esac
