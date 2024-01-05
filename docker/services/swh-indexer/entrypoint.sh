@@ -44,7 +44,7 @@ case "$1" in
 
         exec swh --log-level ${LOG_LEVEL:-INFO} \
              indexer --config-file $SWH_CONFIG_FILENAME \
-             journal-client
+             journal-client '*'
         ;;
 
 esac

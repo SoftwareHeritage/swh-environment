@@ -450,32 +450,6 @@ services:
 
   # Indexer workers
 
-  swh-indexer-worker-celery:
-    image: swh/stack
-    build: ./
-    user: swh
-    env_file:
-      - ./env/common_python.env
-      - ./env/workers.env
-    environment:
-      SWH_WORKER_INSTANCE: indexer
-      SWH_CONFIG_FILENAME: /indexer.yml
-      CONCURRENCY: 4
-      POSTGRES_DB: swh-idx-storage
-      SWH_SCHEDULER_INSTANCE: http://nginx:5080/scheduler
-    entrypoint: /entrypoint.sh
-    command: worker
-    depends_on:
-      - swh-scheduler-runner
-      - swh-idx-storage
-      - swh-storage
-      - swh-objstorage
-      - amqp
-      - nginx
-    volumes:
-      - "./conf/indexer.yml:/indexer.yml:ro"
-      - "./services/swh-indexer/entrypoint.sh:/entrypoint.sh:ro"
-
   swh-indexer-worker-journal:
     image: swh/stack
     build: ./
