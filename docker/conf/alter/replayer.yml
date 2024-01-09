@@ -7,8 +7,7 @@ journal_client:
   brokers:
     - kafka
   prefix: swh.journal.objects
-  # XXX: do we need this?
-  group_id: swh.storage.mirror.replayer
+  group_id: swh.storage.alter.replayer
   privileged: true
   object_types:
     - content

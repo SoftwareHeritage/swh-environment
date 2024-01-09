@@ -1,0 +1,8 @@
+storage:
+  cls: cassandra
+  hosts:
+    - cassandra-seed
+  keyspace: swh
+  objstorage:
+    cls: remote
+    url: http://swh-objstorage:5003/

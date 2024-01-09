@@ -9,6 +9,7 @@ import time
 from typing import Iterable, List, Tuple
 
 import pytest
+import requests
 import testinfra
 import yaml
 
@@ -27,15 +28,13 @@ def origin_urls() -> List[Tuple[str, str]]:
 
 
 @pytest.fixture(scope="module")
-def alter_host(docker_host, compose_cmd) -> Iterable[testinfra.host.Host]:
-    print(docker_host.check_output(f"{compose_cmd} logs swh-alter"))
+def alter_host(docker_compose) -> Iterable[testinfra.host.Host]:
     # Getting a compressed graph with swh-graph is not stable enough
     # so we use a mock server for the time being that starts
     # by default when running the swh-alter container.
-    docker_services = docker_host.check_output(
-        f"{compose_cmd} ps --status running --format " "'{{.Service}} {{.Name}}'"
+    docker_services = docker_compose.check_compose_output(
+        "ps --status running --format '{{.Service}} {{.Name}}'"
     )
-    print(docker_services)
     docker_id = dict(line.split(" ") for line in docker_services.split("\n"))[
         "swh-alter"
     ]
@@ -45,7 +44,7 @@ def alter_host(docker_host, compose_cmd) -> Iterable[testinfra.host.Host]:
 
 
 @pytest.fixture(scope="module")
-def verified_origins(alter_host, docker_compose, origins):
+def verified_origins(alter_host, docker_compose, origins, kafka_api_url):
     # Verify that our origins have properly been loaded in PostgreSQL
     # and Cassandra
     origin_swhids = {
@@ -56,21 +55,30 @@ def verified_origins(alter_host, docker_compose, origins):
         "exec swh-alter python /src/alter_companion.py "
         f"query-postgresql --presence {' '.join(origin_swhids)}"
     )
-    # Let’s give the replayer some time to catch up
-    tries = 0
-    while True:
-        try:
-            docker_compose.check_compose_output(
-                "exec swh-alter python /src/alter_companion.py "
-                f"query-cassandra --presence {' '.join(origin_swhids)}"
-            )
-            break
-        except AssertionError:
-            tries += 1
-            if tries > 3:
-                raise
-            time.sleep(1)
+    # wait until the replayer is done
+    print("Waiting for the replayer to be done")
+    cluster = requests.get(kafka_api_url).json()["data"][0]["cluster_id"]
 
+    def kget(path):
+        url = f"{kafka_api_url}/{cluster}/{path}"
+        resp = requests.get(url)
+        if resp.status_code == 200:
+            return resp.json()
+        resp.raise_for_status()
+
+    for _ in range(30):
+        try:
+            lag_sum = kget("consumer-groups/swh.storage.alter.replayer/lag-summary")
+        except requests.exceptions.HTTPError as exc:
+            print(f"Failed to retrieve consumer status: {exc}")
+        else:
+            if lag_sum["total_lag"] == 0:
+                break
+        time.sleep(1)
+    else:
+        raise AssertionError(
+            "Could not detect a condition where the replayer did its job"
+        )
     return origins
 
 

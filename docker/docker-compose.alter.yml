@@ -59,7 +59,7 @@ services:
     entrypoint: /entrypoint.sh
     command: rpc
     volumes:
-      - "./conf/storage_cassandra.yml:/storage.yml:ro"
+      - "./conf/alter/storage_cassandra.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
 
   swh-storage-replayer:
