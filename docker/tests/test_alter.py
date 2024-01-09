@@ -20,6 +20,21 @@ def compose_files() -> List[str]:
 
 
 @pytest.fixture(scope="module")
+def compose_services() -> List[str]:
+    return [
+        "swh-alter",
+        "swh-storage",
+        "swh-storage-replayer",
+        "swh-scheduler-runner",
+        "swh-scheduler-listener",
+        "swh-scheduler-schedule-recurrent",
+        "swh-web",
+        "swh-loader",
+        "swh-lister",
+    ]
+
+
+@pytest.fixture(scope="module")
 def origin_urls() -> List[Tuple[str, str]]:
     return [
         ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-py-template.git"),

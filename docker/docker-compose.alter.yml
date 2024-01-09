@@ -68,6 +68,7 @@ services:
     depends_on:
       - kafka
       - swh-storage-db
+      - swh-cassandra-storage
       - prometheus-statsd-exporter
     env_file:
       - ./env/common_python.env

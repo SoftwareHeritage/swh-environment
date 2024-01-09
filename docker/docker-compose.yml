@@ -143,7 +143,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       BROKER_URL: amqp://amqp/
-      WORKER_INSTANCES: indexer, listers, loader
+      WORKER_INSTANCES: listers, loader
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-listener
@@ -165,7 +165,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       BROKER_URL: amqp://amqp/
-      WORKER_INSTANCES: indexer, listers, loader
+      WORKER_INSTANCES: listers, loader
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10
@@ -187,7 +187,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       BROKER_URL: amqp://amqp/
-      WORKER_INSTANCES: indexer, listers, loader
+      WORKER_INSTANCES: listers, loader
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker start-runner --period 10 --with-priority
@@ -209,7 +209,7 @@ services:
       SWH_CONFIG_FILENAME: /scheduler.yml
       SWH_SCHEDULER_CONFIG_FILE: /scheduler.yml
       BROKER_URL: amqp://amqp/
-      WORKER_INSTANCES: indexer, listers, loader
+      WORKER_INSTANCES: listers, loader
       APP: swh.scheduler.celery_backend.config.app
     entrypoint: /entrypoint.sh
     command: worker schedule-recurrent
@@ -258,7 +258,7 @@ services:
     depends_on:
       - swh-storage-db
       - swh-objstorage
-      - kafka
+      - kafka-create-topics
       - nginx
       - prometheus-statsd-exporter
     env_file:
