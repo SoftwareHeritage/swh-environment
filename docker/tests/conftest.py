@@ -1,8 +1,9 @@
-# Copyright (C) 2019-2023  The Software Heritage developers
+# Copyright (C) 2019-2024  The Software Heritage developers
 # See the AUTHORS file at the top-level directory of this distribution
 # License: GNU General Public License version 3, or any later version
 # See top-level LICENSE file for more information
 
+import atexit
 from functools import partial
 import os
 import re
@@ -132,11 +133,7 @@ def compose_cmd(docker_host, project_name, compose_files, compose_files_tmpdir):
         return f"docker-compose -p {project_name} {compose_file_cmd} "
 
 
-_current_compose_context = None
-
-
 def stop_compose_session(docker_host, project_name, compose_cmd):
-    global _current_compose_context
     print(f"\nStopping the compose session {project_name}...", end=" ", flush=True)
     # first kill all the containers (brutal but much faster than a proper shutdown)
     containers = docker_host.check_output(f"{compose_cmd} ps -q").replace("\n", " ")
@@ -147,7 +144,6 @@ def stop_compose_session(docker_host, project_name, compose_cmd):
         print("OK")
         for _ in range(30):
             if not docker_host.check_output(f"{compose_cmd} ps -q"):
-                _current_compose_context = None
                 print("... All the services are stopped")
                 break
             time.sleep(1)
@@ -157,19 +153,14 @@ def stop_compose_session(docker_host, project_name, compose_cmd):
             ), "Failed to shut compose down"
 
 
-@pytest.hookimpl(tryfirst=True)
-def pytest_keyboard_interrupt(excinfo):
-    """Ensure to not leak containers when stopping tests with a keyboard interrupt."""
-    if _current_compose_context:
-        docker_host, project_name, compose_cmd = _current_compose_context
-        stop_compose_session(docker_host, project_name, compose_cmd)
-
-
 # scope='module' so we use the same container for all the tests in a test file
 @pytest.fixture(scope="module")
 def docker_compose(request, docker_host, project_name, compose_cmd, tmp_path_factory):
-    global _current_compose_context
-    _current_compose_context = (docker_host, project_name, compose_cmd)
+    # register an exit handler to ensure started containers will be stopped if any
+    # keyboard interruption or unhandled exception occurs
+    stop_compose_func = atexit.register(
+        stop_compose_session, docker_host, project_name, compose_cmd
+    )
     failed_tests_count = request.node.session.testsfailed
     print(f"Starting the compose session {project_name}...", end=" ", flush=True)
     try:
@@ -203,6 +194,7 @@ def docker_compose(request, docker_host, project_name, compose_cmd, tmp_path_fac
                 with open(logs_filepath, "a") as logs_file:
                     logs_file.write(logs)
 
+        atexit.unregister(stop_compose_func)
         stop_compose_session(docker_host, project_name, compose_cmd)
 
 
