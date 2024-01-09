@@ -190,7 +190,7 @@ def docker_compose(request, docker_host, project_name, compose_cmd, tmp_path_fac
     finally:
         if request.node.session.testsfailed != failed_tests_count:
             logs_filename = request.node.name.replace(".py", ".logs")
-            logs_dir = tmp_path_factory.mktemp("docker", numbered=False)
+            logs_dir = os.path.join(tmp_path_factory.getbasetemp(), "docker")
             os.makedirs(logs_dir, exist_ok=True)
             logs_filepath = os.path.join(logs_dir, logs_filename)
             print(
