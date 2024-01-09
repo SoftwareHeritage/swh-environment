@@ -67,6 +67,14 @@ def compose_files() -> List[str]:
 
 
 @pytest.fixture(scope="module")
+def compose_services() -> List[str]:
+    # this fixture is meant to be overloaded in test modules to explicitly
+    # specify which services to spawn in the docker compose session.
+    # If empty (the default), spawn all the services defined in the compose files.
+    return []
+
+
+@pytest.fixture(scope="module")
 def project_name() -> str:
     return f"swh_test_{uuid()}"
 
@@ -162,7 +170,9 @@ def stop_compose_session(docker_host, project_name, compose_cmd):
 
 # scope='module' so we use the same container for all the tests in a test file
 @pytest.fixture(scope="module")
-def docker_compose(request, docker_host, project_name, compose_cmd, tmp_path_factory):
+def docker_compose(
+    request, docker_host, project_name, compose_cmd, compose_services, tmp_path_factory
+):
     # register an exit handler to ensure started containers will be stopped if any
     # keyboard interruption or unhandled exception occurs
     stop_compose_func = atexit.register(
@@ -175,7 +185,7 @@ def docker_compose(request, docker_host, project_name, compose_cmd, tmp_path_fac
         docker_host.check_output(f"{compose_cmd} pull --ignore-pull-failures")
 
         # start the whole cluster
-        docker_host.check_output(f"{compose_cmd} up -d")
+        docker_host.check_output(f"{compose_cmd} up -d {' '.join(compose_services)}")
         print("OK")
 
         # small hack: add a helper func to docker_host; so it's not necessary to
@@ -183,7 +193,10 @@ def docker_compose(request, docker_host, project_name, compose_cmd, tmp_path_fac
         docker_host.check_compose_output = lambda command: docker_host.check_output(
             f"{compose_cmd} {command}"
         )
-
+        services = docker_host.check_compose_output(
+            "ps --format '{{.Name}}'"
+        ).splitlines()
+        print(f"Started {len(services)} services")
         yield docker_host
     finally:
         if request.node.session.testsfailed != failed_tests_count:
