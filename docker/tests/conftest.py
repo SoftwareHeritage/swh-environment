@@ -10,10 +10,12 @@ import re
 import shutil
 from subprocess import CalledProcessError, check_output
 import time
-from typing import List, Tuple
+from typing import Iterable, List, Tuple, Union
+from urllib.parse import urlparse
 from uuid import uuid4 as uuid
 
 import pytest
+import requests
 import testinfra
 import yaml
 
@@ -267,12 +269,32 @@ def webapp_host(docker_compose):
 
 
 @pytest.fixture(scope="module")
-def origin_urls() -> List[Tuple[str, str]]:
+def origin_urls() -> List[Tuple[str, Union[str, Iterable[str]]]]:
     # This fixture is meant to be overloaded in test modules to initialize the
     # main storage with the content from the loading of the origins listed
     # here. By default we only load one git origin (to try to keep execution
     # time under control), but some tests may require more than that.
     return [("git", "https://gitlab.softwareheritage.org/swh/devel/swh-core.git")]
+
+
+def filter_origins(origin_urls: Iterable[str]) -> str:
+    """From a list of urls, return the first one that is reachable"""
+    if isinstance(origin_urls, str):
+        origin_urls = [origin_urls]
+
+    for origin_url in origin_urls:
+        parsed_url = urlparse(origin_url)
+        if parsed_url.scheme in ("http", "https"):
+            try:
+                requests.head(origin_url, timeout=5).raise_for_status()
+                return origin_url
+            except Exception as exc:
+                print(f"Failed to connect to {origin_url}: {exc}")
+                continue
+        else:
+            # not a http url, assume it's ok
+            return origin_url
+    raise AssertionError("Unable to contact any origin of {origin_urls}")
 
 
 @pytest.fixture(scope="module")
@@ -283,6 +305,8 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
     wait for all the loading tasks to finish. Check these are in the 'eventful'
     state.
     """
+
+    origin_urls = [(otype, filter_origins(urls)) for (otype, urls) in origin_urls]
     task_ids = {}
     if len(origin_urls) > 1:
         # spawn a few loaders to try to speed things up a bit

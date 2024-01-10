@@ -16,7 +16,13 @@ def graphql_url(nginx_url) -> str:
 def origin_urls():
     return [
         ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-core.git"),
-        ("hg", "https://hg.sr.ht/~douardda/pygpibtoolkit"),
+        (
+            "hg",
+            [
+                "https://hg.sr.ht/~douardda/pygpibtoolkit",
+                "https://hg.sdfa3.org/pygpibtoolkit",
+            ],
+        ),
         ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-model.git"),
     ]
 

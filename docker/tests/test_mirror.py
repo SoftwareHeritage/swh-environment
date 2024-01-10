@@ -66,7 +66,13 @@ def origin_urls():
     return [
         ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-core.git"),
         ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-model.git"),
-        ("hg", "https://hg.sr.ht/~douardda/pygpibtoolkit"),
+        (
+            "hg",
+            [
+                "https://hg.sr.ht/~douardda/pygpibtoolkit",
+                "https://hg.sdfa3.org/pygpibtoolkit",
+            ],
+        ),
     ]
 
 
