@@ -185,7 +185,9 @@ def docker_compose(
         docker_host.check_output(f"{compose_cmd} pull --ignore-pull-failures")
 
         # start the whole cluster
-        docker_host.check_output(f"{compose_cmd} up -d {' '.join(compose_services)}")
+        docker_host.check_output(
+            f"{compose_cmd} up --wait -d {' '.join(compose_services)}"
+        )
         print("OK")
 
         # small hack: add a helper func to docker_host; so it's not necessary to
@@ -193,9 +195,7 @@ def docker_compose(
         docker_host.check_compose_output = lambda command: docker_host.check_output(
             f"{compose_cmd} {command}"
         )
-        services = docker_host.check_compose_output(
-            "ps --format '{{.Name}}'"
-        ).splitlines()
+        services = docker_host.check_compose_output("ps --services").splitlines()
         print(f"Started {len(services)} services")
         yield docker_host
     finally:
@@ -208,9 +208,9 @@ def docker_compose(
                 f"Tests failed in {request.node.name}, "
                 f"dumping logs to {logs_filepath}"
             )
-            services = docker_host.check_output(f"{compose_cmd} ps --services")
-            for service in services.split("\n"):
-                logs = docker_host.check_output(f"{compose_cmd} logs {service}")
+            services = docker_host.check_output(f"{compose_cmd} ps --services --all")
+            for service in services.splitlines():
+                logs = docker_host.check_output(f"{compose_cmd} logs -t {service}")
                 with open(logs_filepath, "a") as logs_file:
                     logs_file.write(logs)
 
