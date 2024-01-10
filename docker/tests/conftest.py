@@ -138,7 +138,12 @@ def stop_compose_session(docker_host, project_name, compose_cmd):
     # first kill all the containers (brutal but much faster than a proper shutdown)
     containers = docker_host.check_output(f"{compose_cmd} ps -q").replace("\n", " ")
     if containers:
-        docker_host.check_output(f"docker kill {containers}")
+        try:
+            docker_host.check_output(f"docker kill {containers}")
+        except AssertionError:
+            # may happen if a container is killed as a result of another one
+            # being shut down...
+            pass
         # and gently stop the cluster
         docker_host.check_output(f"{compose_cmd} down --volumes --remove-orphans")
         print("OK")
