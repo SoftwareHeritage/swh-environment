@@ -40,7 +40,6 @@ services:
       - "./conf/web.yml:/web.yml:ro"
       - "./conf/webhooks_journal_client.yml:/journal_client.yml:ro"
       - "./services/swh-webhooks-journal-client/entrypoint.sh:/entrypoint.sh:ro"
-      - "../swh-webhooks:/src/swh-webhooks"
 
   swh-web:
     depends_on:
