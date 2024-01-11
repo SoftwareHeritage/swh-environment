@@ -20,7 +20,7 @@ case "$1" in
         http://swh-web:5004/save/origin/visit/webhook/ --secret $secret
 
       echo "Starting swh-webhooks-journal client"
-      wait-for-it kafka:9092 -s --timeout=0
+      wait-for-it kafka:8082 -s --timeout=0
       wait-for-topic http://kafka:8082 swh.journal.objects.origin_visit_status
       swh -l DEBUG webhooks journal-client
       ;;
