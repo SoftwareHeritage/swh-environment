@@ -30,6 +30,7 @@ services:
     entrypoint: /entrypoint.sh
     healthcheck:
       test: curl -f http://localhost:5006 || exit 1
+      retries: 6
     volumes:
       - "./conf/deposit.yml:/deposit.yml:ro"
       - "./services/swh-deposit/entrypoint.sh:/entrypoint.sh:ro"

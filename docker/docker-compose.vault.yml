@@ -22,6 +22,7 @@ services:
     command: rpc
     healthcheck:
       test: curl -f http://localhost:5005 || exit 1
+      retries: 6
     ports:
       - 5005:5005
     depends_on:

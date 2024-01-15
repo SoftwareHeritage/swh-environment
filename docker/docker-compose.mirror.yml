@@ -37,6 +37,7 @@ services:
     command: rpc
     healthcheck:
       test: curl -f http://localhost:5002 || exit 1
+      retries: 6
     volumes:
       - "./conf/mirror/storage.yml:/storage.yml:ro"
       - "./services/swh-storage/entrypoint.sh:/entrypoint.sh:ro"
@@ -56,6 +57,7 @@ services:
     command: rpc
     healthcheck:
       test: curl -f http://localhost:5003 || exit 1
+      retries: 6
     volumes:
       - "./conf/objstorage.yml:/objstorage.yml:ro"
       - "./services/swh-objstorage/entrypoint.sh:/entrypoint.sh:ro"
@@ -89,6 +91,7 @@ services:
     entrypoint: /entrypoint.sh
     healthcheck:
       test: curl -f http://localhost:5004 || exit 1
+      retries: 6
     volumes:
       - "./conf/mirror/web.yml:/web.yml:ro"
       - "./services/swh-web/entrypoint.sh:/entrypoint.sh:ro"
@@ -164,6 +167,7 @@ services:
     command: rpc
     healthcheck:
       test: curl -f http://localhost:5005 || exit 1
+      retries: 6
     depends_on:
       - swh-mirror-vault-db
       - swh-mirror-objstorage
@@ -219,6 +223,7 @@ services:
     command: rpc
     healthcheck:
       test: curl -f http://localhost:5008 || exit 1
+      retries: 6
     depends_on:
       - swh-mirror-scheduler-db
       - amqp-mirror
