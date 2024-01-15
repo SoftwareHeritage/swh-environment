@@ -22,20 +22,20 @@ def test_git_loader(scheduler_host, origins, api_get):
         print(f"Look for origin {url}")
         # use quote_plus to prevent urljoin from messing with the 'http://' part of
         # the url
-        origin = api_get(f"origin/{quote_plus(url)}/get")
+        origin = api_get(f"origin/{quote_plus(url)}/get/")
         assert origin["url"] == url
 
-        visit = api_get(f"origin/{quote_plus(url)}/visit/latest")
+        visit = api_get(f"origin/{quote_plus(url)}/visit/latest/")
         assert visit["status"] == "full"
 
         print("Check every identified git ref has been loaded")
-        snapshot = api_get(f'snapshot/{visit["snapshot"]}')
+        snapshot = api_get(f'snapshot/{visit["snapshot"]}/')
 
         branches = snapshot["branches"]
 
         while snapshot["next_branch"] is not None:
             snapshot = api_get(
-                f'snapshot/{visit["snapshot"]}?branches_from={snapshot["next_branch"]}'
+                f'snapshot/{visit["snapshot"]}/?branches_from={snapshot["next_branch"]}'
             )
             branches.update(snapshot["branches"])
 
@@ -48,7 +48,7 @@ def test_git_loader(scheduler_host, origins, api_get):
                 b"^{}"
             ):
                 continue
-            rev_desc = api_get(f"revision/{rev.decode()}")
+            rev_desc = api_get(f"revision/{rev.decode()}/")
             assert rev_desc["type"] == "git"
 
         tag_revision = {}
@@ -66,7 +66,7 @@ def test_git_loader(scheduler_host, origins, api_get):
             # check that every release tag listed in the snapshot is known by the
             # archive and consistent
             release_id = tag_release[tag]
-            release = api_get(f"release/{release_id}")
+            release = api_get(f"release/{release_id}/")
             assert release["id"] == release_id
             assert release["target_type"] == "revision"
             assert release["target"] == revision

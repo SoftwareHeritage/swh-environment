@@ -183,12 +183,12 @@ def test_mirror_replication(
     # check all the objects are present in the mirror...
     for _, origin_url in origins:
         print(f"... for {origin_url}")
-        visit1 = base_api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
-        visit2 = mirror_api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
+        visit1 = base_api_get(f"origin/{quote_plus(origin_url)}/visit/latest/")
+        visit2 = mirror_api_get(f"origin/{quote_plus(origin_url)}/visit/latest/")
         assert filter_obj(visit1) == filter_obj(visit2)
 
-        snapshot1 = base_api_get(f'snapshot/{visit1["snapshot"]}')
-        snapshot2 = mirror_api_get(f'snapshot/{visit2["snapshot"]}')
+        snapshot1 = base_api_get(f'snapshot/{visit1["snapshot"]}/')
+        snapshot2 = mirror_api_get(f'snapshot/{visit2["snapshot"]}/')
         assert filter_obj(snapshot1) == filter_obj(snapshot2)
 
         assert snapshot1["branches"]["HEAD"]["target_type"] == "alias"
@@ -196,8 +196,8 @@ def test_mirror_replication(
         target = snapshot1["branches"][tgt_name]
         assert target["target_type"] == "revision"
         rev_id = target["target"]
-        revision1 = base_api_get(f"revision/{rev_id}")
-        revision2 = mirror_api_get(f"revision/{rev_id}")
+        revision1 = base_api_get(f"revision/{rev_id}/")
+        revision2 = mirror_api_get(f"revision/{rev_id}/")
         assert filter_obj(revision1) == filter_obj(revision2)
 
         dir_id = revision1["directory"]

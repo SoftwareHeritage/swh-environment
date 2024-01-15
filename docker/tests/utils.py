@@ -51,7 +51,7 @@ def api_get_directory(
     apiurl: str, dirid: str, currentpath: str = ""
 ) -> Generator[Tuple[str, Mapping], None, None]:
     """Recursively retrieve directory description from the archive"""
-    directory = api_get(apiurl, f"directory/{dirid}")
+    directory = api_get(apiurl, f"directory/{dirid}/")
     for direntry in directory:
         path = join(currentpath, direntry["name"])
         if direntry["type"] != "dir":

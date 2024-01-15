@@ -62,8 +62,8 @@ def test_vault_directory(origins, api_get, api_poll, api_get_directory):
     # repository (by the git_origin fixture)
 
     for _, origin_url in origins:
-        visit = api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
-        snapshot = api_get(f'snapshot/{visit["snapshot"]}')
+        visit = api_get(f"origin/{quote_plus(origin_url)}/visit/latest/")
+        snapshot = api_get(f'snapshot/{visit["snapshot"]}/')
 
         assert snapshot["branches"]["HEAD"]["target_type"] == "alias"
         tgt_name = snapshot["branches"]["HEAD"]["target"]
@@ -71,7 +71,7 @@ def test_vault_directory(origins, api_get, api_poll, api_get_directory):
         assert target["target_type"] == "revision"
         rev_id = target["target"]
 
-        revision = api_get(f"revision/{rev_id}")
+        revision = api_get(f"revision/{rev_id}/")
         dir_id = revision["directory"]
         swhid = f"swh:1:dir:{dir_id}"
 
@@ -127,9 +127,9 @@ def test_vault_git_bare(host, origins, tmp_path, api_get, api_poll, api_get_dire
     # repository (by the git_origin fixture)
 
     for _, origin_url in origins:
-        visit = api_get(f"origin/{quote_plus(origin_url)}/visit/latest")
+        visit = api_get(f"origin/{quote_plus(origin_url)}/visit/latest/")
 
-        snapshot = api_get(f'snapshot/{visit["snapshot"]}')
+        snapshot = api_get(f'snapshot/{visit["snapshot"]}/')
         assert snapshot["branches"]["HEAD"]["target_type"] == "alias"
         tgt_name = snapshot["branches"]["HEAD"]["target"]
         target = snapshot["branches"][tgt_name]
@@ -137,7 +137,7 @@ def test_vault_git_bare(host, origins, tmp_path, api_get, api_poll, api_get_dire
         rev_id = target["target"]
 
         swhid = f"swh:1:rev:{rev_id}"
-        revision = api_get(f"revision/{rev_id}")
+        revision = api_get(f"revision/{rev_id}/")
         dir_id = revision["directory"]
 
         # now cook it
