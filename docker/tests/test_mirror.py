@@ -69,8 +69,8 @@ def origin_urls():
         (
             "hg",
             [
-                "https://hg.sr.ht/~douardda/pygpibtoolkit",
                 "https://hg.sdfa3.org/pygpibtoolkit",
+                "https://hg.sr.ht/~douardda/pygpibtoolkit",
             ],
         ),
     ]

@@ -19,8 +19,8 @@ def origin_urls():
         (
             "hg",
             [
-                "https://hg.sr.ht/~douardda/pygpibtoolkit",
                 "https://hg.sdfa3.org/pygpibtoolkit",
+                "https://hg.sr.ht/~douardda/pygpibtoolkit",
             ],
         ),
         ("git", "https://gitlab.softwareheritage.org/swh/devel/swh-model.git"),
