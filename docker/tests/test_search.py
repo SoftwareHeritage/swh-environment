@@ -27,6 +27,50 @@ def origin_urls():
     ]
 
 
+# Here is a quick explanation of waht's going on in this origin MD scaffolding:
+# first we load a bunch of origins; the pypi ones do have intrinsic metadata
+# (the python packaging stuff), and Roberto's parmap comes with a codemeta file
+# in the source tree. The 2 swh-xxx git repos do not trigger a IMD detection
+# (for now, files like pyproject.toml etc are not detected as IMD).
+#
+# The loading of these origins generates a bunch of messages in kafka, in
+# particular 'origin_visit_status' messages. The 'swh-indexer-worker-journal'
+# service is a journal client consuming this topic (it is running as
+#
+#   swh indexer journal-client origin_intrinsic_metadata
+#
+# so it's executing only the intrinsic metadata indexer which consumes only the
+# origin_visit_status topic). This journal client will look for known intrinsic
+# metadata files in the (root?) directory of each head of listed origins.
+# Detected MD files are loaded and translated into a common data model then
+# stored in the metadata indexer storage (swh-idx-storage) as both (?) and
+# directory_intrinsic_metadata and origin_intrinsic_metadata.
+#
+# The indexer storage, while adding rows to its DB, also produces kafka
+# messages for indexed objects under the swh.journal.indexed prefix (as
+# 'directory_intrinsic_metadata' and 'origin_intrinsic_metadata' topics).
+#
+# The 'swh-search-journal-client-objects' service is a journal client consuming
+# the swh.journal.objects.{origin,origin_visit_status} topics. Then:
+# - the 'origin' topic is used to fill the search db (elasticsearch) with
+#   origin URLs only.
+# - the 'origin_visit_status' topic is also used to fill the search db with
+#   origin URLs with additional fields (has_visit, nb_visits, last visit, last
+#   snapshot, etc.)
+#
+# The 'swh-search-journal-client-indexed' service is a journal client consuming
+# the swh.journal.indexed.origin_intrinsic_metadata topic. Then:
+# - the 'origin_intrinsic_metadata' is used to fill the (es) search db with
+#   origin MD linked to the url (as jsonld)
+#
+# When searching for IMD via the public API endpoint 'origin/metadata_search',
+# the web frontend will:
+# - perform a origin_search(metadata_pattern='<fulltext>') on swh-search
+# - if it did not return anything, it queries the indexer storage using the
+#   'origin_intrinsic_metadata_search_fulltext()' method
+# - the gathered origin URLs with their metadata are then returned
+
+
 def test_origin_metadata_search(origins, docker_compose, nginx_get, api_get):
     # preliminary checks:
     for _, url in origins:
@@ -37,7 +81,9 @@ def test_origin_metadata_search(origins, docker_compose, nginx_get, api_get):
         visit = api_get(f"origin/{quote_plus(url)}/visit/latest")
         assert visit["status"] == "full"
 
-    # 3. Check origins are in elasticserch
+    # 3. Check origins are in elasticserch (as a result of the
+    # swh-search-journal-client-objects consuming the
+    # swh.journal.objects.origin topic at least)
     es_resp = nginx_get("es/origin/_search")
     es_origins = [
         (hit["_source"]["visit_types"][0], hit["_source"]["url"])
