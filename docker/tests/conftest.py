@@ -323,7 +323,6 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
     wait for all the loading tasks to finish. Check these are in the 'eventful'
     state.
     """
-
     origin_urls = [(otype, filter_origins(urls)) for (otype, urls) in origin_urls]
     task_ids = {}
 
@@ -338,26 +337,37 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
         assert int(taskid) > 0
         task_ids[origin_url] = taskid
 
-    for _, origin_url in origin_urls:
-        taskid = task_ids[origin_url]
-        for _ in range(120):
-            status = scheduler_host.check_output(
-                f"swh scheduler task list --list-runs --task-id {taskid}"
-            )
-            if "Executions:" in status:
-                if "[eventful]" in status:
-                    break
-                if "[started]" in status or "[scheduled]" in status:
-                    time.sleep(1)
-                    continue
-                if "[failed]" in status:
-                    loader_logs = docker_compose.check_compose_output("logs swh-loader")
-                    raise AssertionError(
-                        "Loading execution failed\n"
-                        f"status: {status}\n"
-                        f"loader logs: " + loader_logs
-                    )
+    # ids of the tasks still running
+    ids = list(task_ids.values())
+    t0 = time.time()
+    for _ in range(120):
+        if not ids:
+            break
+        taskid = ids.pop(0)
+        origin_url = next(k for k, v in task_ids.items() if v == taskid)
+        status = scheduler_host.check_output(
+            f"swh scheduler task list --list-runs --task-id {taskid}"
+        )
+        if "Executions:" in status:
+            if "[eventful]" in status:
+                print(f"Loading of {origin_url} is done (took {time.time()-t0:.2f}s)")
+            elif "[started]" in status or "[scheduled]" in status:
+                ids.append(taskid)
+                time.sleep(1)
+                continue
+            elif "[failed]" in status:
+                loader_logs = docker_compose.check_compose_output("logs swh-loader")
+                raise AssertionError(
+                    "Loading execution failed\n"
+                    f"status: {status}\n"
+                    f"loader logs: " + loader_logs
+                )
+            else:
                 raise AssertionError(
                     f"Loading execution failed, task status is {status}"
                 )
+        else:
+            ids.append(taskid)
+            time.sleep(1)
+
     return origin_urls
