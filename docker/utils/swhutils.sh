@@ -11,7 +11,7 @@ swh_start_rpc() {
          --access-logfile /dev/stdout \
          --access-logformat "%(t)s %(r)s %(s)s %(b)s %(M)s" \
          --threads ${GUNICORN_THREADS:-2} \
-         --workers ${GUNICORN_WORKERS:-2} \
+         --workers ${GUNICORN_WORKERS:-4} \
          --timeout ${GUNICORN_TIMEOUT:-3600} \
          --config 'python:swh.core.api.gunicorn_config' \
          "swh.${service}.api.server:make_app_from_configfile()"

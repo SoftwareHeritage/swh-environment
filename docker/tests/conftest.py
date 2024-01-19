@@ -326,9 +326,6 @@ def origins(docker_compose, scheduler_host, origin_urls: List[Tuple[str, str]]):
 
     origin_urls = [(otype, filter_origins(urls)) for (otype, urls) in origin_urls]
     task_ids = {}
-    if len(origin_urls) > 1:
-        # spawn a few loaders to try to speed things up a bit
-        docker_compose.check_compose_output("up -d --no-recreate --scale swh-loader=4")
 
     for origin_type, origin_url in origin_urls:
         print(f"Scheduling {origin_type} loading task for {origin_url}")
