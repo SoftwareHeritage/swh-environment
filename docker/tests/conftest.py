@@ -179,6 +179,7 @@ def docker_compose(
         stop_compose_session, docker_host, project_name, compose_cmd
     )
     failed_tests_count = request.node.session.testsfailed
+    got_exception = False
     print(f"Starting the compose session {project_name}...", end=" ", flush=True)
     try:
         # pull required docker images
@@ -198,8 +199,11 @@ def docker_compose(
         services = docker_host.check_compose_output("ps --services").splitlines()
         print(f"Started {len(services)} services")
         yield docker_host
+    except Exception:
+        got_exception = True
+        raise
     finally:
-        if request.node.session.testsfailed != failed_tests_count:
+        if got_exception or request.node.session.testsfailed != failed_tests_count:
             logs_filename = request.node.name.replace(".py", ".logs")
             logs_dir = os.path.join(tmp_path_factory.getbasetemp(), "docker")
             os.makedirs(logs_dir, exist_ok=True)
