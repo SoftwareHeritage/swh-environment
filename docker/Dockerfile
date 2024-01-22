@@ -110,6 +110,7 @@ RUN pip install \
   swh-web \
   swh-webhooks
 
+RUN pip list > /srv/softwareheritage/pip-installed.txt
 COPY utils/*.sh /srv/softwareheritage/utils/
 RUN mkdir -p /srv/softwareheritage/objects
 RUN mkdir -p /srv/softwareheritage/graph
