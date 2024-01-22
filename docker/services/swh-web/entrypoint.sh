@@ -12,12 +12,14 @@ source /srv/softwareheritage/utils/swhutils.sh
 
 case "$1" in
     "noop")
-        exit 0
+        echo "Doing nothing..."
+        exec sleep 60
         ;;
     "shell")
         exec bash -i
         ;;
     "cron")
+        echo "Waiting for swh-web..."
         wait-for-it swh-web:5004 -s --timeout=0
 
         echo "Start periodic save code now refresh statuses routine (in background)"
