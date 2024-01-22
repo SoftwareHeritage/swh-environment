@@ -29,8 +29,8 @@ else
     echo "Migrating db"
     django-admin migrate --settings=${DJANGO_SETTINGS_MODULE}
 
-    swh-deposit admin user exists test || \
-        swh-deposit admin user create \
+    swh deposit admin user exists test || \
+        swh deposit admin user create \
                     --username test \
                     --password test \
                     --provider-url https://softwareheritage.org \
