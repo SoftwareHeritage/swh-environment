@@ -1,6 +1,9 @@
 storage:
   cls: remote
   url: http://nginx:5080/storage
+objstorage:
+  cls: remote
+  url: http://nginx:5080/objstorage
 vault:
   cls: remote
   url: http://nginx:5080/vault
