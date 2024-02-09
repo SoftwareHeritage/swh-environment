@@ -7,7 +7,7 @@ PYTHON_BIN := $(shell test -d bin/ && find bin/ -type f -executable | xargs egre
 TEST_DIRS := .
 
 TEST = python3 -m pytest
-TESTFLAGS =
+TESTFLAGS ?=
 LINT = pylint3
 LINTFLAGS = --rcfile=../pylintrc
 MYPY = mypy
