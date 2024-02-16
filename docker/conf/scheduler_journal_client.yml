@@ -1,7 +1,0 @@
-journal:
-  brokers:
-    - kafka
-  group_id: swh.scheduler.journal_client
-scheduler:
-  cls: remote
-  url: http://nginx:5080/scheduler

@@ -1,6 +1,0 @@
-version: "2.1"
-
-services:
-  swh-objstorage:
-    volumes:
-      - "../swh-objstorage:/src/swh-objstorage"

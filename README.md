@@ -14,6 +14,10 @@ Software Heritage developer environment.
 Docker based test environment
 -----------------------------
 
+Note: the `docker/` directory has been extracted as a standalone git repository
+(https://gitlab.softwareheritage.org/swh/devel/docker). Make sure to run `bin/update`
+to get this new repository cloned here.
+
 Please check the
 [Developer docker environment](https://docs.softwareheritage.org/devel/getting-started/using-docker.html)
 page.

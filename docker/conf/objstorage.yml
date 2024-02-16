@@ -1,6 +1,0 @@
-objstorage:
-  cls: pathslicing
-  root: /srv/softwareheritage/objects
-  slicing: 0:5
-
-client_max_size: 1073741824

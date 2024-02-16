@@ -1,3 +1,0 @@
-counters:
-  cls: redis
-  host: redis:6379

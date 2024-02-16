@@ -1,8 +1,0 @@
-storage:
-  cls: postgresql
-  db: postgresql:///?service=swh-storage
-journal_writer:
-  brokers:
-    - kafka
-  prefix: swh.journal.objects
-  client_id: swh.journal.backfiller

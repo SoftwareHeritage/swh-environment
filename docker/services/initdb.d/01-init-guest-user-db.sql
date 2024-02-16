@@ -1,1 +1,0 @@
-CREATE ROLE guest LOGIN PASSWORD 'guest';

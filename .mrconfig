@@ -1,5 +1,10 @@
 # keep the list sorted alphabetically by local repo name
 
+[docker]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/docker.git' 'docker'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/docker.git
+
 [snippets]
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/snippets.git' 'snippets'
 fixups =
