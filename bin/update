@@ -21,14 +21,14 @@ if ! which pre-commit &> /dev/null ; then
 fi
 
 git pull
-mr -j 4 update
+mr -j4 update
 
-mr run pre-commit install
+mr -j4 run pre-commit install
 
 # create symlinks to swh-docs/Makefile.sphinx to make it easy to build the
 # documentation of a swh package standalone (otherwise one has to think about
 # using the command 'make -I ../../swh-docs' which is not very nice).
-mr -q run sh -c 'cd docs ; if [ ! -f Makefile.sphinx ] ; then ln -s ../../swh-docs/Makefile.sphinx ; fi'
+mr -q run sh -c 'if [ -d docs ] ; then cd docs ; if [ ! -f Makefile.sphinx ] ; then ln -s ../../swh-docs/Makefile.sphinx ; fi; fi'
 
 if [ "$1" = "-i" -o "$1" = "--install" ] ; then
     ./bin/install
