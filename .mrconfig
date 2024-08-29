@@ -184,6 +184,13 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
+[swh-provenance]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-provenance.git' 'swh-provenance'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-provenance.git
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
+
 [swh-py-template]
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-py-template.git' 'swh-py-template'
 fixups =
