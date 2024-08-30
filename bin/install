@@ -2,7 +2,7 @@
 
 # Usage: bin/install [PIP_INSTALL_OPTION..]
 
-PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy==1.8.0"
+PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy==1.11.1"
 PIP_FLAGS="--disable-pip-version-check"
 PIP="python3 -m pip $PIP_FLAGS"
 
