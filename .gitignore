@@ -5,5 +5,5 @@ snippets/
 !packages/keys/
 .venv
 .tox
-docker/*.override.yml
-docker/tests/*.logs
+docker/
+.envrc
