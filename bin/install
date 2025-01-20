@@ -6,6 +6,9 @@ PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy==1.11.1"
 PIP_FLAGS="--disable-pip-version-check"
 PIP="python3 -m pip $PIP_FLAGS"
 
+# This is to allow compilation of `subvertpy` with GCC>=14
+export CFLAGS=-Wno-int-conversion
+
 # We use strict editable_mode now that we have PEP420 (implicit namespace)
 # swh packages; ideally you should have this in your venv 'pip config'...
 $PIP config --site set install.config-settings editable_mode=strict
