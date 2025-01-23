@@ -38,10 +38,10 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
-[swh-dataset]
-checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-dataset.git' 'swh-dataset'
+[swh-export]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-export.git' 'swh-export'
 fixups =
-  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-dataset.git
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-export.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
