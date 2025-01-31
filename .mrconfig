@@ -38,10 +38,10 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
-[swh-datasets]
-checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-datasets.git' 'swh-datasets'
+[swh-export]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-export.git' 'swh-export'
 fixups =
-  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-datasets.git
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-export.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
@@ -56,13 +56,6 @@ fixups =
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-docs.git' 'swh-docs'
 fixups =
   git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-docs.git
-  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
-  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
-
-[swh-export]
-checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-export.git' 'swh-export'
-fixups =
-  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-export.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
