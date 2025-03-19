@@ -15,15 +15,19 @@ while (( "$#" )); do
     esac
     shift
 done
-if [ -z "$repo_dir" -o ! -d "$repo_dir" ] ; then
+if [ -z "$repo_dir" ] ; then
     usage
 fi
 
-copier copy $TEMPLATE_REPO $repo_dir
-cd "$repo_dir"
-git init .
-git add .
-git commit -m "import template from $TEMPLATE_REPO (init-py-repo)"
+if [ ! -d "$repo_dir" ] ; then
+    copier copy $TEMPLATE_REPO $repo_dir
+    cd "$repo_dir"
+    git init .
+    git add .
+    git commit -m "import template from $TEMPLATE_REPO (init-py-repo)"
+else
+    cd "$repo_dir"
+fi
 
 if [ "$create_gitlab" = "yes" ]; then
   echo "Create the project on gitlab"
