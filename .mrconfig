@@ -191,13 +191,6 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
-[swh-perfecthash]
-checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-perfecthash.git' 'swh-perfecthash'
-fixups =
-  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-perfecthash.git
-  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
-  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
-
 [swh-provenance]
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-provenance.git' 'swh-provenance'
 fixups =
@@ -236,6 +229,13 @@ fixups =
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-search.git' 'swh-search'
 fixups =
   git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-search.git
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
+
+[swh-shard]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-shard.git' 'swh-shard'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-shard.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
