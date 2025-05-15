@@ -66,6 +66,13 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
+[swh-digestmap]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-digestmap.git' 'swh-digestmap'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-digestmap.git
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
+
 [swh-docs]
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-docs.git' 'swh-docs'
 fixups =
