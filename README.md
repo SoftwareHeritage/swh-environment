@@ -11,6 +11,8 @@ Please refer to the
 for a step-by-step documentation on how to use this repository to install a
 Software Heritage developer environment.
 
+We recommend you set your `~/.gitconfig` as close as possible to `recommended-gitconfig.txt`.
+
 Docker based test environment
 -----------------------------
 

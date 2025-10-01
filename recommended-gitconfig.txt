@@ -1,0 +1,83 @@
+# This file contains many options we recommend you copy in your ~/.gitconfig
+# when working in Software Heritage's environment
+
+# swh-environment/bin/install will clone from https remote, this will tell git to use
+# SSH instead any time you push to these remotes
+[url "git@gitlab.softwareheritage.org:"]
+	pushInsteadOf = https://gitlab.softwareheritage.org
+
+# Creates a `git k` command that shows the working tree in your pager, 1 commit per line
+[alias]
+    k = log '--pretty=format:"%Cblue%h %Cgreen(%an, %cr) %Cred%d %Creset %s"'  --date-order --graph --all --decorate
+
+# Organize file lists into columns (à la `ls`) when possible (when listing untracked
+# files in `git status`, for example)
+[column]
+    ui = auto
+
+# use the latest diff algorithm; can avoid the "noise" of old lines when moving code
+[diff]
+    algorithm = histogram
+
+# when diffing, moved blocks are colored in blue instead of red/green
+[diff]
+    colorMoved = plain
+
+# when diffing, will replace the a/ and b/ in your diff header output with where the diff is coming from, so i/ (index), w/ (working directory) or c/ commit.
+[diff]
+    mnemonicPrefix = true
+
+# when diffing, detect renaming instead of copying a file two times prefixed by +/-
+[diff]
+    renames = true
+
+# when listing branches, sort by latest commit date (most recent first)
+[branch]
+    sort = -committerdate
+
+# when listing tags, sort version numbers as integers (default uses alphanumeric sort)
+[tag]
+    sort = version:refname
+
+# when pushing, if no tracking exists for the current branch, set the new remote as upstream
+[push]
+    autoSetupRemote = true
+
+# When fetching, attempt to update all available remotes
+[fetch]
+    all = true
+
+# When pulling, rebase branches on top of the fetched branch
+# (instead of merging the default branch from the default remote)
+[pull]
+    rebase = true
+
+# rebase using squash markers https://git-scm.com/docs/git-rebase#Documentation/git-rebase.txt---autosquash
+[rebase]
+    autoSquash = true
+
+# Automatically create a temporary stash entry before the operation begins, and apply it
+# after the operation ends. This means that you can run rebase on a dirty worktree.
+[rebase]
+    autoStash = true
+
+# Automatically force-update any branches that point to commits that are being rebased
+[rebase]
+    updateRefs = true
+
+# if you type "git commite", it will ask you "Run 'commit' instead [y/N]?"
+# you can instead set a number: it will run the suggested command after specified deciseconds
+[help]
+    autocorrect = prompt
+
+# include diff in git comments when you edit your message
+[commit]
+    verbose = true
+
+# REuse REcorded REsolutions when repeatedly hitting a conflict when rebasing
+[rerere]
+    enabled = true
+
+# and, automatically reapply recorded resolutions
+[rerere]
+    autoupdate = true
