@@ -35,8 +35,9 @@ done
 
 getdeps() {
     grep -E -v '(^#|^[[:space:]]*$)' "$1" |
-        sed 's/[<>=].*$//' | # remove dep version pin
+        sed 's/[!<>=].*$//' | # remove dep version pin
         sed 's/[;].*$//' | # remove environment markers
+        sed 's/#.*$//' | # remove inline comments
         tr 'A-Z' 'a-z' |
         sed -E 's/\[\w+\]//'
 }
