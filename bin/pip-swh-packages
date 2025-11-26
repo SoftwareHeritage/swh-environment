@@ -7,7 +7,7 @@ if [ "$1" == "--with-testing" ]; then
     suffix="[testing]"
 fi
 
-./bin/py-depgraph |
+./bin/py-depgraph --no-external |
     grep -- '->' |
     sed -e 's/[";]//g' -e 's/->//g' -e 's/\[.*$//g' |
     tsort |
