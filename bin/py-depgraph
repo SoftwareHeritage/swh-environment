@@ -44,21 +44,24 @@ getdeps() {
 
 for repo in $pyrepos ; do
     pymod=${repo//-/.}
-    reqs_int="${repo}/requirements-swh.txt"
-    reqs_ext="${repo}/requirements.txt"
 
-    if [ "$internal_modules" -eq 1 -a -f "$reqs_int" ]; then
-        for dep in $( getdeps "$reqs_int" ) ; do
-            echo -e "\t\"${pymod}\" -> \"${dep}\" ;"
+    if [ "$internal_modules" -eq 1 ]; then
+        for reqs_int in $(ls ${repo}/requirements-swh* 2>/dev/null); do
+            for dep in $( getdeps "$reqs_int" ) ; do
+                echo -e "\t\"${pymod}\" -> \"${dep}\" ;"
+            done
         done
     fi
 
-    if [ "$external_modules" -eq 1 -a -f "$reqs_ext" ]; then
-        for dep in $( getdeps "$reqs_ext" ) ; do
-            echo -e "\t\"${dep}\" [style=dashed] ;"
-            echo -e "\t\"${pymod}\" -> \"${dep}\" ;"
+    if [ "$external_modules" -eq 1 ]; then
+        for reqs_ext in $(ls ${repo}/requirements* 2>/dev/null | grep -v "requirements-swh"); do
+            for dep in $( getdeps "$reqs_ext" ) ; do
+                echo -e "\t\"${dep}\" [style=dashed] ;"
+                echo -e "\t\"${pymod}\" -> \"${dep}\" ;"
+            done
         done
     fi
+
 done | sort -u
 
 echo "}"
