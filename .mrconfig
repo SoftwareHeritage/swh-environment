@@ -198,6 +198,13 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
+[swh-mosaic]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-mosaic.git' 'swh-mosaic'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-mosaic.git
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
+
 [swh-objstorage]
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-objstorage.git' 'swh-objstorage'
 fixups =
