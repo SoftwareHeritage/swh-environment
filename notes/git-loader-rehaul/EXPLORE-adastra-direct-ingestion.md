@@ -124,19 +124,50 @@ For (1), the gix CLI bench above is the wrong shape — its variants don't refle
 
 Estimated effort: 1–2 day prototype + 1 day bench setup + 1 day measurement and write-up.
 
-## 7. Coordination
+## 7. Coordination — prior-art search
 
 This work overlaps with two other SWH efforts:
 
 - **swh-export / swh-datasets** — produces ORC datasets from existing Cassandra/objstorage state via Luigi pipelines. They have the ORC schema and the columnar-write infrastructure. The "ingest directly into ORC" path is structurally close to their existing pipeline but inverted (read upstream forge → write ORC, vs. read SWH storage → write ORC).
 - **swh-graph** — compressed graph computation over the deduplicated archive. Consumes ORC-style flat exports as input.
 
-Before prototyping, check with the swh-export team whether direct-to-ORC ingestion is on their roadmap, or whether they prefer the "ingest into SWH storage, then export to ORC" path that exists today. Two reasons:
+### Prior-art search outcome
 
-1. They may have already prototyped this. No point duplicating work.
-2. ORC schema decisions (which columns, which compression, which sharding scheme) should be made jointly so the output of bulk ingestion is consumable by the existing graph pipeline.
+A scan of the SWH ecosystem (swh-export, swh-datasets, swh-graph, swh-graph-libs, swh-shard, swh-objstorage, plus `git log --since='2025-11-01'` across them) confirms that direct-from-forge bulk ingestion into ORC has **not been prototyped or implemented anywhere in the codebase**. Net-new work.
 
-Likely contacts: same set of people as the storage proposal — David Douard, Thomas Pellissier-Tanon (storage side), plus whoever currently maintains swh-export and swh-graph.
+Specifically:
+
+- **swh-export's existing ORCExporter** (`swh-export/swh/export/exporters/orc.py:132+`) and schema (`swh-export/swh/export/relational.py:9-110`) read **only from Cassandra/journal**, via `journalprocessor.ParallelJournalProcessor` (`swh-export/swh/export/luigi.py:365+`). No adapter for non-SWH sources exists.
+- **swh-datasets** Luigi pipelines have no forge-direct ingestion paths.
+- **swh-graph** input adapters expect the standard ORC layout produced by swh-export; no alternative inputs documented.
+- **swh-shard / Winery** offer bulk-read paths but no direct write-to-ORC pipeline.
+- Recent (since 2025-11) commits across these repos contain no "bulk ingest", "direct ingest", "forge ingest" or "AdAstra" subjects.
+
+### Reusable assets from swh-export
+
+The existing ORC writer code is directly reusable for the prototype — no need to redesign the schema or writer wiring. Key reuse points:
+
+- `ORCExporter.__init__()` and `get_writer_for()` at `swh-export/swh/export/exporters/orc.py:132-247` — writer setup, schema mapping, ZSTD compression config, file rotation.
+- Schema definitions at `swh-export/swh/export/relational.py:9-110` (`MAIN_TABLES`, `RELATION_TABLES`) — column types for content / directory / revision / release / snapshot / origin / origin_visit + relation tables (snapshot_branch, revision_history, revision_extra_headers, directory_entry). Includes bloom-filter definitions.
+- `SWHTimestampConverter` at `swh-export/swh/export/exporters/orc.py:101-129` — handles SWH's `(seconds, microseconds)` → ORC `(seconds, nanoseconds)` conversion correctly.
+- `hash_to_hex_or_none()` at `swh-export/swh/export/exporters/orc.py:79-80` — hash-formatting helper.
+
+The prototype should write into the same ORC schema as the existing exporter, so the output is consumable by the existing graph-compression pipeline without changes. (If a future optimisation needs an alternative layout, that's a separate question to negotiate with the graph team.)
+
+### No conflict with existing code
+
+The existing `ORCExporter` reads **from** Cassandra/journal. The AdAstra prototype reads **from** the forge directly. Both write into the same ORC schema. They are siblings on the producer side, not competitors.
+
+### Likely contacts
+
+From `git log` analysis on the relevant repos:
+
+- **swh-export ORC code**: Aymeric Varasse, Antoine Lambert, Valentin Lorentz, David Douard.
+- **swh-datasets pipelines**: Valentin Lorentz (primary), Stefano Zacchiroli, Thibault Allançon.
+- **swh-graph**: Valentin Lorentz (dominant contributor).
+- **Storage side** (from the storage proposal): David Douard, Thomas Pellissier-Tanon.
+
+Recommended single conversation: **Valentin Lorentz** (overlaps swh-export + swh-datasets + swh-graph). Confirm AdAstra is not on their roadmap, then proceed.
 
 ## 8. Open questions
 
@@ -148,13 +179,14 @@ Likely contacts: same set of people as the storage proposal — David Douard, Th
 
 ## 9. Recommended next steps
 
-1. **Confirm with swh-export team** whether direct-to-ORC ingestion is already planned or prototyped. (~30 min conversation.)
-2. **Pick 5–10 representative origins** of varying pack sizes (small flask-like / medium kernel-like / large chromium-like). Document them.
-3. **Baseline the current dulwich loader** end-to-end against the sample, into a throwaway swh-storage. Capture per-origin wall time and CPU profile. (~1 day.)
-4. **Write the ~200-LOC Rust prototype** — `gix-protocol` fetch + `gix-pack` iterate + ORC append. Use the same upstream gitoxide crates as `swh-loader-git/gix-lib/`. (~1–2 days.)
-5. **Run the prototype against the same sample**, capture comparable numbers. (~1 day.)
-6. **Cost-model the projection to 100M origins**: per-origin wall time × N origins / parallelism factor → wall time + cluster size. Identify whether network or CPU is the binding constraint at scale.
-7. **Decision gate**: if the prototype shows ≥ 5× per-origin wall-time reduction AND the network ceiling allows the projected concurrency, proceed to a production AdAstra implementation. Otherwise reconsider — the SWH loader rehaul + REC-L4 may already be enough.
+1. **Codebase scan: done** (§7 above). Direct-from-forge ingestion into ORC is genuinely net-new — no existing implementation in swh-export, swh-datasets, swh-graph, swh-shard, or related repos. Reusable assets (ORC schema, writer setup, timestamp converter, hash helpers) identified at `swh-export/swh/export/exporters/orc.py` and `relational.py`.
+2. **One short conversation** with Valentin Lorentz (covers swh-export + swh-datasets + swh-graph): confirm AdAstra is not on the team's near-term roadmap and the proposed schema reuse is acceptable. (~30 min.)
+3. **Pick 5–10 representative origins** of varying pack sizes (small flask-like / medium kernel-like / large chromium-like). Document them.
+4. **Baseline the current dulwich loader** end-to-end against the sample, into a throwaway swh-storage. Capture per-origin wall time and CPU profile. (~1 day.)
+5. **Write the ~200-LOC Rust prototype** — `gix-protocol` fetch + `gix-pack` iterate + ORC append (reusing `swh-export`'s schema and timestamp/hash converters). Same upstream gitoxide crates as `swh-loader-git/gix-lib/`. (~1–2 days.)
+6. **Run the prototype against the same sample**, capture comparable numbers. (~1 day.)
+7. **Cost-model the projection to 100M origins**: per-origin wall time × N origins / parallelism factor → wall time + cluster size. Identify whether network or CPU is the binding constraint at scale.
+8. **Decision gate**: if the prototype shows ≥ 5× per-origin wall-time reduction AND the network ceiling allows the projected concurrency, proceed to a production AdAstra implementation. Otherwise reconsider — the SWH loader rehaul + REC-L4 may already be enough.
 
 ## 10. Relation to the gix loader rehaul + REC-L4 proposals
 
