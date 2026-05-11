@@ -121,6 +121,7 @@ From `HANDOFF.md` §7 (gix proposal) + `ISSUE-rec-l4-architecture.md` §7 (REC-L
 - **Production rollout decisions** — those live in the ops repos (swh-sysadmin / puppet), gated by the staging metrics described in `PROPOSAL-staging-rollout.md` §5 and `PLAN-rec-l4-execution.md` §6.
 - **Mirror replay against partial visits** — probably non-issue; worth a five-minute confirmation with whoever runs the SWH mirrors. Listed in `HANDOFF.md` §10.
 - **Direct gix-to-ORC bulk ingestion (AdAstra)** — a forward-looking sibling exploration for bulk-loading hundreds of millions of repositories directly into ORC files, bypassing the SWH loader→storage runtime. Scoped in `EXPLORE-adastra-direct-ingestion.md`; not part of this proposal's rollout, but reuses the same gitoxide stack and can prototype in parallel with rehaul review.
+- **github-ingestion migration** — the existing `github-ingestion` repo's batch loader has only 3 dulwich call sites (2–4 hour migration to gix once `mr/1-gix-engine` lands) and ships with a 390-LOC `OrcStorage` sink that AdAstra can reuse without modification. Scoped in `EXPLORE-github-ingestion-migration.md`.
 
 ---
 

@@ -291,6 +291,7 @@ Pick by topic.
 - `notes/git-loader-rehaul/PLAN-rec-l4-execution.md` — REC-L4 8-MR execution sequence.
 - `notes/PROPOSAL-staging-rollout.md` — full staging proposal with metric gates.
 - `notes/git-loader-rehaul/EXPLORE-adastra-direct-ingestion.md` — forward-looking sibling: direct gix-to-ORC bulk ingestion for hundreds of millions of repositories, bypassing the SWH loader→storage runtime. Reuses the same gitoxide stack.
+- `notes/git-loader-rehaul/EXPLORE-github-ingestion-migration.md` — companion: maps the existing github-ingestion repo against the new pipeline; identifies 2–4 hour dulwich→gix migration and 390-LOC `OrcStorage` sink reusable by AdAstra.
 - `report/ANALYSIS-git-loader-modernization.md` — strict-cell evidence + L1-L7 root causes.
 - `report/ALGORITHMS-pack-loading.md` — per-step algorithm walkthrough.
 - `notes/presentations/SESSION_B_TEAM.md` — team-leadership deck.
