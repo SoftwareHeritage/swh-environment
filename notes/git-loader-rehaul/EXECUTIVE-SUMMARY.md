@@ -120,6 +120,7 @@ From `HANDOFF.md` §7 (gix proposal) + `ISSUE-rec-l4-architecture.md` §7 (REC-L
 - **The journal-driven content reconciler for REC-L4** — required before REC-L4's `concurrent` algo can be enabled in production. Covered as MR4-MR7 in `PLAN-rec-l4-execution.md`; sequenced after the architectural issue is opened and ratified.
 - **Production rollout decisions** — those live in the ops repos (swh-sysadmin / puppet), gated by the staging metrics described in `PROPOSAL-staging-rollout.md` §5 and `PLAN-rec-l4-execution.md` §6.
 - **Mirror replay against partial visits** — probably non-issue; worth a five-minute confirmation with whoever runs the SWH mirrors. Listed in `HANDOFF.md` §10.
+- **Direct gix-to-ORC bulk ingestion (AdAstra)** — a forward-looking sibling exploration for bulk-loading hundreds of millions of repositories directly into ORC files, bypassing the SWH loader→storage runtime. Scoped in `EXPLORE-adastra-direct-ingestion.md`; not part of this proposal's rollout, but reuses the same gitoxide stack and can prototype in parallel with rehaul review.
 
 ---
 

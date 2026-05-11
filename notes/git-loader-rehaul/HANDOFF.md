@@ -290,6 +290,7 @@ Pick by topic.
 - `notes/git-loader-rehaul/ISSUE-rec-l4-architecture.md` — REC-L4 architectural-issue body, ready to publish in `swh/devel/swh-storage`.
 - `notes/git-loader-rehaul/PLAN-rec-l4-execution.md` — REC-L4 8-MR execution sequence.
 - `notes/PROPOSAL-staging-rollout.md` — full staging proposal with metric gates.
+- `notes/git-loader-rehaul/EXPLORE-adastra-direct-ingestion.md` — forward-looking sibling: direct gix-to-ORC bulk ingestion for hundreds of millions of repositories, bypassing the SWH loader→storage runtime. Reuses the same gitoxide stack.
 - `report/ANALYSIS-git-loader-modernization.md` — strict-cell evidence + L1-L7 root causes.
 - `report/ALGORITHMS-pack-loading.md` — per-step algorithm walkthrough.
 - `notes/presentations/SESSION_B_TEAM.md` — team-leadership deck.
