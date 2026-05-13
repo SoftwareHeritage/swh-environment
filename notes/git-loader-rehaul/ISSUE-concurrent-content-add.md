@@ -37,7 +37,7 @@ This is the rate-limiting step in the loader → storage pipeline for git origin
 
 ## 2. Optimization (`execute_concurrent`)
 
-Fire all 5N statements concurrently via `cassandra.concurrent.execute_concurrent`. This was already partially built: Nicolas Dandrimont's Sept 2025 batched-read work introduced [`execute_many_statements_with_retries`](https://gitlab.softwareheritage.org/swh/devel/swh-storage/-/blob/master/swh/storage/cassandra/cql.py#L498-507) and the prepared-statement scaffolding concurrent content_add stacks on. The new code adds two factory helpers ([`content_add_statement`](#) and [`content_index_add_one_statement`](#)) that return bound statements without executing them, plus the dispatch in `_content_add` that builds the full batch and drains the generator.
+Fire all 5N statements concurrently via `cassandra.concurrent.execute_concurrent`. This was already partially built: Nicolas Dandrimont's Sept 2025 batched-read work introduced [`execute_many_statements_with_retries`](https://gitlab.softwareheritage.org/swh/devel/swh-storage/-/blob/master/swh/storage/cassandra/cql.py#L498-507) and the prepared-statement scaffolding concurrent content_add stacks on. The new code adds two factory helpers (`content_add_statement` and `content_index_add_one_statement`) that return bound statements without executing them, plus the dispatch in `_content_add` that builds the full batch and drains the generator.
 
 **Code shape (unchanged from current concurrent content_add branch):**
 
@@ -131,9 +131,9 @@ Each MR is independently revertable.
 | **MR5** | `puppet: deploy reconciler in observe-only mode (staging)` | swh-sysadmin | ~50 | Antoine Lambert, Nicolas | reconciler observes staging journal, no writes |
 | **MR6** | `puppet: enable repair in staging, then concurrent algo in staging` | swh-sysadmin | ~30 | Ops + David / Valentin | staging-only |
 | **MR7** | `puppet: production rollout, one Cassandra-fronting storage at a time` | swh-sysadmin | ~30 | Ops + senior engineer sign-off | one prod canary, then fleet |
-| MR8 (opt) | `storage: MissTolerantProxyStorage` | swh-storage | ~80 | Thomas Pellissier-Tanon | nothing unless wired |
+| MR8 (opt) | `storage: MissTolerantProxyStorage` | swh-storage | ~80 | Thomas | nothing unless wired |
 
-Detailed per-MR scope, file lists, and test plans are in the companion plan at `notes/git-loader-rehaul/PLAN-concurrent-content-add.md` on the `audit/git-loader-rehaul` branch of swh-environment.
+Detailed per-MR scope, file lists, and test plans are in the companion plan at `notes/git-loader-rehaul/PLAN-concurrent-content-add.md` on the `share/ingestion-rehaul` branch of swh-environment.
 
 ## 6. Decision matrix (deployment gates)
 
@@ -158,7 +158,7 @@ Throughput-target gate (between dev and reconciler-build): **MR3 bench shows ≥
 
 ## 8. References
 
-**Companion documents (on the `audit/git-loader-rehaul` branch of swh-environment):**
+**Companion documents (on the `share/ingestion-rehaul` branch of swh-environment):**
 - Detailed per-MR execution plan: `notes/git-loader-rehaul/PLAN-concurrent-content-add.md`
 - Gix engine rehaul handoff (companion proposal): `notes/git-loader-rehaul/HANDOFF.md` + `HANDOFF-MR-PLAN.md`
 - Executive summary across both proposals: `notes/git-loader-rehaul/EXECUTIVE-SUMMARY.md`

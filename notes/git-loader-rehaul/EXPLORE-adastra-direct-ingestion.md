@@ -170,7 +170,7 @@ From `git log` analysis on the relevant repos:
 - **swh-export ORC code**: Aymeric Varasse, Antoine Lambert, Valentin Lorentz, David Douard.
 - **swh-datasets pipelines**: Valentin Lorentz (primary), Stefano Zacchiroli, Thibault Allançon.
 - **swh-graph**: Valentin Lorentz (dominant contributor).
-- **Storage side** (from the storage proposal): David Douard, Thomas Pellissier-Tanon.
+- **Storage side** (from the storage proposal): David Douard, Thomas.
 
 Recommended single conversation: **Valentin Lorentz** (overlaps swh-export + swh-datasets + swh-graph). Confirm AdAstra is not on their roadmap, then proceed.
 

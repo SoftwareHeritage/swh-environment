@@ -94,7 +94,7 @@ Each MR is independently revertable.
 - **Repo**: swh-storage. New proxy at `swh/storage/proxies/miss_tolerant.py` (~80 LOC).
 - **What**: Wraps `content_find` / `content_missing_per_sha1{_git}` / `content_get` to retry once after a short delay on empty result. Defense-in-depth.
 - **Default**: off. Wire into web pipeline only if metrics show a problem.
-- **Reviewers**: Thomas Pellissier-Tanon (read-path semantics).
+- **Reviewers**: Thomas (read-path semantics).
 
 ---
 

@@ -198,7 +198,7 @@ Targets the deployable surface only:
 
 Already familiar with the prior batched-read commits this stacks on. 239 LOC, 4 files. Needs a parametrised-tests review pass (R8 in HANDOFF.md §7 #4).
 
-### 4.4 Storage owners (David Douard / Thomas Pellissier-Tanon, type-emission Q): ~1 hour
+### 4.4 Storage owners (David Douard / Thomas, type-emission Q): ~1 hour
 
 A single-question review: does any consumer of the storage API rely on per-visit `content` topic completing before the `directory` topic? Doesn't require reading code — needs a yes/no from the owner team.
 

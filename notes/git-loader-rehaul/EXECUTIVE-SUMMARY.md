@@ -110,7 +110,7 @@ The **test rig** at `notes/git-loader-rehaul/test-rig/` is the reproducibility a
 
 From `HANDOFF.md` §5 + `ISSUE-concurrent-content-add.md`:
 
-1. **Per-visit type separation** (storage owners) — does any journal consumer rely on per-visit `content` topic completing before `directory` topic? If yes → schedule a 2-walk follow-up MR; if no → ship single-walk as-is. Single yes/no from David Douard / Thomas Pellissier-Tanon.
+1. **Per-visit type separation** (storage owners) — does any journal consumer rely on per-visit `content` topic completing before `directory` topic? If yes → schedule a 2-walk follow-up MR; if no → ship single-walk as-is. Single yes/no from David Douard / Thomas.
 2. **Concurrent `content_add` reconciler location** — recommend sub-package `swh.storage.reconciler` (alternatives in `PLAN-concurrent-content-add.md` §3). Storage owners decide.
 3. **Concurrent `content_add` concurrency knob default** — recommend `content_add_concurrency: 50` (vs cassandra-driver default 100). Conservative for first prod deploy; ops + storage owners decide.
 4. **MR3 bench harness location** — recommend `swh-storage/swh/storage/tests/bench/content_add.py` (in-tree). Storage owners decide.
@@ -121,7 +121,7 @@ From `HANDOFF.md` §5 + `ISSUE-concurrent-content-add.md`:
 
 - **Phase 2/3 Lane work** — Lane 2 (scheduler-side size-based dispatch) and Lane 3 (lister-side GitHub size metadata) are deferred. The Phase 1 path runs on the existing scheduler + lister; we revisit after Phase 1 telemetry shows whether the size-based migration is worth the schema change.
 - **The journal-driven content reconciler for concurrent content_add** — required before concurrent content_add's `concurrent` algo can be enabled in production. Covered as MR4-MR7 in `PLAN-concurrent-content-add.md`; sequenced after the architectural issue is opened and ratified.
-- **Production rollout decisions** — those live in the ops repos (swh-sysadmin / puppet), gated by the staging metrics described in `PROPOSAL-staging-rollout.md` §5 and `PLAN-concurrent-content-add.md` §6.
+- **Production rollout decisions** — those live in the ops repos (`swh/infra/ci-cd/swh-charts`), gated by the staging metrics described in `PROPOSAL-staging-rollout.md` §5 and `PLAN-concurrent-content-add.md` §6. The reconciler chart + per-cluster overlay design is captured in `SPEC-reconciler-deploy.md` (this directory); tracking issue at `swh/infra/ci-cd/swh-charts#5`.
 - **Mirror replay against partial visits** — probably non-issue; worth a five-minute confirmation with whoever runs the SWH mirrors. Listed in `HANDOFF.md` §8.
 - **Direct gix-to-ORC bulk ingestion (AdAstra)** — a forward-looking sibling exploration for bulk-loading hundreds of millions of repositories directly into ORC files, bypassing the SWH loader→storage runtime. Scoped in `EXPLORE-adastra-direct-ingestion.md`; not part of this proposal's rollout, but reuses the same gitoxide stack and can prototype in parallel with rehaul review.
 - **github-ingestion migration** — the existing `github-ingestion` repo's batch loader has only 3 dulwich call sites (2–4 hour migration to gix once `mr/1-gix-engine` lands) and ships with a 390-LOC `OrcStorage` sink that AdAstra can reuse without modification. Scoped in `EXPLORE-github-ingestion-migration.md`.

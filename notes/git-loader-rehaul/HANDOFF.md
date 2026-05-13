@@ -196,4 +196,5 @@ Pick by topic.
 ## 8. Open questions / things this doc does NOT answer
 
 - **Mirror replay against partial visits**: probably non-issue, but worth a five-minute confirmation with whoever runs the SWH mirrors.
-- **Concurrent `content_add` MissTolerantProxy** (optional MR8 in the execution plan): defense-in-depth against the consistency window. Wire only if production metrics show user-facing 404s from the race window.
+- **Concurrent `content_add` MissTolerantProxy** (optional MR8) — code now shipped as `!1227` (GATED draft). Defense-in-depth against the consistency window. Wire into the read pipeline only if production metrics show user-facing 404s from the race window.
+- **Reconciler chart + per-cluster overlays** (MRs 5/6/7) — tracking issue `swh/infra/ci-cd/swh-charts#5`. Full design in `notes/git-loader-rehaul/SPEC-reconciler-deploy.md`. Blocks on `!1223`–`!1226` merging to swh-storage master + a tagged release.
