@@ -2,6 +2,8 @@
 
 *Forward-looking exploration. Companion to `EXPLORE-adastra-direct-ingestion.md`. Maps the existing `github-ingestion` repo against the new gix-based pipeline, and identifies what to migrate, what to reuse, and what to drop.*
 
+**Code lives at:** `https://gitlab.softwareheritage.org/teams/codecommons/github-ingestion` (public, `master` branch). It's under the `teams/codecommons/` namespace, not `swh/devel/` — this is why a `swh-environment` checkout doesn't include it by default.
+
 ---
 
 ## 1. What github-ingestion is today
@@ -130,13 +132,13 @@ This is structurally different from swh-export's `ORCExporter`:
 
 ## 6. Open question for the team
 
-**Who maintains github-ingestion today?** The repo lives outside the canonical SWH GitLab namespace (it's at the swh-audit checkout, not under `gitlab.softwareheritage.org/swh/devel/`). Maintenance ownership matters for:
+**Who maintains github-ingestion today?** The repo is at `gitlab.softwareheritage.org/teams/codecommons/github-ingestion` — under the `teams/codecommons/` namespace, separate from `swh/devel/`. Maintenance ownership matters for:
 
-- Reviewer assignment when Scenario A's MR opens.
-- Coordination with the swh-loader-git rehaul (Scenario A depends on `mr/1-gix-engine` landing).
+- Reviewer assignment when Scenario A's MR opens (the MR targets the codecommons fork, not a `swh/devel/` repo).
+- Coordination with the swh-loader-git rehaul (Scenario A depends on `mr/1-gix-engine` landing in swh-loader-git).
 - The decision on Scenario B vs C (AdAstra direction).
 
-Resolve before opening MRs against github-ingestion.
+Resolve before opening MRs against `teams/codecommons/github-ingestion`.
 
 ---
 

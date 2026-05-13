@@ -153,7 +153,7 @@ Specifically:
 - `SWHTimestampConverter` at `swh-export/swh/export/exporters/orc.py:101-129` — handles SWH's `(seconds, microseconds)` → ORC `(seconds, nanoseconds)` conversion correctly.
 - `hash_to_hex_or_none()` at `swh-export/swh/export/exporters/orc.py:79-80` — hash-formatting helper.
 
-**github-ingestion's `OrcStorage`** (`github-ingestion/custom_swh_components/orc_storage/orc_storage.py`, ~390 LOC) — implements `StorageInterface` and writes incoming SWH objects directly to ORC. **This is the writer body AdAstra actually needs** — it accepts in-memory objects from a loader pipeline and flushes to ORC, exactly the shape AdAstra wants on the sink side. Has been exercised at AdAstra HPC scale.
+**github-ingestion's `OrcStorage`** (`custom_swh_components/orc_storage/orc_storage.py` in `https://gitlab.softwareheritage.org/teams/codecommons/github-ingestion`, ~390 LOC) — implements `StorageInterface` and writes incoming SWH objects directly to ORC. **This is the writer body AdAstra actually needs** — it accepts in-memory objects from a loader pipeline and flushes to ORC, exactly the shape AdAstra wants on the sink side. Has been exercised at AdAstra HPC scale.
 
 The two are complementary: swh-export's `ORCExporter` is *read-from-Cassandra*, github-ingestion's `OrcStorage` is *write-into-ORC-from-anywhere*. AdAstra reuses github-ingestion's `OrcStorage` body + swh-export's schema constants. The output should land in the same ORC schema as swh-export's so the graph-compression pipeline consumes it unchanged.
 
