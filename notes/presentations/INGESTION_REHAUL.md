@@ -9,6 +9,9 @@ slideOptions:
   center: true
   slideNumber: true
   progress: true
+  width: 2160
+  height: 1080
+  margin: 0.02
 style: |
   .reveal { font-size: 24px; }
   .reveal h1 { font-size: 1.8em; }
@@ -29,12 +32,19 @@ style: |
 -->
 
 <style>
-.reveal .slides section { font-size: 0.68em; line-height: 1.2; }
+.reveal .slides section { font-size: 0.90em; line-height: 1.25; }
 .reveal .slides section h1 { font-size: 1.55em; }
 .reveal .slides section h2 { font-size: 1.28em; }
 .reveal .slides section h3 { font-size: 1.10em; }
 .reveal .slides section table { font-size: 0.80em; }
 .reveal .slides section pre { font-size: 0.70em; }
+/* Per-slide density overrides (base = 0.90em is sized for typical-density slides):
+ *   .big   — very light slides (≤3 short bullets, lots of whitespace)
+ *   .med   — medium-light slides (4-5 bullets, room to breathe)
+ *   .dense — text-heavy slides (long bullet lists, big tables) — keep compact */
+.reveal .slides section.big   { font-size: 1.10em; }
+.reveal .slides section.med   { font-size: 1.00em; }
+.reveal .slides section.dense { font-size: 0.72em; }
 </style>
 
 # Supercharging the SWH ingestion pipeline — Tech team leadership overview
@@ -71,19 +81,24 @@ Note: Open on the chart. Let the audience absorb the cliff. Resist the urge to n
 ## The ingestion pipeline — a reminder
 
 ```mermaid
+%%{init: {"themeVariables": {"fontSize": "20px"}, "flowchart": {"nodeSpacing": 60, "rankSpacing": 70, "padding": 16, "htmlLabels": true}}}%%
 flowchart LR
-  L[Listers<br/>GitHub, GitLab,<br/>PyPI, npm, …] -->|listed origins| S[Scheduler<br/>Celery + PG]
-  S -->|task dispatch| LD[Loaders<br/>git, hg, svn, bzr, cvs,<br/>package loaders]
-  LD -->|objects| ST[Storage<br/>Cassandra]
-  LD -->|blobs| OS[Objstorage<br/>Winery / Ceph]
-  ST -.->|events| J[Journal<br/>Kafka]
-  J -.-> SR[Search<br/>Elasticsearch]
-  J -.-> CN[Counters<br/>Redis HLL]
-  J -.-> IX[Indexer]
+  L[Listers] -->|listed origins| S[Scheduler]
+  S -->|task dispatch| LD[Loaders]
+  LD -->|content_add / directory_add / …| ST[Storage]
+  ST -->|① blobs| OS[Objstorage]
+  ST -->|② intent log| J[Journal]
+  ST -->|③ derived index| C[Cassandra]
+  J -.->|replay| SR[Search]
+  J -.->|replay| CN[Counters]
+  J -.->|replay| IX[Indexer]
+  J -.->|mirror| OS
   classDef hot fill:#ffe6e6,stroke:#cc3333,stroke-width:2px
   class LD hot
   linkStyle default stroke:#ffffff,stroke-width:2.5px
 ```
+
+<small>Listers: GitHub, GitLab, PyPI, npm, … · Scheduler: Celery + PG · Loaders: git, hg, svn, bzr, cvs, package · Objstorage: Winery / Ceph · Journal: Kafka · Search: Elasticsearch · Counters: Redis HLL</small>
 
 - **Any of these components** could be the rate-limiter on the lag, we must investigate them all:
   - lister rates, scheduler queue depth, loader visit time, storage write latency, journal lag, ...
@@ -94,6 +109,8 @@ Note: The point of this slide is to make the investigation framing visible: we a
 ---
 
 ## Why we look at the git loader first
+
+<!-- .slide: class="big" -->
 
 Three reasons make it the right first suspect:
 
@@ -169,6 +186,8 @@ Note: The first shock lands here, right after the observation. The bulk of dulwi
 
 ## Can we fix this by making small changes in dulwich? 
 
+<!-- .slide: class="med" -->
+
 TL;DR: no, the gap is structural, cannot be addressed by tuning parameters or minor changes:
 
 - **Pure-Python pack inflation.** `PackInflater` walks zlib + deltas + hashes in bytecode. No native acceleration on the upstream roadmap.
@@ -184,6 +203,8 @@ Note: This is the "no path to fix dulwich within dulwich" slide. Sets up the nex
 ---
 
 ## Looking for alternatives
+
+<!-- .slide: class="med" -->
 
 Here are the explored options:
 
@@ -264,6 +285,8 @@ Note: One config flag switches modes per worker queue. No commitment to a single
 ---
 
 ## Setting up the measurement harness (thanks David and Thomas for DiscardStorage)
+
+<!-- .slide: class="big" -->
 
 Same input pack. Same xl container cell (cpuset 0-15, 64 GB). Same `BaseGitLoader.load()` machinery. Same `DiscardStorage`. **Engine is the only variable.**
 
@@ -406,6 +429,8 @@ Note: The "we already validated in Rust" argument is the crux. Emphasise that th
 
 ### (c) Concurrent `content_add` on Cassandra
 
+<!-- .slide: class="dense" -->
+
 **Long-known bottleneck** in the Cassandra storage path; previously deprioritised because the upstream pipeline was the visible wall. With the engine swap in flight, content_add becomes the new wall — time to ship the fix. The architectural issue body and the MR execution sequence (init refactor + concurrent path + bench + journal-driven reconciler) live at `notes/git-loader-rehaul/ISSUE-concurrent-content-add.md` and `notes/git-loader-rehaul/PLAN-concurrent-content-add.md`.
 
 **Recent prior work to credit.** Nicolas Dandrimont landed three commits in Sept 2025 that batched the **read path** of `_content_add`: `9a4d5596` (batch hash collision checks, ~5 reads total per batch instead of 5 reads per content), `9da2c163` (statsd counter for collisions), `c5e77f48` (merge "exists" + "collision" checks). The concurrent `content_add` work attacks the **write path** that remains: 4 index INSERTs + 1 main INSERT per content, still serialized.
@@ -423,6 +448,12 @@ At 1 ms RTT (write path only, post-Nicolas baseline):
 | 10K-content flush | ~50 s | 0.25–2 s | 25–200x |
 | Kernel content-write phase | ~5.4 h | ~5–20 min | 16–65x |
 | Acceptance target | — | ≥10x flush wall-time | — |
+
+----
+
+### (c) Concurrent `content_add` on Cassandra, cont'd
+
+<!-- .slide: class="dense" -->
 
 Risks:
 - **Ordering relaxation.** Sequential writes 4 indexes then main per content; concurrent has unordered completion. A reader hitting an index can briefly see "index exists, main row not yet" — but the same window already exists transiently in the sequential path between the 4th index and the finalizer. No new failure class, just non-deterministic ordering within the sub-second window.
@@ -442,7 +473,7 @@ Note: concurrent content_add is the biggest unmeasured gain remaining on the wri
 
 ### (d) Size- and commit-count-based dispatch
 
-**Background.** Routing visits by size has been on the table for years and was rejected on the grounds that the scheduler was deliberately *agnostic* — it shouldn't know anything repo-specific. That argument no longer holds: **fork-relationship metadata already traverses the scheduler** (used by the `parent_origins` incremental-load logic), so the scheduler is no longer agnostic. Re-opening the size-routing question is now consistent with the existing data model, not a violation of it.
+**Background.** Routing visits by size was rejected on the grounds that the scheduler was deliberately *agnostic*. That argument no longer holds: **fork-relationship metadata already traverses the scheduler** (used by the `parent_origins` incremental-load logic). Re-opening the size-routing question is now consistent with the existing data model.
 
 The full-stack dispatch design — committed, and still the target architecture. We recommend **starting from a subset of it** (the zero-refactor minimal path on the next slide) and reaching the full-stack form incrementally.
 
@@ -469,6 +500,8 @@ Note: This is the slide where the room will ask "what if the estimate is wrong?"
 ----
 
 ### Dispatch decision matrix
+
+<!-- .slide: class="dense" -->
 
 The *structural* rules are the invariants of Scenario C. The *numeric*
 thresholds in the full-stack variant come from the cost/performance
@@ -539,9 +572,13 @@ Tiers are a **throughput knob**: wrong tier = slower or more expensive, not cata
 | **Forward signal** | Scheduler dispatch (visit doesn't even start on the wrong tier) | `pack_size_kb` collected by the lister | GH ✅ GL ✅ — listers that talk to a metadata API |
 | **Loader pre-flight** *(planned)* | `prepare()`, before download | One cheap forge API call (`GET /repos/{full_name}` for GH) | GH ✅ GL ✅ — same as above, but for repos the lister hasn't sized yet |
 | **Pack-size after download** | After `fetch_pack_to_file`, before opening the pack | `os.path.getsize(pack_path)` against tier budget | Universal — works for any forge once the pack is on disk |
-| **Wall-time threshold** | During processing | Per-tier `T_class` | Universal — fallback for CPU-bound mis-routing the size-check missed |
+| **Wall-time threshold** | During processing | Per-tier `T_class` | Universal — fallback for CPU-bound mis-routing |
 
 All four triggers call the same `mr/2-size-classed-queues` re-queue primitive (`apply_async(<next_tier_task>) + emit metric + exit cleanly`). What differs is *when* the decision is made.
+
+----
+
+## Operating model — tier as throughput knob, cont'd
 
 **The chromium-on-small case** is caught by the pack-size-after-download trigger: a 30 GB pack arrives, the loader checks its size against the small-tier budget (~100 MB), re-queues to large/xl, exits cleanly. **No OOM, no wasted processing CPU**, only the download cost.
 
@@ -556,23 +593,21 @@ Note: The four-trigger picture is the honest one. Forward signal (Lane 2) preven
 
 ---
 
-<h2 style="font-size: 0.75em">Type-emission shape: one decision for storage owners</h2>
+<h2>Type-emission shape: one decision for storage owners</h2>
 
-Phase 4C dropped dulwich's 4-pass write in favor of a single-pass dispatch. The invariant that changed is **per-visit type separation**: dulwich emitted all of one type before any of the next, for the whole visit; gix+`BufferingProxyStorage` does not, because per-type thresholds fire mid-walk and type-batches interleave across flush epochs.
+Gix replaces dulwich's 4-pass with a single pass. The **per-visit type separation** invariant drops: gix+`BufferingProxyStorage` mixes content/dir/rev/rel.
 
 **Per-call** type ordering (within one batched flush, leaf-first across types) is preserved either way. **Intra-type** ordering is pack-walk-arbitrary on both engines and was never claimed.
 
 **The only honest question:** does any downstream consumer require per-visit type separation?
 
 | | If NOT needed | If needed |
-|---|---|---|
-| Loader change | None — the `mr/1-gix-engine` → `mr/4-helm-overlay` clean stack ships as-is | Two-walk in gix: walk 1 emits contents only; walk 2 streams dirs and buffers revs+rels in-loader; emit revs, then rels, then snapshot. ~30–50 LOC |
+|-----|---|---|
+| Loader change | None — `mr/1-gix-engine` → `mr/4-helm-overlay` ship as-is | Two-walk in gix: 1 emits contents only; 2 streams dirs and buffers revs+rels in-loader. ~30–50 LOC |
 | Wall vs current gix | 1× | 1.15–2× — still 20–35× faster than dulwich on chromium |
-| In-loader RAM | 0 | ~1.7 GB (Linux) / ~3 GB (chromium) — rev+rel buffer only; dirs cannot be buffered (8M trees × 26 KB ≈ 210 GB on Linux, dead path) |
-| `BufferingProxyStorage` role | Batching / dedup convenience | Batching / dedup convenience |
+| In-loader RAM | 0 | ~1.7 GB (Linux) / ~3 GB (chromium) — rev+rel buffer only; dirs cant (8M trees × 26 KB ≈ 210 GB on Linux, dead path) |
+| `BufferingProxyStorage` | Batching / dedup convenience | Batching / dedup convenience |
 | Restored invariant | Per-call type ordering only | Full dulwich-shape per-visit type separation |
-
-**Question for David and Thomas.** Do any journal consumers (search, indexer, mirrors, scrubber, counters, webhooks) require per-visit separation between Kafka topics — most likely candidate: search/indexer jointly indexing `content` against `directory`?
 
 - **No** → ship as-is. The proxy's per-call leaf-first emission is sufficient; transient cross-type holes between flush epochs close at the next flush and are tolerated by Cassandra (no FK).
 - **Yes** → add the two-walk path. No storage-side change. Loader self-enforces dulwich's invariant, and `BufferingProxyStorage` is no longer load-bearing for ordering.
@@ -602,6 +637,10 @@ Note: This collapses what was previously a 4-question ratification list into one
 - gix throughput in production for every repo (28–41x wall, 8–19x memory vs dulwich).
 - Bounded-staleness guarantee (Scenario C): small origins complete fast; oversized origins self-promote to larger tiers.
 - Dulwich fallback path for pathological repos (malformed packs gix rejects that dulwich absorbs). All three primitives + Celery wiring shipped in `mr/3-dulwich-fallback`.
+
+---
+
+## The zero-refactor minimal path (recommendation), cont'd
 
 **Deployment lanes (independent, mergeable in any order):**
 
@@ -638,6 +677,8 @@ Note: Do not open this up for a team vote. The decision is stated and documented
 ---
 
 ## Cost / performance model (placeholder)
+
+<!-- .slide: class="med" -->
 
 The bench sweep produces a fitted model at `notes/data/container-model-v1.json` with three surfaces:
 
@@ -678,6 +719,8 @@ Note: Status snapshot. The chromium dulwich-vs-gix headline cell is now closed: 
 
 ## Where things stand
 
+<!-- .slide: class="dense" -->
+
 The honest list of what is solid and what is not yet.
 
 <table>
@@ -695,6 +738,21 @@ The honest list of what is solid and what is not yet.
 <tr><td><strong>Helm worker pool deployments</strong></td><td>Not required for the zero-refactor path; needed only when adding Lane 2/3 (full-stack dispatch)</td></tr>
 <tr><td><strong>Shadow / canary against prod traffic</strong></td><td>Not run</td></tr>
 <tr><td><strong>Dulwich fallback path</strong> for pathological packs</td><td>Complete — typed exceptions, classifier, marker, metric, and Celery re-dispatch wiring all ship in <code>mr/3-dulwich-fallback</code>; integration tests in the same MR.</td></tr>
+</tbody>
+</table>
+
+---
+
+## Where things stand, cont'd
+
+<!-- .slide: class="dense" -->
+
+The honest list of what is solid and what is not yet.
+
+<table>
+<colgroup><col style="width: 55%"><col style="width: 45%"></colgroup>
+<thead><tr><th>Area</th><th>Status</th></tr></thead>
+<tbody>
 <tr><td><strong>MR stack opened on GitLab (2026-05-12)</strong></td><td>All four MRs open as drafts: <code>!217</code> (mr/1-gix-engine, gix engine + bindings + wire-in), <code>!218</code> (mr/2-size-classed-queues), <code>!219</code> (mr/3-dulwich-fallback), <code>!220</code> (mr/4-helm-overlay). Stacked targets; assignee David Douard; reviewers TBD.</td></tr>
 <tr><td><strong>Jenkins CI status</strong></td><td>Build infrastructure healthy after 3 fix iterations (Cargo patch → SWH gitoxide fork; pytest collection; sphinx docstring; mypy callable annotation). Remaining failures match exactly the 6 documented pre-existing test gaps in <code>HANDOFF.md §5</code> — all Category B/B' loader-maintainer triage items, none production regressions.</td></tr>
 <tr><td><strong>New observability signals</strong></td><td>Specced, not wired — including <code>git_dulwich_fallback_total{reason}</code> and <code>swh_loader_git_visit_wall_seconds</code></td></tr>
@@ -709,6 +767,8 @@ Note: Do not oversell. The CPU-time numbers are reproducible from the discard-mo
 ---
 
 ## A path to deployment
+
+<!-- .slide: class="dense" -->
 
 Staging-first, zero-refactor-first, incremental. **The W20 management
 meeting moved concurrent content_add (Cassandra `content_add` bottleneck) to the top
@@ -738,6 +798,12 @@ with it, not behind it.
   dulwich-fallback rate < 0.1 %, p95 wall within 30 % of model
   prediction, zero OOM-kills on `small` over 7 days.
 
+---
+
+## A path to deployment, cont'd
+
+<!-- .slide: class="dense" -->
+
 **Phase 2 — Decisions + refactoring (June 2026).**
 
 - Per the W20 management decision: **June is decide + launch
@@ -760,6 +826,8 @@ Note: Phases 1 and 2 are the critical path; everything else is an upgrade on top
 ---
 
 ## concurrent content_add is the top priority — first sprint scope
+
+<!-- .slide: class="dense" -->
 
 **Why concurrent content_add leads the sprint, not trails it:** the Cassandra
 `content_add` bottleneck slows down **dulwich as much as gix**. Today's
@@ -845,6 +913,8 @@ Note: The 7-day measurement window is a starting point; the team may want longer
 
 ## Team learning curve — moderate
 
+<!-- .slide: class="med" -->
+
 Easy to grasp:
 
 - Loader interface is unchanged. Same `GitLoader` API, same model outputs.
@@ -881,18 +951,22 @@ Per the management coordination meeting (week 20, 2026): ingestion pipeline is t
 - **End of May**: presentation to Roberto.
 - **June**: decide + launch refactoring, informed by the May audit.
 
+---
+
+## Task force charter (W20 management decision), cont'd
+
 **Two parallel tracks in scope this first sprint:**
 
 - **Storage-side  — top priority**, runs on the 8-MR sequence in `PLAN-concurrent-content-add.md`. Independent of the loader engine; benefits both dulwich and gix today. The init-refactor + bench MRs (MR1–MR3) are zero-effect in production and can land during May.
 - **Loader-side** — May audit + June refactoring on the four open MRs (`!217` → `!220`).
-
-Aymeric is on MOSAIC / Code Commons and is **not** in the loader task force loop. Maintenance system (Nicolas's prior allocation) is being reallocated.
 
 Note: The task force was formed at the W20 management coordination meeting. The deck previously framed the operational ask as "approve Phase 1 now"; that framing is superseded by the task-force charter. The slides that follow describe what's still open for the task force to decide vs already settled.
 
 ---
 
 ## What's still open for the task force
+
+<!-- .slide: class="dense" -->
 
 The audit material does the homework; these are the points the task force will land in May–June. **concurrent content_add leads** per the W20 decision — it's the highest-leverage piece because it slows down dulwich today.
 
@@ -914,6 +988,8 @@ Note: Frame as "the audit work is in; here is what the task force needs to decid
 ---
 
 ## What we need from the team — operational
+
+<!-- .slide: class="dense" -->
 
 Aligned with the task-force charter; the asks below go to the task force first, with David Douard remaining the assignee on the open loader-side MRs (he dispatches review):
 
@@ -953,6 +1029,10 @@ Note: The not-asking list is the bigger half of the message — what we delibera
 - [report/ANALYSIS-git-loader-modernization.md](../../report/ANALYSIS-git-loader-modernization.md) — the full analysis: discard-mode methodology, headline measurements, comparison with `git` itself (§3.7), L1-L7 root causes, why gix avoids each, code references with SWHID anchors.
 - [report/ALGORITHMS-pack-loading.md](../../report/ALGORITHMS-pack-loading.md) — pseudocode-level walkthrough of `git index-pack`, dulwich, and the new gix path; time + memory budget breakdown per algorithm.
 - [PROPOSAL-staging-rollout.md](../PROPOSAL-staging-rollout.md) — the full staging proposal with metric gates.
+
+---
+
+## References
 
 **concurrent content_add (Cassandra `content_add`) — sibling proposal:**
 - [notes/git-loader-rehaul/ISSUE-concurrent-content-add.md](../git-loader-rehaul/ISSUE-concurrent-content-add.md) — architectural-issue body, ready to publish.
