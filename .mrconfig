@@ -219,6 +219,13 @@ fixups =
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
+[swh-osv]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-osv.git' 'swh-osv'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-osv.git
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
+
 [swh-provenance]
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-provenance.git' 'swh-provenance'
 fixups =
@@ -278,6 +285,13 @@ fixups =
 checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-vault.git' 'swh-vault'
 fixups =
   git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-vault.git
+  grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
+  grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
+
+[swh-vulns]
+checkout = git clone 'https://gitlab.softwareheritage.org/swh/devel/swh-vulns.git' 'swh-vulns'
+fixups =
+  git remote set-url origin https://gitlab.softwareheritage.org/swh/devel/swh-vulns.git
   grep -q pre-commit.com .git/hooks/pre-commit || pre-commit install
   grep -q pre-commit.com .git/hooks/commit-msg || pre-commit install -t commit-msg
 
