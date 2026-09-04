@@ -14,6 +14,8 @@ if ! grep -q "$mrconf" "$mrtrust" &> /dev/null ; then
     echo "$mrconf" >> "$mrtrust"
 fi
 
+pip install pre-commit
+
 if ! which pre-commit &> /dev/null ; then
 	echo "The pre-commit command is required, please install it before"
 	echo "running this command. See README.md for more information."
