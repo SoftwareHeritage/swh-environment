@@ -6,6 +6,8 @@ PREREQUISITES="pre-commit flake8 pifpaf tox wheel mypy==2.1.0"
 PIP_FLAGS="--disable-pip-version-check"
 PIP="python3 -m pip $PIP_FLAGS"
 
-$PIP install $PREREQUISITES "$@"
+$PIP install uv
 
+PIP="uv pip"
+$PIP install $PREREQUISITES "$@"
 $PIP install $(bin/pip-swh-packages --with-testing) "$@"
